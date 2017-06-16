@@ -1,0 +1,20 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+
+/**
+ * 融资
+ * @author Yuancy
+ *
+ */
+public interface IFinanceInfoService {
+
+	public BaseRespBean getFinanceInfoList(Map<String, Object> paramMap, PageInfoBean page);
+	
+	public BaseRespBean getProGuarantee(FinanceInfoListReqBean reqBean);
+}

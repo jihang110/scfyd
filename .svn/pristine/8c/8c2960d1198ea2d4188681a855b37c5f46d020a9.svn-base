@@ -1,0 +1,80 @@
+$(document).ready(function() {
+	getInfo();
+	initInterestTable();
+});
+
+function initInterestTable() {
+	$('#carInfoTable').bootstrapTable('destroy'); 
+	$("#carInfoTable").bootstrapTable({  
+		 method: "post", 
+         striped: false,  //表格显示条纹  
+         data:json,
+         pagination: false, //启动分页  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'frameNumber',
+ 	        title: '车架号',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'actualCarPrice',
+ 	        title: '实际提车价(元)',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }]
+       });
+}
+var json = [];
+function getInfo(){
+	for(var i=0;i<10;i++){
+		var ss = {};
+		ss.frameNumber = i;
+		ss.actualCarPrice = i*i;
+		json.push(ss);
+	}
+}
+
+function save(){
+	var data = CloudUtils.convertStringJson('addForm');
+	data = eval("(" + data + ")");
+	var tableData = $('#carInfoTable').bootstrapTable('getData');
+	data.tableData = tableData;
+	 var options = {
+				url : '../../offsetDeposit/startProcess',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					if (data.result == 0) {
+						bootbox.alert(data.resultNote);
+					} else {
+						return false;
+					}
+				},
+				errorCallback : function(data) {
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+}

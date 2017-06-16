@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.IDeptDao" >
+  
+  <resultMap id="DeptResultMap" type="com.ut.scf.pojo.CorpDept">
+    <id column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+    <result column="corp_id" jdbcType="VARCHAR" property="corpId" />
+    <result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+    <result column="dept_type" jdbcType="VARCHAR" property="deptType" />
+    <result column="staff_num" jdbcType="INTEGER" property="staffNum" />
+    <result column="functions" jdbcType="VARCHAR" property="functions" />
+    <result column="org_structure_path" jdbcType="VARCHAR" property="orgStructurePath" />
+    <result column="contact_person" jdbcType="VARCHAR" property="contactPerson" />
+    <result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+  
+  <select id="getDeptList" resultType="hashmap" parameterType="hashmap" >
+    select d.dept_id deptId, d.dept_name deptName, d.corp_id corpId, d.parent_id parentId, 
+    dept_type deptType, staff_num staffNum, d.functions functions, org_structure_path orgStructurePath,
+    d.contact_person contactPerson, d.contact_phone contactPhone, d.note
+    from corp_dept d
+    where d.status=1 and d.corp_id = #{corpId} 
+	<if test="deptId != null">
+	  and (d.parent_id = #{deptId} or d.dept_id = #{deptId})
+	</if>
+    order by d.create_time
+  </select>
+  
+  <select id="getDeptPageList" resultType="hashmap" parameterType="hashmap" >
+    select d.dept_id deptId, d.dept_name deptName, d.corp_id corpId, d.parent_id parentId, 
+    d.dept_type deptType, d.staff_num staffNum, d.functions functions, d.org_structure_path orgStructurePath,
+    d.contact_person contactPerson, d.contact_phone contactPhone, d.note,
+    p.dept_name parentName,
+    ci.corp_name relaCorpName
+    from corp_dept d
+    left join corp_dept p on p.dept_id = d.parent_id
+    join corp_info ci on ci.corp_id = d.corp_id
+    where d.status=1
+	<if test="deptId != null">
+	  and (d.parent_id = #{deptId} or d.dept_id = #{deptId})
+	</if>
+	<if test="deptName != null and deptName != ''">
+	  and d.dept_name LIKE CONCAT(CONCAT('%', #{deptName}),'%') 
+	</if>
+	<if test="userCorpList !=null">
+	  and d.corp_id in ${userCorpList}
+	</if>
+	<if test="parentName != null and parentName != ''">
+	  and p.dept_name LIKE CONCAT(CONCAT('%', #{parentName}),'%') 
+	</if>
+	<if test="corpId!=null ">  
+      and d.corp_id = #{corpId}
+    </if>
+    <if test="relaCorpId != null">
+	  and d.rela_corp_id = #{relaCorpId}
+	</if>
+    order by d.create_time
+  </select>
+  
+  <select id="countDeptByName" resultType="int" parameterType="hashmap" >
+    select count(1)
+    from corp_dept d
+    where d.status=1 and d.corp_id = #{corpId} and d.dept_name = #{deptName}
+  </select>
+  
+  <insert id="insertDept" parameterType="hashmap">
+    insert into corp_dept (dept_id, dept_name, corp_id, 
+      parent_id, dept_type, staff_num, 
+      functions, org_structure_path, contact_person, contact_phone, 
+      note,rela_corp_id, create_time, status)
+    values (#{deptId}, #{deptName}, #{corpId}, 
+      #{parentId}, #{deptType}, #{staffNum}, 
+      #{functions}, #{orgStructurePath}, 
+      #{contactPerson}, #{contactPhone}, 
+      #{note},#{relaCorpId} , now(), 1)
+  </insert>
+  
+  <update id="updateDept" parameterType="hashmap">
+    update corp_dept
+    <set>
+      <if test="deptName != null and deptName != ''">
+        dept_name = #{deptName},
+      </if>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId},
+      </if>
+      <if test="deptType != null">
+        dept_type = #{deptType},
+      </if>
+      <if test="staffNum != null">
+        staff_num = #{staffNum},
+      </if>
+      <if test="functions != null">
+        functions = #{functions},
+      </if>
+      <if test="orgStructurePath != null and orgStructurePath !='' ">
+        org_structure_path = #{orgStructurePath},
+      </if>
+      <if test="contactPerson != null">
+        contact_person = #{contactPerson},
+      </if>
+      <if test="contactPhone != null">
+        contact_phone = #{contactPhone},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where dept_id = #{deptId}
+  </update>
+  
+  <select id="countDeptByParentId" resultType="int" parameterType="string" >
+    select count(1)
+    from corp_dept d
+    where d.status=1 and d.parent_id = #{parentId}
+  </select>
+  
+  <select id="countUserByDeptId" resultType="int" parameterType="string" >
+    select count(1)
+    from sys_user u
+    where u.status=1 and u.dept_id = #{deptId}
+  </select>
+  
+  <select id="queryDeptById" parameterType="string" resultMap="DeptResultMap">
+    select dept_id, dept_name, corp_id, parent_id, dept_type, staff_num, functions, org_structure_path, 
+    contact_person, contact_phone, note, create_time, status
+    from corp_dept
+    where dept_id = #{deptId} and status=1
+  </select>
+  
+</mapper>

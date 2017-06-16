@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.finance.IReceiveAccountDao">
+	<select id="selectReceiveAccountList" parameterType="hashmap"
+		resultType="hashmap">
+		select
+		r.rec_uid recUid,
+		r.corp_id corpId,
+		c.corp_name corpName,
+		r.contract_no contractNo,
+		r.invoice_no invoiceNo,
+		r.invoice_type invoiceType,
+		r.invoice_amount invoiceAmount,
+		DATE_FORMAT(r.invoice_date,'%Y-%m-%d') invoiceDate,
+		DATE_FORMAT(r.estimated_pay_date,'%Y-%m-%d') estimatedPayDate,
+		r.estimated_pay_amount estimatedPayAmount,
+		DATE_FORMAT(r.actual_pay_date,'%Y-%m-%d') actualPayDate,
+		r.actual_pay_amount actualPayAmount,
+		r.if_overdue ifOverdue,
+		r.overdue_days overdueDays
+		from receive_account r join corp_info c on r.corp_id=c.corp_id
+		<where>
+			1=1 and c.status = 1
+			<if test="corpId != null">
+				and r.corp_id = #{corpId}
+			</if>
+			<if test="userCorpList !=null">
+	  			and r.corp_id in ${userCorpList}
+			</if>
+			<if test="invoiceNo != null and invoiceNo!=''">
+				and r.invoice_no LIKE CONCAT(CONCAT('%', #{invoiceNo}), '%')
+			</if>
+			<if test="relaCorpId != null">
+				and r.rela_corp_id = #{relaCorpId}
+			</if>
+			<if test="createUserId != null">
+				and r.create_user_id = #{createUserId}
+			</if>
+		</where>
+		order by r.create_time desc
+	</select>
+
+	<insert id="insertReceiveAccount" parameterType="hashmap">
+		insert into
+		receive_account (rec_uid, corp_id, contract_no,
+		invoice_no,
+		invoice_type, invoice_amount,
+		invoice_date, estimated_pay_date,
+		estimated_pay_amount,
+		actual_pay_date, actual_pay_amount, if_overdue,
+		overdue_days, rela_corp_id, create_user_id,
+		create_time)
+		values
+		(#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR},
+		#{contractNo,jdbcType=VARCHAR},
+		#{invoiceNo,jdbcType=VARCHAR},
+		#{invoiceType,jdbcType=TINYINT}, #{invoiceAmount,jdbcType=DECIMAL},
+		#{invoiceDate,jdbcType=TIMESTAMP},
+		#{estimatedPayDate,jdbcType=TIMESTAMP},
+		#{estimatedPayAmount,jdbcType=DECIMAL},
+		#{actualPayDate,jdbcType=TIMESTAMP},
+		#{actualPayAmount,jdbcType=DECIMAL}, #{ifOverdue,jdbcType=TINYINT},
+		#{overdueDays,jdbcType=SMALLINT}, #{relaCorpId,jdbcType=VARCHAR},
+		#{createUserId,jdbcType=VARCHAR},
+		now())
+	</insert>
+
+	<delete id="deleteReceiveAccount" parameterType="java.lang.String">
+		delete from
+		receive_account
+		where rec_uid = #{recUid}
+	</delete>
+
+	<update id="updateReceiveAccount" parameterType="hashmap">
+		update receive_account
+		<set>
+			<if test="corpId != null">
+				corp_id = #{corpId,jdbcType=VARCHAR},
+			</if>
+			<if test="contractNo != null">
+				contract_no = #{contractNo,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceNo != null">
+				invoice_no = #{invoiceNo,jdbcType=VARCHAR},
+			</if>
+			<if test="invoiceType != null">
+				invoice_type = #{invoiceType,jdbcType=TINYINT},
+			</if>
+			<if test="invoiceAmount != null">
+				invoice_amount = #{invoiceAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="invoiceDate != null">
+				invoice_date = #{invoiceDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="estimatedPayDate != null">
+				estimated_pay_date =
+				#{estimatedPayDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="estimatedPayAmount != null">
+				estimated_pay_amount =
+				#{estimatedPayAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="actualPayDate != null">
+				actual_pay_date = #{actualPayDate,jdbcType=TIMESTAMP},
+			</if>
+			<if test="actualPayAmount != null">
+				actual_pay_amount = #{actualPayAmount,jdbcType=DECIMAL},
+			</if>
+			<if test="ifOverdue != null">
+				if_overdue = #{ifOverdue,jdbcType=TINYINT},
+			</if>
+			<if test="overdueDays != null">
+				overdue_days = #{overdueDays,jdbcType=SMALLINT},
+			</if>
+		</set>
+		where rec_uid = #{recUid,jdbcType=VARCHAR}
+	</update>
+</mapper>

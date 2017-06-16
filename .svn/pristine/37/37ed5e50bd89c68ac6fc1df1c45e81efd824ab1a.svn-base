@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.IRoleDao">
+  <resultMap id="RoleResultMap" type="com.ut.scf.pojo.SysRole">
+    <id column="role_id" jdbcType="VARCHAR" property="roleId" />
+    <result column="role_name" jdbcType="VARCHAR" property="roleName" />
+    <result column="role_type" jdbcType="SMALLINT" property="roleType" />
+    <result column="corp_id" jdbcType="VARCHAR" property="corpId" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="TINYINT" property="status" />
+  </resultMap>
+
+	<select id="selectRoleList" resultType="hashmap" parameterType="hashmap">
+		select sr.role_id roleId, sr.role_name roleName, sr.role_type roleType,
+		st.type_name roleTypeName, sr.corp_id corpId, c.corp_name corpName, sr.note
+		from sys_role sr join sys_type st on sr.role_type =	st.type_id
+		left join corp_info c on sr.corp_id=c.corp_id
+		where sr.status = 1
+		and sr.role_type != 1
+		<if test="roleName!=null"> and sr.role_name LIKE CONCAT('%',#{roleName},'%')</if>
+		<if test="roleType!=null"> and sr.role_type = #{roleType}</if>
+		<if test="corpId!=null and corpId!='null'"> and (sr.corp_id is null or sr.corp_id = #{corpId})</if>
+		order by sr.role_type
+	</select>
+	
+	<select id="selectRoleTypeList" parameterType="java.lang.Integer" resultType="hashmap">
+		select st.type_id roleType, st.type_name roleTypeName
+		from sys_type st 
+		where 1 = 1
+        <if test="_parameter != 1">
+          and st.type_id = #{_parameter}
+        </if>
+	</select>
+	
+	<select id="selectAllRoleTypeList" parameterType="java.lang.Integer" resultType="hashmap">
+		select st.type_id roleType, st.type_name roleTypeName
+		from sys_type st 
+		where 1 = 1
+		and st.type_id in (2,3,4,6)
+	</select>
+  
+    <select id="countRoleByName" resultType="int" parameterType="hashmap" >
+        select count(1)
+        from sys_role r
+        where r.status=1 and r.role_name = #{roleName}
+       <!--  <if test="corpId == null">
+          and r.corp_id is null 
+        </if> -->
+        <if test="corpId != null">
+          and (r.corp_id = #{corpId} or r.corp_id is null)
+        </if>
+    </select>
+    
+  <select id="selectRoleById" parameterType="java.lang.String" resultMap="RoleResultMap">
+    select role_id, role_name, role_type, corp_id, note, create_time, status
+    from sys_role
+    where role_id = #{roleId} and status=1
+  </select>
+	
+	<select id="countRoleUsed" resultType="int" parameterType="hashmap" >
+    select count(*)
+    from sys_user a
+    left join sys_user_role b on a.user_id = b.user_id
+    where a.status=1
+	<if test="roleId!=null ">  
+      and b.role_id = #{roleId}
+    </if>
+  </select>
+
+	<insert id="insertRole" parameterType="hashmap">
+		INSERT INTO sys_role
+		(role_id,role_name,role_type,corp_id,note,create_time,status)
+		VALUES(#{roleId},#{roleName},#{roleType},#{corpId},#{note},now(),1)
+	</insert>
+	
+	<insert id="insertRoleMenu" parameterType="java.util.List">
+		INSERT INTO
+		sys_role_menu (rec_uid,role_id,menu_id,create_time) VALUES
+		<foreach collection="list" item="roleMenuList" index="index" separator="," > 
+		(#{roleMenuList.recUid},#{roleMenuList.roleId},#{roleMenuList.menuId},now())
+		</foreach>
+	</insert>
+	
+	<delete id="deleteRoleMenu" parameterType="java.lang.String">
+		DELETE from
+		sys_role_menu WHERE role_id = #{roleId}
+	</delete>
+	
+  <update id="updateRole" parameterType="hashmap">
+    update sys_role
+    <set>
+      <if test="roleName != null and roleName != ''">
+        role_name = #{roleName},
+      </if>
+      <if test="roleType != null">
+        role_type = #{roleType},
+      </if>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where role_id = #{roleId}
+  </update>
+</mapper>

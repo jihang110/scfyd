@@ -1,0 +1,85 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IAgencyService;
+@Service("agencyService")
+public class AgencyServiceImpl implements IAgencyService {
+	@Resource ProcessEngine processEngine;
+	@Resource RuntimeService runtimeService;
+	@Resource TaskService taskService;
+	@Resource RepositoryService repositoryService;
+	/**
+	 * 发起流程
+	 */
+	public void startProcess(JSONObject jsonObject) {
+		String userName = (String) jsonObject.get("userId");
+		String key = (String) jsonObject.get("activitiKey");
+//		加上当前用户
+		ProcessInstance pi = processEngine.getRuntimeService()//管理流程实例和执行对象，也就是表示正在执行的操作  
+		            .startProcessInstanceByKey(key);
+//		TaskService taskService = processEngine.getTaskService();//获取任务的Service，设置和获取流程变量  
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+//		获取所有的候选人
+//		List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
+//		判断候选人
+
+//		拾取用户
+		taskService.claim(task.getId(), userName);
+//		设置变量
+		taskService.setVariable(task.getId(), "agencyJson", jsonObject.toString());
+//		完成节点
+		taskService.complete(task.getId());
+		
+		System.out.println("完成任务"+task.getId());
+	}
+	
+	/**
+	 * 查找代办
+	 */
+	@Override
+	public BaseRespBean getAgencyTaskList(Map<String, Object> map,
+			PageInfoBean page) {
+//		1.获取用户名
+		String userName = (String) map.get("userId");
+//		2.查出所有的任务
+		  List<Task> tasks = processEngine.getTaskService()//与任务相关的Service  
+		            .createTaskQuery()//创建一个任务查询对象  
+		            .taskCandidateUser(userName) 
+		            .list();
+		List<Map<String, String>> list = new ArrayList<Map<String,String>>();
+		for (Task task : tasks) {
+			Map<String, String> taskMap = new HashMap<String, String>();
+			taskMap.put("taskId", task.getId());
+			taskMap.put("processDefinitionId", task.getProcessDefinitionId());
+			taskMap.put("processInstanceId", task.getProcessInstanceId());
+			taskMap.put("taskName", task.getName());
+			taskMap.put("assignee", task.getAssignee());
+			taskMap.put("processDefinitionName", repositoryService.getProcessDefinition(task.getProcessDefinitionId()).getName());
+			list.add(taskMap);
+		}
+	  	PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;  
+	}
+	
+}

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd  
+                        http://www.springframework.org/schema/mvc  
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+                        http://www.springframework.org/schema/task
+                        http://www.springframework.org/schema/task/spring-task-4.0.xsd">
+	
+	<!-- 自动扫描Service，使用注解 ，排除Controller，防止Service事务不成功-->
+	<context:component-scan base-package="com.ut.scf">
+	    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+	</context:component-scan>
+	
+	<!-- 引入配置文件 -->
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+	
+	<!--tomcat jdbc pool数据源配置-->
+    <bean id="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">    
+        <property name="poolProperties">  
+            <bean class="org.apache.tomcat.jdbc.pool.PoolProperties">    
+                <property name="driverClassName" value="${jdbc.driver.class}" />
+                <property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />  
+                <property name="jmxEnabled" value="true"/>  
+                <property name="testWhileIdle" value="true"/>  
+                <property name="testOnBorrow" value="true"/>    
+                <property name="testOnReturn" value="false"/>    
+                <property name="validationInterval" value="30000"/>   
+                <property name="validationQuery" value="SELECT 1"/>    
+                <property name="timeBetweenEvictionRunsMillis" value="30000"/>    
+                <property name="maxActive" value="100"/>    
+                <property name="initialSize" value="10"/>    
+                <property name="maxWait" value="10000"/>    
+                <property name="minEvictableIdleTimeMillis" value="30000"/>    
+                <property name="minIdle" value="10"/>    
+                <property name="logAbandoned" value="false"/>    
+                <property name="removeAbandoned" value="true"/>    
+                <property name="removeAbandonedTimeout" value="60"/>  
+                <property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/>    
+            </bean>    
+        </property>    
+    </bean>
+	
+	<bean id="dataSourceAct" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">    
+	        <property name="poolProperties">  
+	            <bean class="org.apache.tomcat.jdbc.pool.PoolProperties">    
+	                <property name="driverClassName" value="${jdbc.driver.class}" />
+	                <property name="url" value="${jdbc.activitiurl}" />
+					<property name="username" value="${jdbc.username}" />
+					<property name="password" value="${jdbc.password}" />  
+	                <property name="jmxEnabled" value="true"/>  
+	                <property name="testWhileIdle" value="true"/>  
+	                <property name="testOnBorrow" value="true"/>    
+	                <property name="testOnReturn" value="false"/>    
+	                <property name="validationInterval" value="30000"/>   
+	                <property name="validationQuery" value="SELECT 1"/>    
+	                <property name="timeBetweenEvictionRunsMillis" value="30000"/>    
+	                <property name="maxActive" value="100"/>    
+	                <property name="initialSize" value="10"/>    
+	                <property name="maxWait" value="10000"/>    
+	                <property name="minEvictableIdleTimeMillis" value="30000"/>    
+	                <property name="minIdle" value="10"/>    
+	                <property name="logAbandoned" value="false"/>    
+	                <property name="removeAbandoned" value="true"/>    
+	                <property name="removeAbandonedTimeout" value="60"/>  
+	                <property name="jdbcInterceptors" value="org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer"/>    
+	            </bean>    
+	        </property>    
+	    </bean>
+	
+	<!-- spring和MyBatis完美整合，不需要mybatis的配置映射文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描mapping.xml文件 -->
+		<property name="mapperLocations" value="classpath*:com/ut/scf/mybatis/mapping/**/*Mapper.xml"></property>
+		<property name="plugins">  
+	        <bean class="com.ut.scf.mybatis.interceptor.MybatisSpringPageInterceptor">  
+	        </bean>  
+	    </property> 
+	</bean>
+
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.ut.scf.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+	</bean>
+
+	<!-- (事务管理)transaction manager, use JtaTransactionManager for global tx -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	
+	<!-- 支持上传文件 -->  
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+	    <property name="defaultEncoding" value="utf-8"></property>   
+	    <property name="maxUploadSize" value="10485760000"></property>  
+	    <property name="maxInMemorySize" value="40960"></property>  
+	</bean>
+	
+	 <!-- 加载activiti引擎 -->  
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">  
+      <property name="processEngineConfiguration" ref="processEngineConfiguration" />  
+    </bean>  
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">  
+      <property name="dataSource" ref="dataSourceAct" />  
+      <property name="transactionManager" ref="transactionManager" />  
+      <property name="databaseSchemaUpdate" value="true" />  
+      <property name="jobExecutorActivate" value="false" />  
+      <property name="activityFontName" value="宋体"/>
+      <property name="labelFontName" value="宋体"/>
+    </bean>  
+     
+    <!-- activiti的各种服务接口 -->  
+    <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />  
+    <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />  
+    <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />  
+    <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />  
+    <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />  
+    
+	
+	<!-- spring task定时任务配置 -->
+	<bean id="interfaceSyncJob" class="com.ut.scf.web.scheduled.InterfaceSyncJob" />  
+	<task:scheduled-tasks> 
+		<!-- 测试 启动五秒后启动订单管理 流程发起任务   -->
+        <task:scheduled ref="interfaceSyncJob" method="orderInfoSyncTask" cron="0 18 15 * * ?"/>   
+    </task:scheduled-tasks>
+    
+     <!-- 使用annotation定义任务驱动 -->
+    <task:annotation-driven/>
+	
+</beans>

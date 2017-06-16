@@ -1,0 +1,239 @@
+package com.ut.scf.web.scheduled;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.impl.bpmn.data.SimpleDataInputAssociation;
+import org.activiti.engine.impl.util.json.JSONArray;
+import org.activiti.engine.impl.util.json.JSONException;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.auto.OrderBatchInfoMapper;
+import com.ut.scf.dao.auto.OrderInfoMapper;
+import com.ut.scf.dao.auto.StuInfoMapper;
+import com.ut.scf.pojo.auto.OrderBatchInfo;
+import com.ut.scf.pojo.auto.OrderInfo;
+import com.ut.scf.pojo.auto.StuInfo;
+import com.ut.scf.respbean.sys.inner.Dept;
+import com.ut.scf.service.sys.impl.DeptServiceImpl;
+
+@Component
+@Lazy(value=false)
+public class InterfaceSyncJob {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(InterfaceSyncJob.class);
+	
+	private static String DATE_FORMAT = "yyyy-MM-dd";
+	
+	private static SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+	
+	@Resource
+	private OrderBatchInfoMapper orderBatchInfoMapper;
+	
+	@Resource
+	private OrderInfoMapper orderInfoMapper;
+	
+	@Resource
+	private StuInfoMapper stuInfoMapper;
+	
+//	@Scheduled(cron="*/5 * * * * ?")
+	/*
+	 * 订单信息同步
+	 */
+	public void orderInfoSync() {
+		try {
+			String url = "http://api.fenqichaoren.com/p2p/order.php";
+			Map<String, String> paramMap = new HashMap<String, String>();
+			paramMap.put("keyCode", "");
+			paramMap.put("StatPayTime", "");
+			paramMap.put("EndPayTime", "");
+			paramMap.put("StatTime", "");
+			paramMap.put("EndTime", "");
+			
+			String result = httpURLConnectionPOST(paramMap, url);
+			
+			// 每日定时同步新增订单以及大学生信息存入平台
+			insertOrderInfo(result);
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+	}
+	
+//	@Scheduled(cron="*/5 * * * * ?")
+	/*
+	 * 还款信息同步
+	 */
+	public void repaymentInfoSync() {
+		String url = "http://api.fenqichaoren.com/p2p/finance/temp_finance_repay.php";
+		Map<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("keyCode", "");
+		paramMap.put("rePayDateS", "");
+		paramMap.put("rePayDateE", "");
+		paramMap.put("page", "");
+		
+		String result = httpURLConnectionPOST(paramMap, url);
+		Object object = JSONObject.stringToValue(result);
+	}
+	
+	private String httpURLConnectionPOST(Map<String, String> paramMap, String paramUrl) {
+
+		try {
+			URL url = null;
+			HttpURLConnection connection = null;
+			BufferedReader bufferedReader = null; // 接受连接受的参数
+			StringBuffer result = new StringBuffer(); // 用来接受返回值
+			String parm = "";
+			Iterator<String> iterator = paramMap.keySet().iterator();
+			while (iterator.hasNext()) {
+				String it = iterator.next();
+				parm += it + "=" + URLEncoder.encode(paramMap.get(it), "utf-8")
+						+ "&";
+			}
+			parm = parm.substring(0, parm.length() - 1);
+			paramUrl += "?" + parm;
+
+			// 创建URL
+			url = new URL(paramUrl);
+			// 建立连接
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("accept", "text/json");
+			connection.setRequestProperty("connection", "keep-alive");
+			connection
+					.setRequestProperty("user-agent",
+							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
+			connection.connect();
+
+			// 接受连接返回参数
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				result.append(line);
+			}
+			bufferedReader.close();
+			return result.toString();
+
+		} catch (Exception e) {
+			log.error(e.getMessage());
+		}
+		return "";
+	}
+
+	private void insertOrderInfo(String orderInfoStr) throws JSONException, ParseException {
+		JSONObject jsonObject = new JSONObject(orderInfoStr);
+		JSONArray jsonArray = jsonObject.getJSONArray("data");
+		int count = jsonArray.length();
+		if (count == 0) {
+			// error
+		} else {
+			Map<String, List<OrderInfo>> orderBatchinfoMap = new LinkedHashMap<>();
+			for (int i = 0; i < count; i++) {
+				JSONObject obj = jsonArray.getJSONObject(i);
+				// 订单信息
+				OrderInfo orderInfo = new OrderInfo();
+				orderInfo.setOrderBatchId(obj.getString("p2p_bidding_id")); //资金方系统中每批次转给资金方的id，（每批次含多个订单）
+				orderInfo.setOrderId(obj.getString("orderID")); //订单ID号唯一
+				orderInfo.setProductId(obj.getString("goods_id")); //商品id
+				orderInfo.setLoan(new BigDecimal(obj.getString("Loan"))); //分期总金额
+				orderInfo.setName(obj.getString("Name")); //客户姓名
+				orderInfo.setIdCard(obj.getString("IDcard")); //身份证
+				orderInfo.setContact(obj.getString("mobile")); //手机
+				orderInfo.setSchool(obj.getString("univs")); //学校（学生）
+//				univsRoom	宿舍
+				orderInfo.setGraduateDate(obj.getString("finishTime")); //毕业时间（年，示例：2019）
+//				QQ	QQ号码
+//				wechat	微信
+				orderInfo.setPeriod((byte) obj.getInt("Period")); //期数
+				orderInfo.setProductName(obj.getString("goodsName")); //商品名称
+				orderInfo.setPayM(new BigDecimal(obj.getString("PayM"))); //每期还款金额
+				orderInfo.setStartPayDay(dateFormat.parse(obj.getString("StartPayDay"))); //首期还款日期
+				orderInfo.setCrReqAmt(new BigDecimal(obj.getString("fqcrM"))); //超人所需费用
+				orderInfo.setSellerId(obj.getString("sellerID")); //商家ID
+//				user_pay_type	充值方式（1、超人充值 2商家充值）
+				orderInfo.setSellerName(obj.getString("sellerNmae")); //商家名称
+//				createTime	创建时间。示例：2016-3-21
+//				StartTime 订单审核通过时间。示例：2016-3-21
+				if (orderBatchinfoMap.containsKey(orderInfo.getOrderBatchId())) {
+					orderBatchinfoMap.get(orderInfo.getOrderBatchId()).add(orderInfo);
+				} else {
+					List<OrderInfo> orderInfos = new ArrayList<>();
+					orderInfos.add(orderInfo);
+					orderBatchinfoMap.put(orderInfo.getOrderBatchId(), orderInfos);
+				}
+				
+				// 大学生信息
+				StuInfo stuInfo = new StuInfo();
+				stuInfo.setStuId(ScfUUID.generate());
+				stuInfo.setStuName(orderInfo.getName());
+				stuInfo.setIdNo(orderInfo.getIdCard());
+				stuInfo.setMobilePhone(orderInfo.getContact());
+				stuInfo.setSchoolName(orderInfo.getSchool());
+				stuInfo.setDorm(obj.getString("univsRoom"));
+				stuInfo.setGraduateDate(orderInfo.getGraduateDate());
+				stuInfoMapper.insert(stuInfo);
+			}
+			
+			for (Map.Entry<String, List<OrderInfo>> entry : orderBatchinfoMap.entrySet()) {
+				OrderBatchInfo batchInfo = new OrderBatchInfo();
+				List<OrderInfo> values = entry.getValue();
+				BigDecimal orderTotalAmt = new BigDecimal(0); //订单总金额
+				int recOrderNum = 0; //接收订单数量
+				BigDecimal recOrderAmt = new BigDecimal(0); //接收订单金额
+				int rejOrderNum = 0; //拒绝订单数量
+				BigDecimal rejOrderAmt = new BigDecimal(0); //拒绝订单金额
+				BigDecimal crReqTotalAmt = new BigDecimal(0); //超人所需费用总额
+				
+				batchInfo.setOrderBatchId(entry.getKey()); //订单批次号
+				batchInfo.setOrderTotalNum(values.size()); //订单总数
+				
+				for (OrderInfo order : values) {
+					orderTotalAmt = orderTotalAmt.add(order.getProductAmt());
+					crReqTotalAmt = crReqTotalAmt.add(order.getCrReqAmt());
+					
+					// TODO 预筛选
+					if (true) { //接受
+						order.setOrderStatus((byte) 1);
+						recOrderNum++;
+						recOrderAmt = recOrderAmt.add(order.getProductAmt());
+					} else { //拒绝
+						order.setOrderStatus((byte) 0);
+						rejOrderNum++;
+						rejOrderAmt = rejOrderAmt.add(order.getProductAmt());
+					}
+					orderInfoMapper.insert(order);
+				}
+				
+				batchInfo.setOrderTotalAmt(orderTotalAmt);
+				batchInfo.setRecOrderNum(recOrderNum);
+				batchInfo.setRecOrderAmt(recOrderAmt);
+				batchInfo.setRejOrderNum(rejOrderNum);
+				batchInfo.setRejOrderAmt(rejOrderAmt);
+				batchInfo.setCrReqTotalAmt(crReqTotalAmt);
+				batchInfo.setSyncDate(new Date());
+				orderBatchInfoMapper.insert(batchInfo);
+			}
+		}
+	}
+}

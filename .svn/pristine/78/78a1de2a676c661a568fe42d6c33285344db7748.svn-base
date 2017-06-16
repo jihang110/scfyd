@@ -1,0 +1,6 @@
+jdbc.driver.class=com.mysql.jdbc.Driver
+#jdbc.url=jdbc:mysql://172.25.1.56:3306/scfcore?tinyInt1isBit=false
+jdbc.url=jdbc:mysql://localhost:3306/scfyd?tinyInt1isBit=false
+jdbc.activitiurl=jdbc:mysql://localhost:3306/activitiyd?tinyInt1isBit=false
+jdbc.username=scf
+jdbc.password=scf

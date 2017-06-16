@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.query.IRateInfoDao" >
+
+  <select id="getRateInfoList" resultType="hashmap" parameterType="hashmap" >
+   select
+		f.agency_name agencyName,
+		f.agency_num agencyNum,
+		f.finance_id financeId,
+		f.finance_start_date financeStartDate,
+		f.finance_end_date financeEndDate,
+		f.finance_amount financeAmount,
+  		f.pay_amt payAmt,
+		r.saptta saptta,
+  		r.aptta aptta,
+		(r.saptta-r.aptta) nptta
+	from
+		finance_info f
+	inner join revenue_management r ON r.agency = f.agency_name
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+  </select>
+  
+</mapper>

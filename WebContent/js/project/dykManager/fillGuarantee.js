@@ -1,0 +1,61 @@
+$(document).ready(function() {
+	$("form").attr("autocomplete","off");
+	setForm();
+	numFormat();
+});
+
+function setForm() {
+	var options = {
+		url : '../../commitment/getDataByTaskId',
+		data : JSON.stringify({
+			taskId : taskId,
+			varName : "payApplyJson"
+		}),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var json = JSON.parse(data.str);
+				CloudUtils.setForm(json, "addForm");
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}
+
+function numFormat(){
+	$("#payM").number(true, 2);
+	$("#guaranteeAmt").number(true, 2);
+	$("#payActGuarantee").number(true, 2);
+	$("#guaranteeDiff").number(true, 2);
+	$("#financeAmount").number(true, 2);
+}
+
+function reapply() {
+	var data = CloudUtils.convertStringJson('addForm');
+	var jsonData = eval("(" + data + ")");
+	jsonData.taskId = taskId;
+	
+	var options = {
+			url : "../../commitment/fillGuarantee",
+			data : JSON.stringify(jsonData),
+			callBackFun : function(data) {
+				if(data.result==0){
+					bootbox.alert(data.resultNote, function() {
+						window.location.href = '../../project/agencyTask/agencyTask.html';
+					});
+				}else{
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			},
+			errorCallback:function(data){
+				bootbox.alert("error");
+			}
+	};
+	CloudUtils.ajax(options);
+}

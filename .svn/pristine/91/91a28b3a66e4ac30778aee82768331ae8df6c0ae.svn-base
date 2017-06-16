@@ -1,0 +1,139 @@
+package com.ut.scf.service.project.impl;
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.InputStreamRequestEntity;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.RequestEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.service.project.IRepayMagagerService;
+
+@Service("repayManagerService")
+public class RepayManagerServiceImpl implements IRepayMagagerService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Override
+	public String httpURLConnectionPOST(Map<String, String> map, String paramUrl) {
+
+		try {
+			URL url = null;
+			HttpURLConnection connection = null;
+			BufferedReader bufferedReader = null; // 接受连接受的参数
+			StringBuffer result = new StringBuffer(); // 用来接受返回值
+			String parm = "";
+			Iterator<String> iterator = map.keySet().iterator();
+			while (iterator.hasNext()) {
+				String it = iterator.next();
+				parm += it + "=" + URLEncoder.encode(map.get(it), "utf-8")
+						+ "&";
+			}
+			parm = parm.substring(0, parm.length() - 1);
+			paramUrl += "?" + parm;
+
+			// 创建URL
+			url = new URL(paramUrl);
+			// 建立连接
+			connection = (HttpURLConnection) url.openConnection();
+			connection.setRequestProperty("accept", "text/json");
+			connection.setRequestProperty("connection", "keep-alive");
+			connection
+					.setRequestProperty("user-agent",
+							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
+			connection.connect();
+
+			// 接受连接返回参数
+			bufferedReader = new BufferedReader(new InputStreamReader(
+					connection.getInputStream()));
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				result.append(line);
+			}
+			bufferedReader.close();
+			return result.toString();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+	}
+
+	@Override
+	public String postHttp(String url, Map<String, String> map) {
+		String result = "";
+		try {
+			String parm = "";
+			Iterator<String> iterator = map.keySet().iterator();
+			while (iterator.hasNext()) {
+				String it = iterator.next();
+				parm += it + "=" + URLEncoder.encode(map.get(it), "utf-8")
+						+ "&";
+			}
+			parm = parm.substring(0, parm.length() - 1);
+			byte[] requestBytes = parm.getBytes("utf-8"); // 将参数转为二进制流
+			HttpClient httpClient = new HttpClient();// 客户端实例化
+			PostMethod postMethod = new PostMethod(url);
+			// 设置请求头Authorization
+			// postMethod.setRequestHeader("Authorization", "Basic " +
+			// authorization);
+			// 设置请求头 Content-Type
+			postMethod.setRequestHeader("Content-Type", "application/json");
+			InputStream inputStream = new ByteArrayInputStream(requestBytes, 0,
+					requestBytes.length);
+			RequestEntity requestEntity = new InputStreamRequestEntity(
+					inputStream, requestBytes.length,
+					"application/json; charset=utf-8"); // 请求体
+			postMethod.setRequestEntity(requestEntity);
+			httpClient.executeMethod(postMethod);// 执行请求
+			InputStream soapResponseStream = postMethod
+					.getResponseBodyAsStream();// 获取返回的流
+			byte[] datas = null;
+			try {
+				datas = readInputStream(soapResponseStream);// 从输入流中读取数据
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			result = new String(datas, "UTF-8");// 将二进制流转为String
+			// 打印返回结果
+			// System.out.println(result);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return result;
+	}
+
+	/**
+	 * 从输入流中读取数据
+	 * 
+	 * @param inStream
+	 * @return
+	 * @throws Exception
+	 */
+	public static byte[] readInputStream(InputStream inStream) throws Exception {
+		ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+		byte[] buffer = new byte[1024];
+		int len = 0;
+		while ((len = inStream.read(buffer)) != -1) {
+			outStream.write(buffer, 0, len);
+		}
+		byte[] data = outStream.toByteArray();
+		outStream.close();
+		inStream.close();
+		return data;
+	}
+
+}

@@ -1,0 +1,126 @@
+ $(function() {
+	 initTable();
+ });
+ 
+ window.operateEvents = {
+			'click .detail': function (e, value, row, index) {
+				detailFun(row,0);
+		    }
+ };
+ 
+ function searchFun(){
+	 initTable("");
+ }
+ 
+ function detailFun(row) {
+	 	$('#detailModal').modal();
+	 	CloudUtils.setForm(row,'detailForm');
+	 	$('#detailForm input').attr('readonly',true);
+	    document.getElementById("btn_save").style.display="none";
+	    $("#btn_blank").removeClass('col-sm-4').addClass('col-sm-7');
+	}
+ 
+ function initTable(data) { 
+		$('#stuInfoList').bootstrapTable('destroy'); 
+		$("#stuInfoList").bootstrapTable({  
+	         method: "post", 
+	         url: "../../stuInfo/list", 
+	         striped: false,  //表格显示条纹  
+	         pagination: true, //启动分页  
+	         pageSize: 5,  //每页显示的记录数  
+	         pageNumber:1, //当前第几页  
+	         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+	         search: false,  //是否启用查询  
+	         showColumns: false,  //显示下拉框勾选要显示的列  
+	         showRefresh: false,  //显示刷新按钮  
+	         sidePagination: "server", //表示服务端请求  
+	         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	         //设置为limit可以获取limit, offset, search, sort, order  
+	         queryParamsType : "undefined",   
+	         queryParams: function queryParams(params) {   //设置查询参数  
+	        	 var stuName = '';
+	        	 var mobilePhone = '';
+	        	 var idNum = '';
+	             var data = CloudUtils.convertStringJson('searchForm');
+	             var jsonData = eval("(" + data + ")");
+	             if(!data){
+	            	 stuName=jsonData.stuName;
+	            	 mobilePhone=jsonData.mobilePhone;
+	            	 idNum=jsonData.idNum;
+	        	 }else{
+	        		 stuName=$("#stuName").val();
+	        		 mobilePhone=$("#mobilePhone").val();
+	        		 idNum=$("#idNum").val();
+	        	 }
+	             var param = {    
+	                 pageNumber: params.pageNumber,    
+	                 pageSize: params.pageSize,
+	                 stuName:stuName,
+	            	 mobilePhone:mobilePhone,
+	            	 idNum:idNum
+	             };    
+	             return JSON.stringify(param);                   
+	           }, 
+	         responseHandler:function responseHandler(res) {
+	        	 if (res.result==0) {
+		        	 return {
+		        		 "rows": res.dataList,
+		        		 "total": res.records
+		        	 };
+
+	        	 } else {
+	        		 bootbox.alert(res.resultNote);
+	        		 return {
+				        	 "rows": [],
+				        	 "total": 0
+				        	 };
+	        	 }
+	         },
+	         columns: [{
+	 	        field: 'stuId',
+	 	        title: '学生号',
+	 	        align: 'center',
+	             valign: 'middle',
+	             visible: false
+	 	    }, {
+	 	        field: 'stuName',
+	 	        title: '客户姓名',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	    }, {
+	 	        field: 'idNum',
+	 	        title: '证件号',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	    }, {
+	 	        field: 'mobilePhone',
+	 	        title: '手机号码',
+	 	       align: 'center',
+	           valign: 'middle'
+	 	    },{
+	 	        field: 'schoolName',
+	 	        title: '学校',
+	 	        align: 'center',
+	 	        valign: 'middle'
+	 	    },{
+	 	        field: 'dorm',
+	 	        title: '宿舍',
+	 	        align: 'center',
+	 	        valign: 'middle'
+	 	    },{
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	        formatter:function(value,row,index){
+	 	        	var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+	 	            return d;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }
+	 	    ]
+	       });  
+	}
+
+ 
+ 

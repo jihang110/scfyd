@@ -1,0 +1,391 @@
+$(document).ready(function() {
+	//modal绑定事件
+	$('#addModal').on('hidden.bs.modal', function(){
+		$("#addForm")[0].reset();
+	});
+	$('#addModal').on('hide.bs.modal', function () {
+		$("#addForm").data('bootstrapValidator').resetForm();
+	})
+	initTable();
+	formValidator();
+} );
+
+window.operateEvents = {
+		'click .detail': function (e, value, row, index) {
+			detail(row);
+		}
+};
+
+function searchFun() {
+	initTable();
+}
+
+function initTable() { 
+	$('#agencyListTable').bootstrapTable('destroy');  
+	$("#agencyListTable").bootstrapTable({  
+         method: "post", 
+         url: "../../agency/list", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = JSON.parse(data);
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               agencyCode: jsonData.txt_agencyCode,
+               agencyName: jsonData.txt_agencyName
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'agencyName',
+ 	        title: '经销商名称',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'agencyCode',
+ 	        title: '经销商代码',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'maxReditLine',
+ 	        title: '最高授信额度',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'corpAddress',
+ 	        title: '公司地址',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'contact',
+ 	        title: '联系方式',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '固定电话',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	       align: 'center',
+           valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+}
+
+function accAgency() {
+	$("#agencyInfoModal").modal({backdrop: 'static', keyboard: false});
+	initAccAgencyInfoTable();
+}
+
+function initAccAgencyInfoTable() { 
+	$('#accAgencyInfoTable').bootstrapTable('destroy');  
+	$("#accAgencyInfoTable").bootstrapTable({  
+         method: "post", 
+         url: "", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           return null;
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'agencyName',
+ 	        title: '经销商名称',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'agencyCode',
+ 	        title: '经销商代码',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'maxReditLine',
+ 	        title: '最高授信额度',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'corpAddress',
+ 	        title: '公司地址',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'contact',
+ 	        title: '联系方式',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '固定电话',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'area',
+ 	        title: '所属区域',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'represent',
+ 	        title: '所属商代处',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'firstTwoYearsPickupNum',
+ 	        title: '前2年度提车数量',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'firstTwoYearsRetailNum',
+ 	        title: '前2年度零售数量',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'firstTwoYearsSaleRank',
+ 	        title: '前2年度销售排名',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'thisYearPlanPickupNum',
+ 	        title: '本年度计划提车数量',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'thisYearPlanSales',
+ 	        title: '本年度计划销售额',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	       align: 'center',
+           valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+}
+ 
+function addFun() {
+    $('#addModal').modal({backdrop: 'static', keyboard: false});//防止点击空白/ESC 关闭
+    changeArea("0");
+}
+
+function changeArea(areaVal) {
+	$("#represent").empty();
+	if (areaVal == '0') {
+		$("#represent").append("<option value='0'>南京</option>")
+						.append("<option value='1'>上海</option>");
+	} else if (areaVal == '1') {
+		$("#represent").append("<option value='2'>西安</option>")
+						.append("<option value='3'>成都</option>");
+	} else if (areaVal == '2') {
+		$("#represent").append("<option value='4'>广州</option>")
+						.append("<option value='5'>武汉</option>")
+						.append("<option value='6'>郑州</option>");
+	} else if (areaVal == '3') {
+		$("#represent").append("<option value='7'>北京</option>")
+						.append("<option value='8'>沈阳</option>")
+						.append("<option value='9'>济南</option>");
+	}
+}
+
+function addAgency() {
+	var data = CloudUtils.convertStringJson("addForm");
+	$("#accAgencyInfoTable").bootstrapTable('append', JSON.parse(data));
+	$('#addModal').modal('hide');
+}
+
+function save() {
+	var data = $('#accAgencyInfoTable').bootstrapTable('getData');
+	
+	$.ajax({
+		url:"../../agency/add",
+		data:{json:JSON.stringify(data)},
+		method:"post",
+		success:function(datas){
+			console.log(datas);
+		}
+	});
+	$('#agencyInfoModal').modal('hide');
+}
+
+//form验证规则
+function formValidator(){
+	$('#addForm').bootstrapValidator({
+	      message: 'This value is not valid',
+	      feedbackIcons: {
+	          valid: 'glyphicon glyphicon-ok',
+	          invalid: 'glyphicon glyphicon-remove',
+	          validating: 'glyphicon glyphicon-refresh'
+	      },
+	      fields: {
+	    	  realname: {
+	              validators: {
+	                  notEmpty: {
+	                      message: '真实姓名不能为空'
+	                  },
+	                  stringLength: {
+	                      min: 1,
+	                      max: 10,
+	                      message: '用户名长度为1-10'
+	                  }
+	              }
+	          },
+	          email: {
+	              validators: {
+	            	  stringLength: {
+			              max: 32,
+			              message: '邮箱长度不能超过32'
+			          },
+	            	  regexp: {
+	                      regexp: /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/,
+	                      message: '邮箱格式不正确'
+	                  }
+	              }
+	          },
+//	          password: {
+//	              validators: {
+//	                  notEmpty: {
+//	                      message: '密码不能为空'
+//	                  },
+//	                  different: {
+//	                      field: 'username',
+//	                      message: '密码不能和用户名相同'
+//	                  }
+//	              }
+//	          },
+
+	          mobilephone: {
+	              validators: {
+	                  notEmpty: {
+	                      message: '手机号不能为空'
+	                  },
+			          stringLength: {
+			              min: 11,
+			              max: 11,
+			              message: '手机号长度为11'
+			          },
+			          regexp: {
+	                      regexp: /^[0-9]*$/,
+	                      message: '手机号只能是数字'
+	                  }
+	              }
+	          },
+	          roleId: {
+	              validators: {
+	                  notEmpty: {
+	                      message: '角色不能为空'
+	                  }
+	              }
+	          },
+	          fixedPhone: {
+	              validators: {
+	            	  stringLength: {
+			              max: 20,
+			              message: '固定电话长度不能超过20'
+			          },
+	              }
+	          },
+	          note: {
+	              validators: {
+	            	  stringLength: {
+			              max: 128,
+			              message: '用户描述长度不能超过128'
+			          },
+	              }
+	          },
+//	          deptId: {
+//	        	  validators: {
+//	                  notEmpty: {
+//	                      message: '所属部门不能为空'
+//	                  }
+//	              }
+//	          },
+	          username: {
+	              message: '用户名格式不正确',
+	              validators: {
+	                  notEmpty: {
+	                      message: '用户名不能为空'
+	                  },
+	                  stringLength: {
+	                      min: 3,
+	                      max: 20,
+	                      message: '用户名长度为3-20'
+	                  },
+	                  regexp: {
+	                      regexp: /^[a-zA-Z0-9_\.]+$/,
+	                      message: '只能使用字母、数字、.和_'
+	                  },
+	                  different: {
+	                      field: 'password',
+	                      message: '用户名不能和密码相同'
+	                  }
+	              }
+	          }
+	      }
+		})
+		.on('success.form.bv', function (e) {
+			e.preventDefault();
+		});	
+}

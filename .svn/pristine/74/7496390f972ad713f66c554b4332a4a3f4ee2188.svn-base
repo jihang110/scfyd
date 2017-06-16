@@ -1,0 +1,154 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.dao.auto.CorpInfoMapper;
+import com.ut.scf.dao.auto.FinanceInfoMapper;
+import com.ut.scf.dao.project.IPayCommitmentDao;
+import com.ut.scf.pojo.auto.CorpInfo;
+import com.ut.scf.pojo.auto.CorpInfoExample;
+import com.ut.scf.pojo.auto.CorpInfoExample.Criteria;
+import com.ut.scf.pojo.auto.FinanceInfo;
+import com.ut.scf.pojo.auto.FinanceInfoExample;
+import com.ut.scf.reqbean.project.PayCommitmentListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.respbean.StringRespBean;
+import com.ut.scf.service.project.IPayCommitmentService;
+
+@Service("payCommitmentService")
+public class PayCommitmentServiceImpl implements IPayCommitmentService {
+	@Resource
+	private CorpInfoMapper corpInfoMapper;
+	@Resource
+	private FinanceInfoMapper financeInfoMapper;
+	@Resource
+	private IPayCommitmentDao iPayCommitmentDao;
+	@Resource ProcessEngine processEngine;
+	@Resource RuntimeService runtimeService;
+	@Resource TaskService taskService;
+	@Resource RepositoryService repositoryService;
+
+	// 获取经销商列表
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean dealerInfoList() {
+		CorpInfoExample corpInfoExample = new CorpInfoExample();
+		Criteria criteria = corpInfoExample.createCriteria();
+		criteria.andSysTypeEqualTo((short) 4);// 经销商
+		List<CorpInfo> corpInfos = corpInfoMapper
+				.selectByExample(corpInfoExample);
+		ListRespBean respBean = new ListRespBean();
+		respBean.setDataList(corpInfos);
+		return respBean;
+
+	}
+
+	// 查询经销商的融资信息
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean dealerFinanceInfoList(String no) {
+		FinanceInfoExample example = new FinanceInfoExample();
+		com.ut.scf.pojo.auto.FinanceInfoExample.Criteria criteria = example
+				.createCriteria();
+
+		criteria.andAgencyNumEqualTo(no);// 经销商
+
+		List<FinanceInfo> infos = financeInfoMapper.selectByExample(example);
+		ListRespBean respBean = new ListRespBean();
+		respBean.setDataList(infos);
+		return respBean;
+
+	}
+
+	// 付款承诺函列表信息
+
+	@Override
+	@Transactional
+	public BaseRespBean payCommitmentInfoList(PayCommitmentListReqBean reqBean) {
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+
+		List<Map<String, Object>> list = iPayCommitmentDao
+				.selectCommitmentList(paramMap, page);
+
+		PageRespBean respBean = new PageRespBean();
+		respBean.setDataList(list);
+		return respBean;
+
+	}
+
+	@Override
+	public BaseRespBean doAgree(JSONObject jsonObject) {
+		boolean flag;
+		StringRespBean respBean = new StringRespBean(); 
+//		1.获取taskId和当前用户
+		String taskId = (String) jsonObject.get("taskId");
+		String agree = (String) jsonObject.get("agree");
+		String userId = (String) jsonObject.get("userId");
+//		2.拾取用户
+		taskService.claim(taskId, userId);
+//		3.设置变量
+		taskService.setVariableLocal(taskId, "agencyJson", jsonObject.toString());
+//		4.流程走向
+		if(agree.equals("0")){
+			flag = 	true;
+		}else{
+			flag = 	false;
+		}
+		taskService.setVariable(taskId, "agree", flag);
+//		5.完成流程
+		taskService.complete(taskId);
+		respBean.setStr(jsonObject.toString());
+		return respBean;
+	}
+
+	@Override
+	public void startProcess(JSONObject jsonObject) {
+		String userName = (String) jsonObject.get("userId");
+		String key = (String) jsonObject.get("activitiKey");
+		String payAmount = (String) jsonObject.get("payM");
+		String financeM = (String) jsonObject.get("financeAmount");
+		double payM = Double.parseDouble(payAmount);
+		double financeAmount = Double.parseDouble(financeM);
+//		加上当前用户
+		ProcessInstance pi = processEngine.getRuntimeService()//管理流程实例和执行对象，也就是表示正在执行的操作  
+		            .startProcessInstanceByKey(key);
+//		TaskService taskService = processEngine.getTaskService();//获取任务的Service，设置和获取流程变量  
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+//		获取所有的候选人
+//		List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
+//		判断候选人
+
+//		拾取用户
+		taskService.claim(task.getId(), userName);
+//		设置变量
+		taskService.setVariableLocal(task.getId(), "agencyJson", jsonObject.toString());
+		taskService.setVariable(task.getId(),"payM",payM);
+		taskService.setVariable(task.getId(), "financeAmount", financeAmount);
+//		完成节点
+		taskService.complete(task.getId());
+		
+		System.out.println("完成任务"+task.getId());
+		
+	}
+}

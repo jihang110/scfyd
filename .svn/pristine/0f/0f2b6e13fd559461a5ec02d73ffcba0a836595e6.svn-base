@@ -1,0 +1,138 @@
+$(function() {
+	var username=store.get('username');
+	if(username.length>10){
+		$("a[name='loginRealName']").attr("title",username);
+		username = username.substring(0,8)+"...";
+	}
+	$("a[name='loginRealName']").text(username)
+	InitLeftMenu();
+	logoShow();
+	initRoleIds();
+	$("#roleIds").val(store.get("roleId"));
+});
+function setIframeHeight(iframe) {
+	var srcCont= $(iframe).attr("src");
+	var contentHeight= $(window).height()-$("#titleLogo").height()-85;
+	if (iframe) {
+		if (typeof(iframe.contentWindow) == "undefined") { 
+			   return false;
+			}
+			var iframeWin = iframe.contentWindow||(typeof(iframe.contentDocument.parentWindow)== "undefined"?false:iframe.contentDocument.parentWindow);
+		if (iframeWin.document.body) {
+			if(srcCont=="tabs-accordions.html"){
+				iframe.height =CloudUtils.maxNumber( CloudUtils.maxNumber(iframeWin.document.documentElement.scrollHeight , iframeWin.document.body.scrollHeight),contentHeight);
+			}else{
+				iframe.height =CloudUtils.minNumber( CloudUtils.maxNumber(iframeWin.document.documentElement.scrollHeight , iframeWin.document.body.scrollHeight),contentHeight);
+			}
+		}
+	}
+};
+
+//初始化角色列表
+function initRoleIds(){
+	 var jsonData = eval("(" + store.get("roleList") + ")");
+	$.each(jsonData, function (index, units) { 
+		$("#roleIds").append("<option value='"+units.roleId+"'>&nbsp;" + units.roleName + "</option>");
+	});
+}
+
+//切换角色
+function changeRole(obj){
+	debugger;
+	var jsondata  ='{"roleId":"'+$(obj).val()+'"}';
+	store.set('roleId',$(obj).val());
+	var options = {
+			url : 'user/changeRole',
+			data : jsondata,
+			callBackFun : function(data) {
+				debugger;
+				if(data.result==0){
+	        			 store.set('menuList', JSON.stringify(data.menuList));
+	        			 window.location.href="index.html";
+	        	}else{
+	        		bootbox.alert(data.resultNote);
+	        		document.getElementById("clickImg").onclick();
+	        		return false;
+	        	}
+			},
+			errorCallback:function(data){
+				bootbox.alert("error");
+			}
+	};
+	CloudUtils.ajax(options);
+}
+	
+//初始化左侧
+function InitLeftMenu() {
+	var jsonStringData = store.get("menuList");
+	 jsonStringData=jsonStringData.replace(/menuName/g,'text');
+	 jsonStringData=jsonStringData.replace(new RegExp("subMenuList","gm"),"nodes");
+	 var jsonData=eval('('+ jsonStringData +')');
+	$('#leftMenuList').treeview({
+		data : jsonData,
+		levels: 0,
+		backColor: '#424f63',
+		onhoverColor:'#2A323F',
+		selectedBackColor:'#2A323F',
+		selectedColor:'#2582e3'
+	});
+	$('#leftMenuList').on('nodeSelected', function(event, data) {
+		$('#m_menuPath').val(data.menuPath);
+		if(!CloudUtils.isEmpty(data.menuPath)){
+			$("[name='mainFrame']").attr("src",data.menuPath);
+		}
+	})
+    }
+
+function logOut(){
+	debugger;
+	var data ='{"roleId":"'+$("#roleIds").val()+'"}';
+	var options = {
+			url:"login/logout",
+			data:data,
+			callBackFun : function(data) {
+				if(data.result==0){
+					store.clear();
+					window.location.href="login.html";
+	        	}
+			},
+			errorCallback:function(data){
+				alert("error");
+			}
+	};
+	CloudUtils.ajax(options);
+}
+
+/*
+ * logo显示
+ * by-JH
+ */
+function logoShow(){
+	 var corpId = store.get('corpId');
+	 if(corpId==null||corpId=='null'){
+		 $("#logo").attr("src", "images/logo.png");
+		 return;
+     }
+	 var param = {    
+             corpId: corpId,
+             isLogo: "Y"
+         };  
+	var options = {
+			url:"corp/list",
+			data:JSON.stringify(param),
+			callBackFun : function(data) {
+				if(data.result==0){
+					if(data.dataList.length == 0||data.dataList[0].logoUrl==null||data.dataList[0].logoUrl==""){
+						$("#logo").attr("src", "images/logo.png");
+					}else{
+						$("#logo").attr("src", data.dataList[0].logoUrl);
+					}
+					
+	        	}
+			}/*,
+			errorCallback:function(data){
+				alert("error");
+			}*/
+	};
+	CloudUtils.ajax(options);
+}

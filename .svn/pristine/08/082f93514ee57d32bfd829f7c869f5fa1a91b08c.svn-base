@@ -1,0 +1,17 @@
+package com.ut.scf.reqbean.pub;
+
+import com.ut.scf.reqbean.BaseReqBean;
+
+public class TaskInfoReqBean extends BaseReqBean {
+	private String taskId;
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+	
+	
+}

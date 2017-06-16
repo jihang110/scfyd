@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+  <title>负债表</title>
+  <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css"/> 
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+   <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-fileupload.min.js"></script>
+  <script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+<!--dynamic table initialization -->
+   <script src="../../js/crm/custInfoManager/DebtManager.js" type="text/javascript"></script>
+</head>
+
+<body class="iframeBody">
+<section>
+<div class="main-content-child">
+		<div class="row">
+			<div class="title">
+				<span>资产负债表</span>
+			</div>
+		</div>
+		<fieldset>
+			<div class="row rowpad">
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button id="btn_add" type="button" class="btn btn-default add"
+							data-toggle="modal" onclick="addFun()">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+						</button>
+					</div>
+					<div class="col-sm-2">
+                			<button id="btn_add" type="button" class="btn btn-default add" style="background-color: #fad164;" data-toggle="modal" onclick="impFun()">
+                  			<span class="fa fa-sign-in" aria-hidden="true"></span>导入</button>
+              			</div>
+              			<div class="col-sm-2">
+                			<button id="btn_add" type="button" class="btn btn-default add" style="background-color: #db84f7;" data-toggle="modal" onclick="expFun()">
+                  			<span class="fa fa-sign-out" aria-hidden="true"></span>导出</button>
+             		 	</div>
+					<form id="searchForm" class="form-horizontal" role="form">
+						<div class="col-sm-4">
+							<select id="s_corpId" name="s_corpId" class="form-control"></select>
+						</div>
+						<div class="col-sm-2">
+							<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</fieldset>
+		
+		<form class="form-horizontal" role="form" id="importForm" data-toggle="validator">
+        <div class="modal fade" id="importModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="importModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="importModalLabel">导入</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<div class="form-group">
+			            <label class="col-sm-4 control-label" for="relaCorpId">下载模板</label>
+			            <div class="col-sm-6">
+				            <a style="display: inline-block;height: 40px;line-height: 40px;" id="downloadTemp" href="#">下载</a>
+		                </div>
+			        </div>
+			        <div class="form-group">
+			            <label class="col-sm-4 control-label" for="relaCorpId">所属企业</label>
+			            <div class="col-sm-6">
+				            <select id="relaCorpId" name="relaCorpId" class="form-control">
+			                </select>
+		                </div>
+			        </div>
+		        	<div class="form-group">
+						<label class="col-sm-4 control-label" for="logoUrl">上传Excel:</label>
+						<div class="col-sm-6">
+			            	  <input type="file" class="form-control" name="file" id="file">
+						</div>
+					</div>
+		        </div>
+		        <div class="modal-footer" >
+				  <div class="form-group">
+				  	<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default add" onclick="ajaxFileUpload();">导入</button>
+					</div>
+				  </div>
+				</div>
+	      	  </div>
+	    	</div>
+	 	</div>
+        </form>
+		
+		
+		<form class="form-horizontal" role="form" id="addForm"
+			data-toggle="validator" ENCTYPE="multipart/form-data">
+			<input type="hidden" id="isEdit" name="isEdit"> 
+			<input type="hidden" id="negId" name="negId">
+			<div class="modal fade" id="addModal" tabindex="-1" role="dialog"
+				aria-labelledby="addModalLabel">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="addModalLabel">新增</h4>
+						</div>
+						<div class="modal-body">
+						<fieldset id='field'>
+							  <div class="form-group">
+					            <label class="col-sm-5 control-label" for="corpId"><span class="required">*</span>企业名称</label>
+					            <div class="col-sm-5">
+						            <select id="corpId" name="corpId" class="form-control" >
+					                </select>
+				                </div>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-5 control-label" for="operYear"><span class="required">*</span>年份</label>
+					            <div class="col-sm-5">
+								    <span style="position: relative; z-index: 9999;">
+								    <input id="operYear" name="operYear" style="cursor: pointer;" class="form-control" size="16" type="text" value="2016" readonly>
+								    </span>
+								    <span class="add-on"><i class="icon-calendar"></i></span>
+					          	</div>
+					          </div>
+							<div class="panel-group" id="accordion">
+								<fieldset class="panel panel-default">
+									<div class="panal-head-title">
+										<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+										 <legend class="little-title">流动资产</legend>
+										</a>
+										</h4>
+									</div>
+									<div id="collapse1" class="panel-collapse collapse in">
+										<div class="panel-body">
+											<div class="form-group">
+								            <label class="col-sm-5 control-label" for="moneyFunds">货币资金</label>
+								            <div class="col-sm-5">
+									            <input type="text" name="moneyFunds" class="form-control" id="moneyFunds">
+							                </div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label" for="otherMoneyFunds">其它货币资金</label>
+								            <div class="col-sm-5">
+								            	<input id="otherMoneyFunds" name="otherMoneyFunds" class="form-control" >
+								            </div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="transactionalFinancialAssets">交易性金融资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text" name="transactionalFinancialAssets" class="form-control" id="transactionalFinancialAssets">
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="billReceivable">应收票据</label>
+								            <div class="col-sm-5">
+								            	<input type="text" name="billReceivable" class="form-control" id="billReceivable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="accountsReceivable">应收账款</label>
+								            <div class="col-sm-5">
+								            	<input type="text" name="accountsReceivable" class="form-control" id="accountsReceivable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="prepayments">预付款项</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="prepayments" class="form-control" id="prepayments" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="interestReceivable">应收利息</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="interestReceivable" class="form-control" id="interestReceivable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="dividendReceivable">应收股利</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="dividendReceivable" class="form-control" id="dividendReceivable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherReceivables">其他应收款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherReceivables" class="form-control" id="otherReceivables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="stock">存货</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="stock" class="form-control" id="stock" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="nonCurrentAssetsDueWithinOneYear">一年内到期的非流动资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="nonCurrentAssetsDueWithinOneYear" class="form-control" id="nonCurrentAssetsDueWithinOneYear" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherCurrentAssets">其他流动资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherCurrentAssets" class="form-control" id="otherCurrentAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalCurrentAssets">流动资产合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalCurrentAssets" class="form-control" id="totalCurrentAssets" >
+								         	</div>
+								          </div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="panel panel-default">
+									<div class="panal-head-title">
+										<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+										<legend class="little-title">非流动资产</legend>
+										</a>
+										</h4>
+									</div>
+									<div id="collapse2" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div class="form-group">
+								            <label class="col-sm-5 control-label"  for="availableForSaleFinancialAssets">可供出售金融资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="availableForSaleFinancialAssets" class="form-control" id="availableForSaleFinancialAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="heldToMaturityInvestments">持有至到期投资</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="heldToMaturityInvestments" class="form-control" id="heldToMaturityInvestments" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="longTermReceivables">长期应收款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="longTermReceivables" class="form-control" id="longTermReceivables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="longTermEquityInvestment">长期股权投资</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="longTermEquityInvestment" class="form-control" id="longTermEquityInvestment" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="investmentRealEstate">投资性房地产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="investmentRealEstate" class="form-control" id="investmentRealEstate" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="fixedAssets">固定资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="fixedAssets" class="form-control" id="fixedAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="constructionInProgress">在建工程</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="constructionInProgress" class="form-control" id="constructionInProgress" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="engineerMaterial">工程物资</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="engineerMaterial" class="form-control" id="engineerMaterial" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="cleanUpOfFixedAssets">固定资产清理</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="cleanUpOfFixedAssets" class="form-control" id="cleanUpOfFixedAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="productiveBiologicalAssets">生产性生物资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="productiveBiologicalAssets" class="form-control" id="productiveBiologicalAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="oilAndGasProperties">油气资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="oilAndGasProperties" class="form-control" id="oilAndGasProperties" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="intangibleAssets">无形资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="intangibleAssets" class="form-control" id="intangibleAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="developmentExpenditure">开发支出</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="developmentExpenditure" class="form-control" id="developmentExpenditure" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="goodwill">商誉</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="goodwill" class="form-control" id="goodwill" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="longTermPrepaidExpenses">长期待摊费用</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="longTermPrepaidExpenses" class="form-control" id="longTermPrepaidExpenses" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="deferredTaxAssets">递延所得税资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="deferredTaxAssets" class="form-control" id="deferredTaxAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherNonCurrentAssets">其他非流动资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherNonCurrentAssets" class="form-control" id="otherNonCurrentAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalNonCurrentAssets">非流动资产合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalNonCurrentAssets" class="form-control" id="totalNonCurrentAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalAssets">资产总计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalAssets" class="form-control" id="totalAssets" >
+								         	</div>
+								          </div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="panel panel-default">
+									<div class="panal-head-title">
+										<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+										<legend class="little-title">流动负债</legend>
+										</a>
+										</h4>
+									</div>
+									<div id="collapse3" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div class="form-group">
+								            <label class="col-sm-5 control-label"  for="shortTermLoan">短期借款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="shortTermLoan" class="form-control" id="shortTermLoan" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="transactionalFinancialLiabilities">交易性金融负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="transactionalFinancialLiabilities" class="form-control" id="transactionalFinancialLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="notesPayable">应付票据</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="notesPayable" class="form-control" id="notesPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="accountsPayable">应付账款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="accountsPayable" class="form-control" id="accountsPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="advancePayment">预收款项</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="advancePayment" class="form-control" id="advancePayment" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="employeeBenefitsPayable">应付职工薪酬</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="employeeBenefitsPayable" class="form-control" id="employeeBenefitsPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="taxesPayable">应交税费</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="taxesPayable" class="form-control" id="taxesPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="interestPayable">应付利息</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="interestPayable" class="form-control" id="interestPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="dividendPayable">应付股利</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="dividendPayable" class="form-control" id="dividendPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherPayables">其他应付款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherPayables" class="form-control" id="otherPayables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="nonCurrentLiabilitiesDueWithinOneYear">一年内到期的非流动负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="nonCurrentLiabilitiesDueWithinOneYear" class="form-control" id="nonCurrentLiabilitiesDueWithinOneYear" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherCurrentLiabilities">其他流动负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherCurrentLiabilities" class="form-control" id="otherCurrentLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalCurrentLiabilities">流动负债合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalCurrentLiabilities" class="form-control" id="totalCurrentLiabilities" >
+								         	</div>
+								          </div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="panel panel-default">
+									<div class="panal-head-title">
+										<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+										<legend class="little-title">非流动负债</legend>
+										</a>
+										</h4>
+									</div>
+									<div id="collapse4" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div class="form-group">
+								            <label class="col-sm-5 control-label"  for="longTermLoan">长期借款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="longTermLoan" class="form-control" id="longTermLoan" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="bondsPayable">应付债券</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="bondsPayable" class="form-control" id="bondsPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="longTermPayables">长期应付款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="longTermPayables" class="form-control" id="longTermPayables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="specialPayables">专项应付款</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="specialPayables" class="form-control" id="specialPayables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="projectedLiabilities">预计负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="projectedLiabilities" class="form-control" id="projectedLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="deferredIncomeTaxLiabilities">递延所得税负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="deferredIncomeTaxLiabilities" class="form-control" id="deferredIncomeTaxLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="otherNonCurrentLiabilities">其他非流动负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="otherNonCurrentLiabilities" class="form-control" id="otherNonCurrentLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalNonCurrentLiabilities">非流动负债合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly" name="totalNonCurrentLiabilities" class="form-control" id="totalNonCurrentLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalLiabilities">负债合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly" name="totalLiabilities" class="form-control" id="totalLiabilities" >
+								         	</div>
+								          </div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset class="panel panel-default">
+									<div class="panal-head-title">
+										<h4 class="panel-title">
+										<a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+										<legend class="little-title">所有者权益（或股东权益）</legend>
+										</a>
+										</h4>
+									</div>
+									<div id="collapse5" class="panel-collapse collapse">
+										<div class="panel-body">
+											<div class="form-group">
+								            <label class="col-sm-5 control-label"  for="paidUpCapital">实收资本（或股本）</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="paidUpCapital" class="form-control" id="paidUpCapital" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="capitalReserve">资本公积</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="capitalReserve" class="form-control" id="capitalReserve" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="treasuryStocks">库存股</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="treasuryStocks" class="form-control" id="treasuryStocks" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="surplusReserve">盈余公积</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="surplusReserve" class="form-control" id="surplusReserve" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="undistributedProfit">未分配利润</label>
+								            <div class="col-sm-5">
+								            	<input type="text"  name="undistributedProfit" class="form-control" id="undistributedProfit" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalOwnersEquity" title="所有者权益（或股东权益）合计">所有者权益（或股东权益）合计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalOwnersEquity" class="form-control" id="totalOwnersEquity" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalLiabilitiesAndOwnersEquity" title="负债和所有者权益（或股东权益）总计">负债和所有者权益（或股东权益）总计</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalLiabilitiesAndOwnersEquity" class="form-control" id="totalLiabilitiesAndOwnersEquity" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageCurrentAssets">平均流动资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageCurrentAssets" class="form-control" id="averageCurrentAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageCurrentLiabilities">平均流动负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageCurrentLiabilities" class="form-control" id="averageCurrentLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageTotalAssets">平均总资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageTotalAssets" class="form-control" id="averageTotalAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageTotalLiabilities">平均总负债</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageTotalLiabilities" class="form-control" id="averageTotalLiabilities" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageNetAssets">平均净资产</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageNetAssets" class="form-control" id="averageNetAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageNetFixedAssets">平均固定资产净值</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageNetFixedAssets" class="form-control" id="averageNetFixedAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageAccountsReceivable">平均应收账款</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageAccountsReceivable" class="form-control" id="averageAccountsReceivable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageAccountsPayable">平均应付账款</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageAccountsPayable" class="form-control" id="averageAccountsPayable" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageInventory">平均存货</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageInventory" class="form-control" id="averageInventory" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averagePrepayment">平均预付账款</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averagePrepayment" class="form-control" id="averagePrepayment" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageOtherReceivables">平均其他应收款</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageOtherReceivables" class="form-control" id="averageOtherReceivables" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalAssetsGrowth">总资产增长额</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalAssetsGrowth" class="form-control" id="totalAssetsGrowth" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="totalAssetsGrowthRate">总资产增长率(%)</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="totalAssetsGrowthRate" class="form-control" id="totalAssetsGrowthRate" >
+								         	</div>
+								          </div>
+								          
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="averageMoneyFunds">平均货币资金</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="averageMoneyFunds" class="form-control" id="averageMoneyFunds" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="unallocatedProfitSpreadsheet">未分配利润试算表</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="unallocatedProfitSpreadsheet" class="form-control" id="unallocatedProfitSpreadsheet" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="balanceOfUndistributedProfit">未分配利润平衡差额</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="balanceOfUndistributedProfit" class="form-control" id="balanceOfUndistributedProfit" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="increaseInSurplusFunds">盈余资金增加额</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="increaseInSurplusFunds" class="form-control" id="increaseInSurplusFunds" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="increaseInNetAssets">净资产增长额</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="increaseInNetAssets" class="form-control" id="increaseInNetAssets" >
+								         	</div>
+								          </div>
+								          <div class="form-group">
+								            <label class="col-sm-5 control-label"  for="netAssetsGrowthRate">净资产增长率(%)</label>
+								            <div class="col-sm-5">
+								            	<input type="text" readonly="readonly"  name="netAssetsGrowthRate" class="form-control" id="netAssetsGrowthRate" >
+								         	</div>
+								          </div>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+						</fieldset>
+						</div>
+						<div class="modal-footer">
+						  <div class="form-group">
+						  	<div class="col-sm-4"></div>
+							<div class="col-sm-3">
+								<button type="button" class="btn btn-default cancel"
+									data-dismiss="modal">取消
+								</button>
+							</div>
+							<div class="col-sm-3">
+								<button type="submit" id="btn_save" class="btn btn-default add"
+									data-dismiss="modal" onclick="saveUser(1)">保存
+								</button>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="panel-body">
+			<table id="userListTable" class="table" cellspacing="0" width="100%">
+			</table>
+		</div>
+	</div>
+	
+</section>
+
+</body>
+</html>

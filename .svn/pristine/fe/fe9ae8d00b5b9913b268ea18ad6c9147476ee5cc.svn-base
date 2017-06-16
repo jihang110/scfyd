@@ -1,0 +1,19 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.pojo.auto.RepaymentInfo;
+import com.ut.scf.respbean.BaseRespBean;
+
+
+public interface IRepayManagerService {
+
+	
+	public BaseRespBean getRepayList(Map<String, Object> paramMap, PageInfoBean page);
+	
+	public BaseRespBean addRepayInfo(RepaymentInfo repaymentInfo);
+	
+	public BaseRespBean updateRepayInfo(RepaymentInfo repaymentInfo);
+}

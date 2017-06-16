@@ -1,0 +1,10 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+$(function () {
+	"use strict";
+    alert(taskId);
+    setForm();
+ });
+function setForm(){
+	
+}

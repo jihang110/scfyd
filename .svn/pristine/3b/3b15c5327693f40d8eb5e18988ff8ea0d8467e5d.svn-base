@@ -1,0 +1,105 @@
+package com.ut.scf.web.controller.project;
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.reqbean.project.FinanceInfoAddReqBean;
+import com.ut.scf.reqbean.project.FinanceInfoDeleteReqBean;
+import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
+import com.ut.scf.reqbean.project.FinanceInfoUpdateReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.service.project.IFinanceInfoService;
+
+
+/**
+ * 融资操作相关的控制类
+ * 
+ * @author yuancy
+ *
+ */
+@Controller
+@RequestMapping("/finance")
+public class FinanceInfoController {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(FinanceInfoController.class);
+	
+	@Resource
+	private IFinanceInfoService financeInfoService;
+	
+	@RequestMapping(value = "/list", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean financeInfoList(@RequestBody FinanceInfoListReqBean reqBean, BindingResult bindingResult) {
+		BaseRespBean respBean = new BaseRespBean();
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		respBean = financeInfoService.getFinanceInfoList(paramMap, page);
+		log.debug("financeInfoList: {}", respBean);
+		
+		return respBean;
+	}
+	
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean financeInfoAdd(@Valid @RequestBody FinanceInfoAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		respBean = this.financeInfoService.insertFinanceInfo(paramMap);
+
+		return respBean;
+	}
+	
+	@RequestMapping(value = "/mod", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean financeInfoUpdate(@Valid @RequestBody FinanceInfoUpdateReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		respBean = this.financeInfoService.updateFinanceInfo(reqBean);
+
+		return respBean;
+	}
+	
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean deptDelete(@Valid @RequestBody FinanceInfoDeleteReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		String financeId = reqBean.getFinanceId();
+		respBean = this.financeInfoService.deleteFinanceInfo(financeId);
+
+		return respBean;
+	}
+}

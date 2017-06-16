@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.ISupplierTradeDao">
+	<select id="selectSupplierTradeList" resultType="hashmap" parameterType="hashmap">
+	select sd.rec_uid recUid,sd.corp_id corpId,sd.supplier_name supplierName,sd.products,cp.corp_name corpName,
+	sd.oper_time operTime,sd.current_buy currentBuy,sd.current_pay currentPay,sd.balance,
+	sd.account_and_settlement accountAndSettlement, sd.first_half_transaction firstHalfTransaction, 
+	sd.total_annual_purchases totalAnnualPurchases,sd.financial_phone financialPhone
+    from
+	supplier_buy_pay_detail sd
+    join corp_info cp on sd.corp_id = cp.corp_id
+    where 1=1 and cp.status = 1
+    <if test="corpId != null and corpId!=''">
+	  and sd.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and sd.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and sd.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and sd.create_user_id = #{createUserId}
+	</if>
+	</select>
+	
+	<insert id="insertSupplierTrade" parameterType="hashmap">
+		insert into supplier_buy_pay_detail (rec_uid, corp_id, supplier_name, 
+      products, oper_time, current_buy, 
+      current_pay, balance, account_and_settlement, 
+      first_half_transaction, total_annual_purchases, 
+      is_rela_corp, financial_phone, rela_corp_id, 
+      create_user_id, create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{supplierName,jdbcType=VARCHAR}, 
+      #{products,jdbcType=VARCHAR}, #{operTime,jdbcType=CHAR}, #{currentBuy,jdbcType=DECIMAL}, 
+      #{currentPay,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, #{accountAndSettlement,jdbcType=VARCHAR}, 
+      #{firstHalfTransaction,jdbcType=DECIMAL}, #{totalAnnualPurchases,jdbcType=DECIMAL}, 
+      #{isRelaCorp,jdbcType=TINYINT}, #{financialPhone,jdbcType=VARCHAR}, #{relaCorpId,jdbcType=VARCHAR}, 
+      #{createUserId,jdbcType=VARCHAR}, now())
+	</insert>
+	
+	<delete id="deleteSupplierTrade" parameterType="java.lang.String">
+		delete from supplier_buy_pay_detail where rec_uid = #{recUid}
+	</delete>
+	
+	<update id="updateSupplierTrade" parameterType="hashmap">
+		update supplier_buy_pay_detail
+	<set>
+      <if test="supplierName != null">
+        supplier_name = #{supplierName,jdbcType=VARCHAR},
+      </if>
+      <if test="products != null">
+        products = #{products,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=CHAR},
+      </if>
+      <if test="currentBuy != null">
+        current_buy = #{currentBuy,jdbcType=DECIMAL},
+      </if>
+      <if test="currentPay != null">
+        current_pay = #{currentPay,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null">
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="accountAndSettlement != null">
+        account_and_settlement = #{accountAndSettlement,jdbcType=VARCHAR},
+      </if>
+      <if test="firstHalfTransaction != null">
+        first_half_transaction = #{firstHalfTransaction,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAnnualPurchases != null">
+        total_annual_purchases = #{totalAnnualPurchases,jdbcType=DECIMAL},
+      </if>
+      <if test="financialPhone != null">
+        financial_phone = #{financialPhone,jdbcType=VARCHAR},
+      </if>
+        </set>
+        where rec_uid = #{recUid,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="selectPurchasingRiskAnalyList" resultType="hashmap" parameterType="hashmap">
+		select  p.rec_uid recUid, p.corp_id corpId,cp.corp_name corpName, 
+		p.purchase_risk_point purchaseRiskPoint, p.generate_analysis generateAnalysis, 
+		p.multiple_analysis multipleAnalysis
+		 from
+		purchasing_risk_analy p
+    	join corp_info cp on p.corp_id = cp.corp_id
+    	where 1=1 and cp.status = 1
+    	<if test="corpId != null and corpId!=''">
+	 		and p.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  		and p.corp_id in ${userCorpList}
+		</if>
+		<if test="relaCorpId != null">
+	  		and p.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and p.create_user_id = #{createUserId}
+		</if>
+	</select>
+	
+	<insert id="insertPurchasingRiskAnaly" parameterType="hashmap">
+		insert into purchasing_risk_analy (rec_uid, corp_id, purchase_risk_point, 
+      generate_analysis, multiple_analysis, rela_corp_id, 
+      create_user_id, create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{purchaseRiskPoint,jdbcType=VARCHAR}, 
+      #{generateAnalysis,jdbcType=VARCHAR}, #{multipleAnalysis,jdbcType=VARCHAR}, #{relaCorpId,jdbcType=VARCHAR}, 
+      #{createUserId,jdbcType=VARCHAR}, now())
+	</insert>
+	
+	<delete id="deletePurchasingRiskAnaly" parameterType="java.lang.String">
+		delete from purchasing_risk_analy where rec_uid = #{recUid}
+	</delete>
+	
+	<update id="updatePurchasingRiskAnaly" parameterType="hashmap">
+		update purchasing_risk_analy
+    <set>
+      <if test="purchaseRiskPoint != null">
+        purchase_risk_point = #{purchaseRiskPoint,jdbcType=VARCHAR},
+      </if>
+      <if test="generateAnalysis != null">
+        generate_analysis = #{generateAnalysis,jdbcType=VARCHAR},
+      </if>
+      <if test="multipleAnalysis != null">
+        multiple_analysis = #{multipleAnalysis,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+	</update>
+</mapper>

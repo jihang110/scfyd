@@ -1,0 +1,400 @@
+$(document).ready(function() {
+	CloudUtils.getMenuNames("nav");
+	initTable(); 
+	dateload();
+	
+	
+	//modal绑定事件
+	$('#addModal').on('hidden.bs.modal', function(){
+		$("#addForm")[0].reset();
+		$("#addForm").data('bootstrapValidator').resetForm();
+	});
+	$('#addModal').on('hide.bs.modal', function () {
+		$("#addForm").data('bootstrapValidator').resetForm();
+	});
+	initToolbarBootstrapBindings();
+	$('#editor').wysiwyg({
+		fileUploadError : showErrorAlert
+	});
+	formValidator();
+	window.prettyPrint && prettyPrint();
+	
+	 
+} );
+
+function initToolbarBootstrapBindings() {
+	var fonts = [ 'Serif', 'Sans', 'Arial', 'Arial Black', 'Courier',
+			'Courier New', 'Comic Sans MS', 'Helvetica', 'Impact',
+			'Lucida Grande', 'Lucida Sans', 'Tahoma', 'Times',
+			'Times New Roman', 'Verdana' ], fontTarget = $('[title=Font]')
+			.siblings('.dropdown-menu');
+	$.each(fonts, function(idx, fontName) {
+		fontTarget.append($('<li><a data-edit="fontName ' + fontName
+				+ '" style="font-family:\'' + fontName + '\'">' + fontName
+				+ '</a></li>'));
+	});
+	$('a[title]').tooltip({
+		container : 'body'
+	});
+	$('.dropdown-menu input').click(function() {
+		return false;
+	}).change(
+			function() {
+				$(this).parent('.dropdown-menu').siblings(
+						'.dropdown-toggle').dropdown('toggle');
+			}).keydown('esc', function() {
+		this.value = '';
+		$(this).change();
+	});
+
+	$('[data-role=magic-overlay]').each(
+			function() {
+				var overlay = $(this), target = $(overlay.data('target'));
+				overlay.css('opacity', 0).css('position', 'absolute')
+						.offset(target.offset()).width(target.outerWidth())
+						.height(target.outerHeight());
+			});
+	if ("onwebkitspeechchange" in document.createElement("input")) {
+		var editorOffset = $('#editor').offset();
+		$('#voiceBtn').css('position', 'absolute').offset({
+			top : editorOffset.top,
+			left : editorOffset.left + $('#editor').innerWidth() - 35
+		});
+	} else {
+		$('#voiceBtn').hide();
+	}
+}
+
+function showErrorAlert(reason, detail) {
+	var msg = '';
+	if (reason === 'unsupported-file-type') {
+		msg = "Unsupported format " + detail;
+	} else {
+		console.log("error uploading file", reason, detail);
+	}
+	$('<div class="alert"> <button type="button" class="close" data-dismiss="alert">&times;</button>'
+					+ '<strong>File upload error</strong> '
+					+ msg
+					+ ' </div>').prependTo('#alerts');
+}
+
+window.operateEvents = {
+		'click .detail': function (e, value, row, index) {
+				detailFun(row,0);
+		},
+		'click .modify': function (e, value, row, index) {
+				modFun(row,2);
+		},
+	    'click .remove': function (e, value, row, index) {
+	    	bootbox.confirm("确定删除此条记录?", function(result) {  
+	            if (result) {
+	            	var options = {
+	    					url : '../../internalAnnouncement/delete',
+	    					data : '{"recUid":"'+row.recUid+'"}',
+	    					callBackFun : function(data) {
+	    						if(data.result==0){
+	    							searchFun();
+	    						}else{
+	    							bootbox.alert(data.resultNote);
+	    							return false;
+	    						}
+	    					},
+	    					errorCallback:function(data){
+	    						bootbox.alert("error");
+	    					}
+	    			};
+	    			CloudUtils.ajax(options);
+	            } 
+	    	 });
+	    }
+	};
+
+
+
+
+function searchFun() {
+	initTable();  
+}
+
+function initTable() { 
+	$('#userListTable').bootstrapTable('destroy');  
+	$("#userListTable").bootstrapTable({  
+         method: "post", 
+         url: "../../internalAnnouncement/list", 
+         striped: true,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               title: jsonData.s_title==null?"":jsonData.s_title,
+               type: jsonData.s_type
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'recUid',
+ 	        title: 'Item ID',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
+ 	    },  {
+ 	        field: 'title',
+ 	        title: '标题',
+ 	        align: 'center',
+            valign: 'middle',
+            cellStyle:function(value, row, index, field) {
+            	  return {
+            		    css: {"color": "#8e9197", "height": "40px"}
+            		  };
+            		}
+ 	    },{
+			field : 'attachmentUrl',
+			title : '附件',
+			align : 'center',
+			valign : 'middle', 
+			formatter:function(value,row,index){
+				if(row.attachmentUrl == ''||row.attachmentUrl == null){
+					return '-';
+				}else { 
+					 var s = '<a href="'+value+'">'+'附件下载'+'</a>';
+			            return s;
+				}
+	           
+	        }
+		},{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	        align: 'center',
+            valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	        	var d = '<a class = "fa fa-eye detail" style="color:#1c4efa;padding:0px 5px;" title="预览" href="javascript:void(0)"></a>';
+ 	            var m = '<a class = "fa fa-edit modify" style="color:#d864fd;padding:0px 5px;" title="编辑" href="javascript:void(0)"></a>';
+ 	            var r = '<a class = "fa fa-trash-o remove" style="color:#fa8564;padding:0px 5px;" title="删除" href="javascript:void(0)"></a>';
+ 	            return d+' '+m+' '+r;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+}
+ 
+function addFun() {
+	var releaseDate = new Date();
+	 $('#releaseDate').val(dateFormat(releaseDate, 'yyyy-MM-dd'));
+	$("#addModalLabel").text("添加");
+    $('#addModal').modal({backdrop: 'static', keyboard: false});//防止点击空白/ESC 关闭
+    $('#isEdit').val(1); //新增1；修改2
+    var username = store.get("username");
+   
+    $('#username').val(username);
+    $("input[name='releaseDate']").attr("disabled",true);
+    $('#editor').html(""); 
+}
+
+function detailFun(row,isEdit) {
+	window.location.href="officeDetail.html?id="+row.recUid;
+}
+
+function modFun(row,isEdit) {
+    $("#addModalLabel").text("修改");
+	$('#isEdit').val(isEdit); //新增1;修改2;详情0
+    $('#addModal').modal();
+    $('#title').val(row.title);
+ //   $("#type").find("option[value='"+row.type+"']").attr("selected", true);
+    $('#editor').html(row.announcementContent);
+
+    CloudUtils.setForm(row,'addForm');
+    $("input[name='releaseDate']").attr("disabled",true);
+}
+
+function saveUser() {
+	var announcementContent = $('#editor').html(); 
+	$('#announcementContent').val(announcementContent);
+	$("input[name='releaseDate']").attr("disabled",false);
+	var da = $('#addForm').data('bootstrapValidator');
+	da.validate();
+	
+	if(!da.isValid()){  
+		 	return false;
+    }else{
+    	
+    	var data = CloudUtils.convertStringJson('addForm');
+    	var isEdit =  $('#isEdit').val(); 
+    	if(isEdit == 1){//新增1；修改2
+    		var options = {
+    				url : '../../internalAnnouncement/add',
+    				data : data,
+    				callBackFun : function(data) {
+    					bootbox.alert(data.resultNote);
+    					if(data.result==0){
+    						searchFun();
+    					}else{
+    						return false;
+    					}
+    				},
+    				errorCallback:function(data){
+    					bootbox.alert("error");
+    				}
+    		};
+    		CloudUtils.ajax(options);
+    	}else if(isEdit == 2){
+    		var options = {
+    				url : '../../internalAnnouncement/mod',
+    				data : data,
+    				callBackFun : function(data) {
+    					bootbox.alert(data.resultNote);
+    					if(data.result==0){
+    						searchFun();
+    					}else{
+    						return false;
+    					}
+    				},
+    				errorCallback:function(data){
+    					bootbox.alert("error");
+    				}
+    		};
+    		CloudUtils.ajax(options);
+    	}
+    	$("#addModal").modal("hide");
+    }
+}
+
+
+function dateload(){
+	 $('#releaseDate').datetimepicker({
+      language: 'zh-CN',
+      autoclose: 1,
+      todayBtn: true,// 显示今天时间
+      pickerPosition: "bottom-left",
+      minuteStep: 5,
+      format: 'yyyy-mm-dd',
+      minView: 'month'　　　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+     });
+}
+
+function fileSelect() {
+    document.getElementById("file").click(); 
+}
+
+function ajaxFileUpload(){
+	if ($("#file").val().length > 0) {
+		$.ajaxFileUpload({  
+	        url : '../../file/binUpload?pathId=2',  
+	        secureuri : false,  
+	        fileElementId : 'file',  
+	        dataType : 'json',  
+	        success : function(data, status) {  
+	            if (data.result == 0) { 
+	            	var path=data.fileUrl;
+	            	var filename;
+	            	if(path.indexOf("/")>0)//如果包含有"/"号 从最后一个"/"号+1的位置开始截取字符串
+	            	{
+	            	    filename=path.substring(path.lastIndexOf("/")+1,path.length);
+	            	}
+	            	else
+	            	{
+	            	    filename=path;
+	            	}
+	                $("#attachmentUrl").val( data.fileUrl); 
+	                bootbox.alert("上传成功！");  
+	            }else{
+	            	bootbox.alert("上传失败！"); 
+	            } 
+	        },  
+	        error : function(data, status, e) {  
+	        	bootbox.alert(e);  
+	        }  
+	    });  
+    }
+    else {
+    	bootbox.alert("请选择图片");
+    }
+	
+}
+
+//form验证规则
+function formValidator(){
+	$('#addForm').bootstrapValidator({
+	      message: 'This value is not valid',
+	      feedbackIcons: {
+	          valid: 'glyphicon glyphicon-ok',
+	          invalid: 'glyphicon glyphicon-remove',
+	          validating: 'glyphicon glyphicon-refresh'
+	      },
+	      fields: {
+	    	  title: {
+	              validators: {
+	            	  notEmpty: {message: '标题不能为空'},
+	                  stringLength: {
+	                      min: 1,
+	                      max: 20,
+	                      message: '长度为1-20'
+	                  }
+	              },
+	              announcementContent: {
+		              validators: {
+		            	  notEmpty: {message: '内容不能为空'}
+		              }
+		          }
+	          }
+	      }
+		})
+		.on('success.form.bv', function (e) {
+			e.preventDefault();
+		});	
+}
+
+
+var dateFormat = function(time, format){
+    var t = new Date(time);
+    var tf = function(i){return (i < 10 ? '0' : '') + i};
+    return format.replace(/yyyy|MM|dd|HH|mm|ss/g, function(a){
+        switch(a){
+            case 'yyyy':
+                return tf(t.getFullYear());
+                break;
+            case 'MM':
+                return tf(t.getMonth() + 1);
+                break;
+            case 'mm':
+                return tf(t.getMinutes());
+                break;
+            case 'dd':
+                return tf(t.getDate());
+                break;
+            case 'HH':
+                return tf(t.getHours());
+                break;
+            case 'ss':
+                return tf(t.getSeconds());
+                break;
+        }
+    })
+}

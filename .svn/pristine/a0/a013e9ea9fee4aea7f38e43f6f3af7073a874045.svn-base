@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.IUserDao" >
+   <resultMap id="BaseResultMap" type="com.ut.scf.pojo.auto.SysUser">
+    <id column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="realname" jdbcType="VARCHAR" property="realname" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="mobilephone" jdbcType="VARCHAR" property="mobilephone" />
+    <result column="fixed_phone" jdbcType="VARCHAR" property="fixedPhone" />
+    <result column="dept_id" jdbcType="VARCHAR" property="deptId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="status" jdbcType="BIT" property="status" />
+  </resultMap>
+  
+  <resultMap id="InterfaceResultMap" type="com.ut.scf.pojo.SysFuncInterface">
+    <id column="interface_id" jdbcType="VARCHAR" property="interfaceId" />
+    <result column="interface_name" jdbcType="VARCHAR" property="interfaceName" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
+    <result column="method" jdbcType="VARCHAR" property="method" />
+    <result column="access_status" jdbcType="TINYINT" property="accessStatus" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <resultMap id="FilePathResultMap" type="com.ut.scf.pojo.UploadFilePath">
+    <id column="path_id" jdbcType="SMALLINT" property="pathId" />
+    <result column="path_rule" jdbcType="VARCHAR" property="pathRule" />
+    <result column="path_name" jdbcType="VARCHAR" property="pathName" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  
+  <sql id="Base_Column_List">
+    user_id, username, password, realname, email, mobilephone, fixed_phone, dept_id, 
+    create_time, status
+  </sql>
+  
+  <select id="userLogin" resultType="hashmap" parameterType="hashmap" >
+    select su.user_id userId, su.username username, sur.role_id roleId, sr.role_name roleName,
+    sr.role_type roleType, su.dept_id deptId, d.corp_id corpId, su.mobilephone mobilephone
+    from sys_user su join sys_user_role sur on su.user_id=sur.user_id
+    join sys_role sr on sur.role_id=sr.role_id
+    left join corp_dept d on su.dept_id=d.dept_id
+    where su.username=#{username} and su.password=#{password} and su.status=1 limit 1
+  </select>
+  
+  <select id="userPhoneLogin" resultType="hashmap" parameterType="String" >
+    select su.user_id userId, su.username username, sur.role_id roleId, sr.role_name roleName,
+    sr.role_type roleType, su.dept_id deptId, d.corp_id corpId, su.mobilephone mobilephone
+    from sys_user su join sys_user_role sur on su.user_id=sur.user_id
+    join sys_role sr on sur.role_id=sr.role_id
+    left join corp_dept d on su.dept_id=d.dept_id
+    where su.mobilephone=#{mobilephone} and su.status=1 limit 1
+  </select>
+  
+  <select id="hasUserByName" resultType="int" parameterType="String" >
+    select 
+     count(1)
+    from sys_user
+    where username=#{username} and status=1
+  </select>
+  
+  <select id="hasUserByMobilephone" resultType="int" parameterType="String" >
+    select 
+     count(1)
+    from sys_user
+    where mobilephone=#{mobilephone} and status=1
+  </select>
+  
+   <select id="userList" resultType="hashmap" parameterType="hashmap" >
+    select su.user_id userId,sr.role_type roleType, su.username username,su.realname realname, sr.role_id roleId, sr.role_name roleName,
+    sr.role_type roleType,su.mobilephone mobilephone,su.photo_url photoUrl,su.note note,su.email email,su.fixed_phone fixedphone,
+    cd.dept_id deptId,cd.dept_name deptName,ci.corp_id corpId,ci.corp_name corpName
+    	
+    from sys_user su join sys_user_role sur on su.user_id=sur.user_id
+    join sys_role sr on sur.role_id=sr.role_id
+    left join corp_dept cd on su.dept_id=cd.dept_id
+    left join corp_info ci on ci.corp_id=cd.corp_id
+      <where>
+        su.status=1
+        <if test="roleType != 1">
+          and sr.role_type = #{roleType}
+        </if>
+    	<if test="username!=null and username!='' ">  
+            and su.username LIKE CONCAT(CONCAT('%', #{username}),'%')   
+        </if>  
+    	<if test="mobilephone!=null and mobilephone!='' ">  
+            and su.mobilephone LIKE CONCAT(CONCAT('%', #{mobilephone}),'%')   
+        </if>
+        <if test="roleId!=null and roleId!='' ">  
+            and sr.role_id = #{roleId}   
+        </if>
+        <if test="corpId!=null and corpId!='' ">  
+            and ci.corp_id = #{corpId}
+        </if>
+        <if test="relaCorpId!=null and relaCorpId!='' ">  
+            and ci.rela_corp_id = #{relaCorpId}
+        </if>
+    </where>
+  </select>
+
+  <select id="hasMenuUserList" resultType="hashmap" parameterType="hashmap">
+    select su.user_id userId, su.username username,su.realname realname, sur.role_id roleId, sr.role_name roleName,
+    sr.role_type roleType,su.mobilephone mobilephone,su.photo_url photoUrl,su.note note,su.email email,su.fixed_phone fixedphone,
+    cd.dept_id deptId,cd.dept_name deptName,ci.corp_id corpId,ci.corp_name corpName
+    	
+    from sys_user su join sys_user_role sur on su.user_id=sur.user_id
+    join sys_role sr on sur.role_id=sr.role_id
+    join sys_role_menu rm on sr.role_id=rm.role_id
+    join sys_menu m on rm.menu_id=m.menu_id
+    left join corp_dept cd on su.dept_id=cd.dept_id
+    left join corp_info ci on ci.corp_id=cd.corp_id
+      <where>
+        su.status=1
+        and m.status=1
+        <if test="roleType != 1">
+          and sr.role_type = #{roleType}
+        </if>
+    	<if test="username!=null and username!='' ">  
+            and su.username LIKE CONCAT(CONCAT('%', #{username}),'%')   
+        </if>  
+    	<if test="mobilephone!=null and mobilephone!='' ">  
+            and su.mobilephone LIKE CONCAT(CONCAT('%', #{mobilephone}),'%')   
+        </if>
+        <if test="roleId!=null and roleId!='' ">  
+            and sr.role_id = #{roleId}   
+        </if>
+        <if test="corpId!=null and corpId!='' ">  
+            and ci.corp_id = #{corpId}
+        </if>
+        <if test="menuId != null and menuId != ''">  
+            and m.menu_id = #{menuId}
+        </if>
+    </where>
+  </select>
+
+	<update id="updateUser" parameterType="com.ut.scf.pojo.auto.SysUser">
+    update sys_user
+    <set>
+      <if test="username != null">
+        username = #{username},
+      </if>
+      <if test="password != null">
+        password = #{password},
+      </if>
+      <if test="realname != null">
+        realname = #{realname},
+      </if>
+      <if test="email != null">
+        email = #{email},
+      </if>
+      <if test="mobilephone != null">
+        mobilephone = #{mobilephone},
+      </if>
+      <if test="fixedPhone != null">
+        fixed_phone = #{fixedPhone},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId},
+      </if>
+      <if test="photoUrl != null">
+        photo_url = #{photoUrl},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="status != null">
+        status = #{status}
+      </if>
+    </set>
+     where user_id = #{userId}
+  </update>
+  
+  <update id="updateUserRole" parameterType="com.ut.scf.pojo.auto.SysUserRole">
+    update sys_user_role
+    <set>
+      <if test="roleId != null">
+        role_id = #{roleId}
+      </if>
+    </set>
+    where user_id = #{userId}
+  </update>
+  
+  <update id="updatePwd" parameterType="hashmap">
+    update sys_user
+    set  password = #{newPassword}
+    where user_id = #{userId} and password = #{oldPassword}
+  </update>
+  
+
+
+  <select id="selectBizLogList" parameterType="hashmap" resultType="hashmap">
+    select l.log_id logId, u.username, c.corp_name corpName, i.interface_name logTypeName,
+    l.ip, DATE_FORMAT(l.oper_time, '%Y-%m-%d %H:%i:%s') operTime, l.content
+	from sys_biz_log l join sys_func_interface i on l.interface_id=i.interface_id 
+	join sys_user u on l.user_id=u.user_id
+	left join corp_dept d on u.dept_id=d.dept_id
+	left join corp_info c on d.corp_id=c.corp_id
+	where u.status=1
+    <if test="username != null">
+      and u.username LIKE CONCAT(CONCAT('%', #{username}),'%')
+    </if>
+    <if test="corpId != null">
+      and d.corp_id = #{corpId}
+    </if>
+	<if test="startDate != null">
+      and l.oper_time>= #{startDate}
+	</if>
+	<if test="endDate != null">
+      <![CDATA[ and l.oper_time<= #{endDate}]]>
+	</if>
+    <if test="logType != null">
+      and l.interface_id = #{logType}
+    </if>
+    order by l.oper_time desc
+  </select>
+  
+  <insert id="insertBizLog" parameterType="hashmap">
+		INSERT INTO sys_biz_log ( log_id, user_id, interface_id, ip, content, oper_time ) 
+		values
+		(#{logId,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},
+		#{interfaceId,jdbcType=VARCHAR},#{ip},#{content},now() )
+	</insert>
+  
+  <select id="selectAllInterface" resultMap="InterfaceResultMap">
+    select interface_id, interface_name, path, method, access_status, note, create_time
+    from sys_func_interface
+  </select>
+  
+  <select id="selectAllFilePath" resultMap="FilePathResultMap">
+    select path_id, path_rule, path_name, note, create_time
+    from upload_file_path
+  </select>
+  
+  <select id="selectAllSysConfig" resultType="hashmap">
+    select item_key itemKey, item_value itemValue, module_name moduleName, item_note itemNote
+    from sys_config
+  </select>
+  
+  <select id="selectSysConfigByKey" parameterType="hashmap" resultType="hashmap">
+  select item_key itemKey, item_value itemValue, module_name moduleName, item_note itemNote
+    from sys_config where item_key = #{itemKey}
+  </select>
+  
+  <select id="callExpenseExpireProcedure" statementType="CALLABLE" resultType="hashmap">
+    call expenseExpire()
+  </select>
+  
+  <select id="selectAllUserCorpJurisdiction" resultType="hashmap">
+    select user_id userId, group_concat(corp_id) corpIds
+    from user_corp_jurisdiction
+    group by user_id
+  </select>
+</mapper>

@@ -1,0 +1,161 @@
+package com.ut.scf.reqbean.project;
+
+import java.util.Date;
+
+public class RefundDepositReqBean {
+	/**
+	 * 融资编号
+	 */
+	private String financeNum;
+	/**
+	 * 申请日期
+	 */
+	private Date applyDate;
+	/**
+	 * 融资开始日期
+	 */
+	private Date financeStartDate;
+	/**
+	 * 融资结束日期
+	 */
+	private Date financeEndDate;
+	/**
+	 * 融资金额
+	 */
+	private Double financeAmount;
+	/**
+	 * 付款日期
+	 */
+	private Date paymentDate;
+	/**
+	 * 付款金额
+	 */
+	private Double paymentAmount;
+	/**
+	 * 保证金比例(%)
+	 */
+	private Double cashDepositRate;
+	/**
+	 * 应缴保证金金额
+	 */
+	private Double depositPayableAmount;
+	/**
+	 * 保证金缴纳日期
+	 */
+	private Date depositPayDate;
+	/**
+	 * 实缴保证金金额</
+	 */
+	private Double depositActualAmount;
+	/**
+	 * 退还保证金金额
+	 */
+	private Double depositRefundAmount;
+	/**
+	 * 保证金缴纳历史
+	 */
+	private String depositHistory;
+	/**
+	 * 备注
+	 */
+	private String remark;
+	private String userId;
+	private String activitiKey;
+	public String getFinanceNum() {
+		return financeNum;
+	}
+	public void setFinanceNum(String financeNum) {
+		this.financeNum = financeNum;
+	}
+	public Date getApplyDate() {
+		return applyDate;
+	}
+	public void setApplyDate(Date applyDate) {
+		this.applyDate = applyDate;
+	}
+	public Date getFinanceStartDate() {
+		return financeStartDate;
+	}
+	public void setFinanceStartDate(Date financeStartDate) {
+		this.financeStartDate = financeStartDate;
+	}
+	public Date getFinanceEndDate() {
+		return financeEndDate;
+	}
+	public void setFinanceEndDate(Date financeEndDate) {
+		this.financeEndDate = financeEndDate;
+	}
+	public Double getFinanceAmount() {
+		return financeAmount;
+	}
+	public void setFinanceAmount(Double financeAmount) {
+		this.financeAmount = financeAmount;
+	}
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+	public Double getPaymentAmount() {
+		return paymentAmount;
+	}
+	public void setPaymentAmount(Double paymentAmount) {
+		this.paymentAmount = paymentAmount;
+	}
+	public Double getCashDepositRate() {
+		return cashDepositRate;
+	}
+	public void setCashDepositRate(Double cashDepositRate) {
+		this.cashDepositRate = cashDepositRate;
+	}
+	public Double getDepositPayableAmount() {
+		return depositPayableAmount;
+	}
+	public void setDepositPayableAmount(Double depositPayableAmount) {
+		this.depositPayableAmount = depositPayableAmount;
+	}
+	public Date getDepositPayDate() {
+		return depositPayDate;
+	}
+	public void setDepositPayDate(Date depositPayDate) {
+		this.depositPayDate = depositPayDate;
+	}
+	public Double getDepositActualAmount() {
+		return depositActualAmount;
+	}
+	public void setDepositActualAmount(Double depositActualAmount) {
+		this.depositActualAmount = depositActualAmount;
+	}
+	public Double getDepositRefundAmount() {
+		return depositRefundAmount;
+	}
+	public void setDepositRefundAmount(Double depositRefundAmount) {
+		this.depositRefundAmount = depositRefundAmount;
+	}
+	public String getDepositHistory() {
+		return depositHistory;
+	}
+	public void setDepositHistory(String depositHistory) {
+		this.depositHistory = depositHistory;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getActivitiKey() {
+		return activitiKey;
+	}
+	public void setActivitiKey(String activitiKey) {
+		this.activitiKey = activitiKey;
+	}
+	
+}

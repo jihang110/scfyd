@@ -1,0 +1,75 @@
+package com.ut.scf.service.pub.impl;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.RuntimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.dict.ScfBizConsts;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.auto.CorpInfoMapper;
+import com.ut.scf.dao.pub.ICustDao;
+import com.ut.scf.pojo.auto.CorpInfo;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.pub.ICustManagerService;
+@Service("custManagerService ")
+public class CustManagerServiceImpl implements ICustManagerService {
+	private static final Logger log = LoggerFactory
+			.getLogger(CustManagerServiceImpl.class);
+	@Resource private ICustDao custDao;
+	@Resource private CorpInfoMapper corpInfoMapper;
+	@Override
+	public BaseRespBean startProcess(RuntimeService runtimeService, String processDefinitionKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseRespBean getcorpList(Map<String,Object> paramMap, PageInfoBean page) {
+		List<Map<String, Object>> list = custDao.getCorpInfoList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean addCorp(CorpInfo corpInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+		corpInfo.setCorpId(ScfUUID.generate());
+		corpInfo.setStatus((byte) ScfBizConsts.STATUS_NORMAL);
+		corpInfo.setCreateTime(new Date());
+		int insertNum =  corpInfoMapper.insert(corpInfo);
+		log.debug("insertMenuNum : {}", insertNum);
+		
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean updateCorp(CorpInfo corpInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+		int updateNum =  corpInfoMapper.updateByPrimaryKeySelective(corpInfo);
+		log.debug("updateMenuNum : {}", updateNum);
+		if (updateNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+			return respBean;
+		}
+		
+		return respBean;
+	}
+
+}

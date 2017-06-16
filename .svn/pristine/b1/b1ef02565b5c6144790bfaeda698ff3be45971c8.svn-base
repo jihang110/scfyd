@@ -1,0 +1,87 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.auto.RepaymentInfoMapper;
+import com.ut.scf.dao.project.IRepayManagerDao;
+import com.ut.scf.pojo.auto.RepaymentInfo;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IRepayManagerService;
+
+@Service("repayManagerService")
+public class RepayManagerServiceImpl implements IRepayManagerService {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(RepayManagerServiceImpl.class);
+	@Resource
+	private IRepayManagerDao repayManagerDao;
+	@Resource
+	private RepaymentInfoMapper repaymentInfoMapper;
+	@Resource
+	ProcessEngine processEngine;
+	@Resource
+	RuntimeService runtimeService;
+	@Resource
+	TaskService taskService;
+	@Resource
+	RepositoryService repositoryService;
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getRepayList(Map<String, Object> paramMap,
+			PageInfoBean page) {
+		List<Map<String, Object>> list = repayManagerDao.getRepayList(paramMap,
+				page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean addRepayInfo(RepaymentInfo repaymentInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+		String repaymentId = ScfUUID.generate();
+		repaymentInfo.setRepaymentId(repaymentId);
+		int insertNum = repaymentInfoMapper.insert(repaymentInfo);
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean updateRepayInfo(RepaymentInfo repaymentInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+		int updateNum = repaymentInfoMapper
+				.updateByPrimaryKeySelective(repaymentInfo);
+		log.debug("updateMenuNum : {}", updateNum);
+		if (updateNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+}

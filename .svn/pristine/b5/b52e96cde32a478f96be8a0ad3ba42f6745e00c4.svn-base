@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.IClassNewsDao">
+  <select id="selectClassNewsList" parameterType="hashmap" resultType="hashmap">
+	select 
+	class_news_id classNewsId,
+	type type, 
+	title title,
+	content content,
+	create_time createTime
+    from class_news
+    <where>
+        status=1
+        <if test="type != null">
+	  		and type = #{type}
+		</if>
+		<if test="title != null">
+	  		and title  LIKE CONCAT(CONCAT('%', #{title}),'%')
+		</if>
+		<if test="createUserId != null">
+	  		and create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by create_time desc
+  </select>
+
+   <select id="selectClassNews" parameterType="hashmap" resultType="hashmap">
+	select 
+	class_news_id classNewsId,
+	title title,
+	content content,
+	type type
+    from class_news
+    where class_news_id = #{classNewsId}
+  </select>
+  
+  <delete id="deleteClassNews" parameterType="hashmap">
+    delete from class_news
+    where class_news_id = #{classNewsId}
+  </delete>
+  
+  <insert id="insertClassNews" parameterType="hashmap">
+    insert into class_news (class_news_id, type, create_user_id, 
+      create_time, title, status, 
+      content)
+    values (#{classNewsId}, #{type}, #{createUserId}, 
+      now(), #{title}, 1, 
+      #{content})
+  </insert>
+  
+  <update id="updateClassNews" parameterType="hashmap">
+    update class_news
+    <set>
+      <if test="type != null">
+        type = #{type},
+      </if>
+      <if test="title != null">
+        title = #{title},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="content != null">
+        content = #{content},
+      </if>
+    </set>
+    where class_news_id = #{classNewsId}
+  </update>
+</mapper>

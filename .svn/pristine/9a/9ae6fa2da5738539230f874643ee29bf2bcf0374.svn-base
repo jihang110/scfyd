@@ -1,0 +1,41 @@
+@CHARSET "UTF-8";
+.notification-menu .dropdown-toggle {
+    padding: 0px 0px !important;
+}
+.notification-menu a{
+	font-size: 14px;
+    font-family: "华文细黑";
+    color: #2582e3;
+    display:inline;
+    line-height:60px;
+    text-align:center;
+
+}
+.fa-user:before{
+	font-size: 20px;
+	padding:0px 10px 0px 10px;
+	line-height: 60px;
+}
+.notification-menu{
+	padding: 0;
+}
+ .menu-right{
+	border-left:1px #cccccc solid;
+}
+.menu-left{
+	display: inline-block;
+}
+#logo{
+	padding:10px 0px 0px 10px;
+}
+a[name="loginRealName"]
+{ 
+    margin-right: 7px;
+}
+a[name="loginRealName"]:hover {
+	color:#2582e3 !important;
+	text-decoration: underline !important;
+}
+a[name="loginRealName"]:visited {
+	color:#2582e3 !important;
+}

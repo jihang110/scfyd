@@ -1,0 +1,60 @@
+package com.ut.scf.core.util;
+
+import javax.annotation.Resource;
+
+import com.ut.scf.dao.auto.SequenceInfoMapper;
+import com.ut.scf.pojo.auto.SequenceInfo;
+
+public class SequenceUtil {
+	@Resource
+	private SequenceInfoMapper sequenceInfoMapper;
+
+	private static SequenceUtil instance = new SequenceUtil();
+
+	private int maxLength = 0;
+
+	private SequenceUtil() {
+	}
+
+	public static SequenceUtil getInstance() {
+		return instance;
+	}
+
+	private static final int POOL_SIZE = 1;
+
+	public synchronized String getNextKeyValue(String keyName) {
+		String sequence = findSequence(keyName);
+		String keyValue = "";
+		if ("".equals(sequence)) {
+			keyValue = POOL_SIZE + "";
+		} else {
+			keyValue = Integer.parseInt(sequence) + 1 + "";
+			if (keyValue.length() >= maxLength) {
+				keyValue = POOL_SIZE + "";
+			}
+		}
+		updateSequence(keyName, keyValue);
+		return keyValue;
+	}
+
+	private void updateSequence(String keyName, String keyValue) {
+		SequenceInfo sequenceInfo = new SequenceInfo();
+		sequenceInfo.setKeyName(keyName);
+		sequenceInfo.setKeyValue(keyValue);
+		sequenceInfoMapper.updateByPrimaryKey(sequenceInfo);
+	}
+
+	private String findSequence(String keyName) {
+		SequenceInfo sequenceInfo = sequenceInfoMapper
+				.selectByPrimaryKey(keyName);
+		if (sequenceInfo != null) {
+			this.maxLength = sequenceInfo.getMaxLength();
+			return sequenceInfo.getKeyValue();
+		} else {
+			sequenceInfo = new SequenceInfo();
+			sequenceInfo.setKeyName(keyName);
+			sequenceInfoMapper.insert(sequenceInfo);
+		}
+		return "";
+	}
+}

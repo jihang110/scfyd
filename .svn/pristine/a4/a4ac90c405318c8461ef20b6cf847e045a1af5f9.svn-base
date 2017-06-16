@@ -1,0 +1,64 @@
+package com.ut.scf.reqbean.pub;
+
+import java.math.BigDecimal;
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class DykRateListReqBean extends PageReqBean{
+	/**
+	 * 是否分页，0：否，1：是，默认为1.
+	 */
+	private Integer isPage = 1;
+	
+	
+	
+	public Integer getIsPage() {
+		return isPage;
+	}
+
+	public void setIsPage(Integer isPage) {
+		this.isPage = isPage;
+	}
+
+	private String productId;
+	
+	private String productName;
+	
+	private String rateStandard;
+	
+	private BigDecimal dykRate;
+
+	public String getProductId() {
+		return productId;
+	}
+
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public String getRateStandard() {
+		return rateStandard;
+	}
+
+	public void setRateStandard(String rateStandard) {
+		this.rateStandard = rateStandard;
+	}
+
+	public BigDecimal getDykRate() {
+		return dykRate;
+	}
+
+	public void setDykRate(BigDecimal dykRate) {
+		this.dykRate = dykRate;
+	}
+	
+	
+}

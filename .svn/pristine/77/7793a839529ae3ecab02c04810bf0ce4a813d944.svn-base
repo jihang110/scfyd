@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="ThemeBucket" />
+    <link rel="shortcut icon" href="#" type="image/png" />
+    <title>应收账款转让通知书</title>
+    <style type="text/css">
+		.main-content-child {
+		margin-top:10px;
+    	margin-left: 20px;
+   	 	/* background: #eff0f4; */
+		}
+		.title{
+		border-bottom:1px solid #ccc;
+		font-family:"SimHei";
+		color:#2a323f;
+		font-size:24px;
+		padding:25px 0px 20px 0px;
+		margin:0px 15px 33px 15px;
+		}
+		.notice{
+		background-color:#fff;
+		padding:20px 40px 50px 40px;
+		margin:-15px 15px 0px 15px;
+		font-family: 华文细黑;
+		}
+		.text-center {
+  		text-align: center;
+		}
+		.iframeBody{
+		/* background: #eff0f4; */
+		}
+		p{
+	    margin: 0 0 10px;
+		}
+		.pull-right {
+  		float: right !important;
+		}
+		body{
+		color: #7a7676;
+		line-height: 20px;
+    	overflow-x: hidden;
+   	 	font-size: 14px;
+		}
+		strong {
+   		font-weight: 700;
+    	}
+    	h4{
+    	font-family: 'Open Sans', sans-serif;
+    	font-size: 18px;
+    	}		
+	</style>
+    </head>
+  
+  <body class="iframeBody">
+    <div class="main-content-child" style="margin: 0px">
+      <div class="span12">
+        <section class="notice">
+          <h4 class="text-center" style="margin-bottom: 20px;">
+            <strong>应收账款转让通知书</strong></h4>
+           <p class="MsoNormal" style="text-align:right">
+          	<span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span>编号：</span>
+            <span style="text-decoration: underline">&nbsp;${identifier}&nbsp;</span></p>
+          <br />
+          <p class="MsoNormal"></p>
+          <p class="MsoNormal">
+            <span>买方：</span>
+            <span style="text-decoration: underline">&nbsp;${buyer}&nbsp;</span></p>
+          <p class="MsoNormal"></p>
+          <p class="MsoNormal">
+            <span>卖方：</span>
+            <span style="text-decoration: underline">&nbsp;${seller}&nbsp;</span></p>
+          <p class="MsoNormal"></p>
+           <p class="MsoNormal">
+            <span>保理商：</span>
+            <span style="text-decoration: underline">&nbsp;${factor}&nbsp;</span></p>
+          <p class="MsoNormal"></p>
+          <p class="MsoNormal">
+            <span>&nbsp;&nbsp;根据我公司
+            <span style="text-decoration: underline">&nbsp;${company}&nbsp;</span>与
+            <span style="text-decoration: underline">&nbsp;${sellerCompany}&nbsp;</span>公司（下称受让人）签订的
+            <span style="text-decoration: underline">&nbsp;${number}&nbsp;</span>号《国内保理业务合同》。</span>
+            </p>
+          <p class="MsoNormal">
+            <span>&nbsp;&nbsp;我司已于
+              <span style="text-decoration: underline">&nbsp;${year1}&nbsp;</span>年
+              <span style="text-decoration: underline">&nbsp;${month1}&nbsp;</span>月
+              <span style="text-decoration: underline">&nbsp;${day1}&nbsp;</span>日将与贵方
+              <span style="text-decoration: underline">&nbsp;${buyerCompany}&nbsp;</span>签署的下述合同项下的总计（币种）
+              <span style="text-decoration: underline">&nbsp;${currency}&nbsp;</span>（金额）
+              <span style="text-decoration: underline">&nbsp;${money}&nbsp;</span>的应收账款（详见应收账款转让明细）以及就该部分应收账款所享有的权利转让给受让人。</span></p>
+          <p class="MsoNormal">
+            <span>&nbsp;&nbsp;我司已将对贵方 的商业发票日期标注为自
+              <span style="text-decoration: underline">&nbsp;${year2}&nbsp;</span>年
+              <span style="text-decoration: underline">&nbsp;${month2}&nbsp;</span>月
+              <span style="text-decoration: underline">&nbsp;${day2}&nbsp;</span>日起（含该日）至
+              <span style="text-decoration: underline">&nbsp;${year3}&nbsp;</span>年
+              <span style="text-decoration: underline">&nbsp;${month3}&nbsp;</span>月
+              <span style="text-decoration: underline">&nbsp;${day3}&nbsp;</span>日的所有应收账款全部转让给受让人，总金额为
+              <span style="text-decoration: underline">&nbsp;${allMoney}&nbsp;</span>。</span>
+          </p>
+          <p class="MsoNormal">
+           		<span>&nbsp;&nbsp;因为以上转让，受让人已成为贵方的债权人，享有我司原作为该应收账款债权人的所有权利和权益。现将有关具体事宜知会贵方，敬请支持。</span>
+          </p>
+          <p class="MsoNormal">
+				<span>&nbsp;&nbsp;我司同意，除非取得受让人事先书面同意外，否则我司不得从贵司收取该债权下的任何金额或者取得清偿。本通知未经受让人同意不得撤消和更改。</span>
+          </p>
+          <p class="MsoNormal">
+				<span>&nbsp;&nbsp;转让后，债权人为     
+				<span style="text-decoration: underline">&nbsp;${creditor}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;债务人为    
+				<span style="text-decoration: underline">&nbsp;${debtor}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;债务金额
+				<span style="text-decoration: underline">&nbsp;${debtAmount}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;请贵方向受让人履行上述应收账款项下的义务，并将应收账款直接付至下述账号：</span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;户名：
+				<span style="text-decoration: underline">&nbsp;${accountName}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;账号：
+				<span style="text-decoration: underline">&nbsp;${account}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;开户行：
+				<span style="text-decoration: underline">&nbsp;${Bank}&nbsp;</span></span>
+		  </p>
+		  <p class="MsoNormal">
+				<span>&nbsp;&nbsp;并请在付款凭证回单联上注明合同号和发票号。</span>
+		  </p>
+		  <p class="MsoNormal">
+				特此通知。		  
+		  </p>
+		  <p class="MsoNormal">
+				卖方盖章：		  
+		  </p>
+		  <p class="MsoNormal">
+            <span>法定代表人：
+              <span style="text-decoration: underline">&nbsp;${LegalRepresent}&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间：
+              <span style="text-decoration: underline">&nbsp;${year4}&nbsp;</span>年
+              <span style="text-decoration: underline">&nbsp;${month4}&nbsp;</span>月
+              <span style="text-decoration: underline">&nbsp;${day4}&nbsp;</span>日
+            </span>
+          </p>
+          <p class="MsoNormal">
+            <span>负责人签字：
+              <span style="text-decoration: underline">&nbsp;${principal}&nbsp;</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;时间：
+              <span style="text-decoration: underline">&nbsp;${year5}&nbsp;</span>年
+              <span style="text-decoration: underline">&nbsp;${month5}&nbsp;</span>月
+              <span style="text-decoration: underline">&nbsp;${day5}&nbsp;</span>日
+              </span>
+          </p>
+          	<br>
+			<p class="MsoNormal" style="text-align:center;size:17px;">
+				<span>本通知书一式三份，一份交贵司，一份交受让人，一份我司留存。</span>
+			</p>
+			<br>
+          	<p class="MsoNormal" style="text-align:center;size:17px;">
+			———————————————以下为确认联———————————————
+			</p>
+			<p class="MsoNormal">
+				<span>&nbsp;&nbsp;本公司已收到上述《应收账款转让通知书》，已知晓并确认上述内容，同意按照上述内容执行。</span>
+			</p>
+			 <p class="MsoNormal" style="text-align:right">
+              <span class="pull-right">买方公司盖章：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+            <p class="MsoNormal" style="text-align:right">
+             <span class="pull-right">有权签字人签字：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+          
+        </section>
+      </div>
+    </div>
+  </body>
+
+</html>

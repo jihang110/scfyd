@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IUploadFileRelaDao">
+	<select id="selectFileRelaList" resultType="hashmap" parameterType="hashmap">
+		select file_id fileId,file_name fileName,file_url fileUrl,attach_size attachSize,attach_type attachType from upload_file_rela
+		where status = 1
+    <if test="corpId != null">
+	  and corp_id = #{corpId}
+	</if>
+	<if test="sysType != null">
+	  and sys_type = #{sysType}
+	</if>
+	<if test="createUserId != null">
+	  and create_user_id = #{createUserId}
+	</if>
+		order by create_time desc
+	</select>
+</mapper>

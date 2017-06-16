@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>保证金冲抵</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--external css-->
+    <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css"/> 
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-fileupload.min.js"></script>
+  <script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <script type="text/javascript" src="../../js/project/dykManager/offsetDepositReapply.js"></script>
+  <style type="text/css">
+  	#interest tr,#interest td{
+  		border: 1px solid #ddd !important;
+  	}
+  </style>
+</head>
+<body class="iframeBody">
+    <section>
+	    <div class="main-content-child"> 
+	    <div class="row">
+	    <div class="title"><span>保证金冲抵</span></div>
+	    </div>
+	    <div class="row	rowpad">
+	    		<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+	    		<input type="hidden" class="form-control" id="repaymentNum" name="repaymentNum" readonly/>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="repaymentDate">还款日期</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="repaymentDate"  name="repaymentDate" readonly/>
+	                </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentAmount">还款金额</label>
+		            <div class="col-sm-3">
+		            	   <input id="repaymentAmount" name="repaymentAmount" class="form-control" readonly/>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="payOrginAmount" >还本金金额</label>
+		            <div class="col-sm-3">
+		            	<input id="payOrginAmount" name="payOrginAmount" class="form-control"  readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="payInterestAmount">还利息金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payInterestAmount" class="form-control"  id="payInterestAmount" readonly>
+		            </div>
+		          </div>
+		        <div class="form-group">
+		            <label class="col-sm-4 control-label" for="financeNum">融资编号</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="financeNum"  name="financeNum" readonly/>
+	                </div>
+	                <button type="button" onclick="getFinanceInfo()" class="btn btn-info">获取融资信息</button>
+		          </div>
+		            <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeStartDate">融资起始日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeStartDate" class="form-control" id="financeStartDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="融资起始日" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeEndDate">融资到期日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeEndDate" class="form-control" id="financeEndDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="融资到期日" readonly >
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeAmount">融资金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="paymentAmount">付款金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="paymentAmount" class="form-control" id="paymentAmount" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="paymentBalance">付款余额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="paymentBalance" class="form-control" id="paymentBalance" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="depositActualAmount">实缴保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="depositActualAmount" class="form-control" id="depositActualAmount" readonly>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="offsetGap">冲抵差额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="offsetGap" class="form-control" id="offsetGap" readonly>
+		          	</div>
+		          </div>
+		           <div class="form-group">
+		            <label class="col-sm-4 control-label" for="salesAmount">销售金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="salesAmount" class="form-control" id="salesAmount" readonly>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="salesRate">销售比例(%)</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="salesRate" class="form-control" id="salesRate" readonly>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="carCertificate">购车凭证</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="carCertificate" name="carCertificate" readonly/>
+	                </div>
+	                <button type="button" class="btn btn-info">上传</button>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="remark">备注</label>
+		            <div class="col-sm-3">
+					    <textarea id="remark"  name="remark" class="form-control"></textarea>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <div class="col-sm-2"></div>
+		            <div class="col-sm-7">
+					    <table id="carInfoTable" class="table table-bordered" cellspacing="0" >
+		            	</table>
+		          	</div>
+		          </div>
+		        </form> 
+            </div>
+	    <div>
+			<div class="col-sm-1 col-sm-offset-6">
+				<button type="submit" id="btn_apply" class="btn btn-default add"
+					 onclick="reApply()">再申请
+				</button>
+	    	</div>
+	    </div>
+	    </div>
+    </section>
+  </body>
+</html>

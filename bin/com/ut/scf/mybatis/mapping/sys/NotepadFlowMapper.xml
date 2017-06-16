@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.INotepadFlowDao">
+	<select id="selectNotepadFlowList" resultType="hashmap" parameterType="hashmap">
+		select f.rec_uid recUid, f.mark_id markId,m.mark_name markName, DATE_FORMAT(f.start_date,'%Y-%m-%d') startDate,
+	    DATE_FORMAT(f.end_date,'%Y-%m-%d') endDate, f.oper_time operTime, f.note
+		from user_notepad_flow f  join user_notepad_mark m on f.mark_id = m.rec_uid where 1=1 
+    	<if test="userId!=null"> 
+    	and f.user_id = #{userId}
+    	</if>
+		<if test="startDate!=null"> 
+		and f.start_date &gt;= #{startDate}
+		</if>
+		<if test="endDate!=null"> 
+		and  f.end_date &lt;= #{endDate}
+		</if>	
+	</select>
+	
+	<insert id="insertNotepadFlow" parameterType="hashmap">
+		 insert into user_notepad_flow (rec_uid, mark_id, user_id, 
+                                  start_date, end_date, oper_time, 
+                                  note, create_user_id, create_time)
+         values (#{recUid,jdbcType=VARCHAR}, #{markId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+         #{startDate,jdbcType=DATE}, #{endDate,jdbcType=DATE}, #{operTime,jdbcType=VARCHAR}, 
+         #{note,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, now())
+	</insert>
+	
+	<delete id="deleteNotepadFlow" parameterType="java.lang.String">
+		delete from user_notepad_flow where rec_uid = #{recUid}
+	</delete>
+	
+	<update id="updateNotepadFlow" parameterType="hashmap">
+		update user_notepad_flow
+    <set>
+      <if test="markId != null">
+        mark_id = #{markId,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=DATE},
+      </if>
+      <if test="endDate != null">
+        end_date = #{endDate,jdbcType=DATE},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+	</update>
+  
+  <select id="expenseExpireCount" resultType="int" parameterType="String" >
+    select count(1)
+    from user_notepad_flow
+    where user_id=#{userId} and mark_id='recuid0001' and start_date >= DATE_FORMAT(now(),'%Y-%m-%d')
+  </select>
+	
+</mapper>

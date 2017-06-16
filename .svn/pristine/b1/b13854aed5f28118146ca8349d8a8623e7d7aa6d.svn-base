@@ -1,0 +1,18 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+import com.ut.scf.respbean.BaseRespBean;
+
+/**
+ * @author jihang
+ *	统计分析
+ */
+public interface ICountAnalyseService {
+	/**
+	 * 获取融资信息
+	 * @param paramMap
+	 * @return
+	 */
+	public BaseRespBean getFinanceCountInfo(Map<String, Object> paramMap);
+}

@@ -1,0 +1,76 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
+
+$(document).ready(function() {
+    getTaskData();
+});
+
+
+function getTaskData() {
+    debugger;
+    var data = {};
+    data.taskId = taskId;
+    var options = {
+        url: '../../../activiti/getTaskDataByTaskId',
+        data: JSON.stringify(data),
+        callBackFun: function(data) {
+            if (data.result == 0) {
+                debugger;
+                $("#contractInfo").val(data.str);
+                // viewContract(data.str);
+
+            } else {
+                return false;
+            }
+        },
+        errorCallback: function(data) {
+            bootbox.alert(data.resultNote);
+            return false;
+        }
+    };
+    CloudUtils.ajax(options);
+}
+
+//预览合同
+function viewContract(data) {
+    var tempdata = eval("(" + data + ")");
+    var jsonData = {
+        signId: tempdata.signId,
+        fileId: tempdata.fileId
+    };
+    jsonData = JSON.stringify(jsonData);
+    var options = {
+
+        url: '../../../sign/view',
+        data: jsonData,
+        callBackFun: function(data) {
+            $('#contractFrame').attr('src', data);
+        }
+
+    };
+    CloudUtils.ajax(options);
+}
+
+//签合同 并发起流程
+function agree(type) {
+    var data = $("#contractInfo").val();
+    data = eval("(" + data + ")");
+    var jsonData ={
+    	signId: data.signId,
+        fileId: data.fileId,
+        agree:type,
+        taskId:taskId
+    };
+    jsonData = JSON.stringify(jsonData);
+    debugger;
+    var options = {
+
+        url: '../../../sign/doAgree',
+        data: jsonData,
+        callBackFun: function(data) {
+            bootbox.alert(data);
+        }
+    };
+    CloudUtils.ajax(options);
+}

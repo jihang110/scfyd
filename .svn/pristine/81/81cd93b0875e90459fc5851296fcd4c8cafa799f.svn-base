@@ -1,0 +1,58 @@
+package com.ut.scf.service.sys.impl;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.dao.auto.AgencySequenceMapper;
+import com.ut.scf.pojo.auto.AgencySequence;
+import com.ut.scf.service.sys.ISequenceService;
+
+@Service("sequenceService")
+public class SequenceServiceImpl implements ISequenceService {
+	@Resource
+	private AgencySequenceMapper agencySequenceMapper;
+	private String rz = "YDBL2017RZ0017-";
+	private String yw = "YDBL2017YW0017-";
+
+	/***
+	 * agencyNum:经销商id type：编号类型 rz：融资管理 yw：合同管理
+	 * **/
+
+	@Override
+	public String getNextSequence(String agencyNum, String type) {
+		String agencySequence = findSequence(agencyNum, type);
+		if ("rz".equalsIgnoreCase(type)) {
+			agencySequence = rz + agencySequence;
+		} else {
+			agencySequence = yw + agencySequence;
+		}
+
+		return agencySequence;
+	}
+
+	private void updateSequence(String agencyNum, String agencySecend) {
+		AgencySequence agencySequence = new AgencySequence();
+		agencySequence.setAgencyNum(agencyNum);
+		agencySequence.setAgencySecend(agencySecend);
+		agencySequenceMapper.updateByPrimaryKeySelective(agencySequence);
+	}
+
+	private String findSequence(String agencyNum, String type) {
+		AgencySequence agencySequence = agencySequenceMapper
+				.selectByPrimaryKey(agencyNum);
+		int first = Integer.parseInt(agencySequence.getAgencyFirst());
+		String strFirst = String.format("%02d", first);
+		if ("rz".equalsIgnoreCase(type)) {
+			int secend = Integer.parseInt(agencySequence.getAgencySecend());
+			secend += 1;
+			if (secend > 99) {
+				secend = 1;
+			}
+			String strSecend = String.format("%02d", secend);
+			updateSequence(agencyNum, strSecend);
+			return strFirst + "-" + strSecend;
+		}
+		return strFirst;
+	}
+}

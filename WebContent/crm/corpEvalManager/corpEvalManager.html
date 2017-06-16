@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="ThemeBucket">
+<link rel="shortcut icon" href="#" type="image/png">
+<title>财务指标分析</title>
+<link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/style-responsive.css" rel="stylesheet">
+<link href="../../css/bootstrap-table.css" rel="stylesheet">
+<link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+<link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+<script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+<link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+<link href="../../css/sysfun.css" rel="stylesheet">
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/CloudUtils.js"></script>
+<script src="../../js/password.js"></script>
+<script src="../../js/store.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+<script src="../../js/validation-init.js"></script>
+<script type="text/javascript"
+	src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/zh_CN.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="../../js/jquery.number.js"></script>
+<!--dynamic table initialization -->
+<script src="../../js/crm/corpEvalManager/corpEvalManager.js"
+	type="text/javascript"></script>
+</head>
+<body class="iframeBody">
+	<section>
+		<div class="main-content-child">
+			<div class="row">
+				<div class="title">
+					<span>财务指标分析</span>
+				</div>
+			</div>
+			<fieldset>
+				<div class="row rowpad">
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button id="btn_add" type="button" class="btn btn-default add"
+								data-toggle="modal" onclick="addFun()">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加财务信息
+							</button>
+						</div>
+						<div class="col-sm-2">
+							<button id="btn_add" type="button" class="btn btn-default add"
+								data-toggle="modal" onclick="addFunAnaly()" style="background:#52f99a">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加风险分析
+							</button>
+						</div>
+						<form class="form-horizontal" role="form" id="searchForm">
+							<div class="col-sm-6">
+								<select id="txt_corpId" name="txt_corpId" class="form-control">
+								</select>
+							</div>
+						</form>
+						<div class="col-sm-2">
+							<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+
+			<form class="form-horizontal" role="form" id="addForm"
+				data-toggle="validator" ENCTYPE="multipart/form-data">
+				<input type="hidden" id="isEdit" name="isEdit"> <input
+					type="hidden" id="recUid" name="recUid">
+				<div class="modal fade" id="addModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="addModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<fieldset id='field'>
+									<fieldset>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" for="corpId"><span class="required">*</span>企业名称</label>
+										<div class="col-sm-5">
+											<select id="corpId" name="corpId" class="form-control">
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" for="operYear"><span class="required">*</span>年份</label>
+										<div class="col-sm-5">
+											<span style="position: relative; z-index: 9999;"> <input
+												id="operYear" name="operYear" style="cursor: pointer;" class="form-control" size="16"
+												type="text" value="2016" readonly>
+											</span> <span class="add-on"><i class="icon-calendar"></i></span>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" for="">自动计算</label>
+										<div class="col-sm-2">
+											<button id="change" class="btn btn-default add" style="display:block" onclick="calculateData()">计&nbsp;&nbsp;&nbsp;算</button>
+										</div>
+									</div>
+									</fieldset>
+									<div class="panel-group" id="accordion">
+										<fieldset class="panel panel-default">
+											<legend class="little-title">偿债能力分析</legend>
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+												 <legend class="little-title">短期偿债能力</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse1" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="currentRate">流动比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text" name="currentRate" class="form-control"
+																id="currentRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="quickRate">速动比率(%)</label>
+														<div class="col-sm-5">
+															<input id="quickRate" 
+																name="quickRate" class="form-control" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="interestCoverage">利息保障倍数</label>
+														<div class="col-sm-5">
+															<input type="text" 
+																name="interestCoverage" class="form-control"
+																id="interestCoverage">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashRate">现金比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text" 
+																name="cashRate" class="form-control"
+																id="cashRate" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+												 <legend class="little-title">长期偿债能力</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse2" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="assetsAndLiabilities">资产负债率(%)</label>
+														<div class="col-sm-5">
+															<input type="text" 
+																name="assetsAndLiabilities" class="form-control"
+																id="assetsAndLiabilities" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="equityRate">产权比例(%)</label>
+														<div class="col-sm-5">
+															<input type="text" 
+																name="equityRate" class="form-control"
+																id="equityRate" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<legend class="little-title">运营能力分析</legend>
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+												 <legend class="little-title">流动资产周转</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse3" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="receivableTurnoverRate">应收账款周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="receivableTurnoverRate" class="form-control"
+																id="receivableTurnoverRate">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="receivableTurnoverRateDays"> 应收账款周转天数（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="receivableTurnoverRateDays" class="form-control"
+																id="receivableTurnoverRateDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="inventoryTurnover">存货周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="inventoryTurnover" class="form-control"
+																id="inventoryTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="inventoryTurnoverDays">存货周转期（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="inventoryTurnoverDays" class="form-control"
+																id="inventoryTurnoverDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="currentAssetsTurnover">流动资产周转率（次/年） </label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="currentAssetsTurnover" class="form-control"
+																id="currentAssetsTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="currentAssetsTurnoverDays">流动资产周转期（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="currentAssetsTurnoverDays" class="form-control"
+																id="currentAssetsTurnoverDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="fixedAssetsTurnover">固定资产周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="fixedAssetsTurnover" class="form-control"
+																id="fixedAssetsTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="fixedAssetsTurnoverDays"> 固定资产周转期（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text" name="fixedAssetsTurnoverDays"
+																class="form-control" id="fixedAssetsTurnoverDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="totalAssetTurnover">总资产周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text" name="totalAssetTurnover"
+																class="form-control" id="totalAssetTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="totalAssetTurnoverDays">总资产周转期（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="totalAssetTurnoverDays"
+																class="form-control"
+																id="totalAssetTurnoverDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="accountsPayableTurnover">应付账款周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="accountsPayableTurnover" class="form-control"
+																id="accountsPayableTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="accountsPayableTurnoverDays">应付账款周转天数（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="accountsPayableTurnoverDays" class="form-control"
+																id="accountsPayableTurnoverDays">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashTurnover">现金周转率（次/年）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashTurnover" class="form-control"
+																id="cashTurnover">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashTurnoverDays"> 现金周转天数（天/次）</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashTurnoverDays" class="form-control"
+																id="cashTurnoverDays">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+												 <legend class="little-title">获利能力分析</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse4" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="operatingMargin">营业利润率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="operatingMargin"
+																class="form-control"
+																id="operatingMargin" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="operatingNetProfit">营业净利率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="operatingNetProfit" class="form-control"
+																id="operatingNetProfit" placeholder="10.00">
+														</div>
+													</div>
+											
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="operatingGrossProfit">营业毛利率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="operatingGrossProfit" class="form-control"
+																id="operatingGrossProfit" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="costMargins">成本费用利润率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="costMargins" class="form-control"
+																id="costMargins" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="costRate">成本费用率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="costRate" class="form-control"
+																id="costRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="returnTotalAssets">总资产报酬率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="returnTotalAssets"
+																class="form-control" id="returnTotalAssets" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="returnNetAssets">净资产收益率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="returnNetAssets" class="form-control"
+																id="returnNetAssets" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+												 <legend class="little-title">发展能力分析</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse5" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="mainBusinessRevenueGrowth">主营业务收入增长率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="mainBusinessRevenueGrowth" class="form-control"
+																id="mainBusinessRevenueGrowth" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="mainBusinessProfitGrowth">主营业务利润增长率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="mainBusinessProfitGrowth" class="form-control"
+																id="mainBusinessProfitGrowth" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="netProfitGrowth">净利润增长率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="netProfitGrowth"
+																class="form-control"
+																id="netProfitGrowth" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="totalAssetGrowth">总资产增长率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="totalAssetGrowth" class="form-control"
+																id="totalAssetGrowth" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="capitalMaintenanceAndAppreciation">资本保值增值率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="capitalMaintenanceAndAppreciation" class="form-control"
+																id="capitalMaintenanceAndAppreciation" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
+												 <legend class="little-title">现金流量分析</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse6" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashOfSales">销售收现比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text" name="cashOfSales"
+																class="form-control" id="cashOfSales" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="cashOfPurchase">购货付现比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text" name="cashOfPurchase" class="form-control"
+																id="cashOfPurchase" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="netOperatingCashToSales">经营现金净流量对销售收入比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="netOperatingCashToSales" class="form-control"
+																id="netOperatingCashToSales" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="operatingCashRateOfReturn">资产的经营现金流量回报率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="operatingCashRateOfReturn" class="form-control"
+																id="operatingCashRateOfReturn" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="netOperatingCashToProfit">经营现金净流量对净利润的比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="netOperatingCashToProfit" class="form-control"
+																id="netOperatingCashToProfit" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="netOperatingCashToDebt">经营现金净流量对负债比率</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="netOperatingCashToDebt" class="form-control"
+																id="netOperatingCashToDebt" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse7">
+												 <legend class="little-title">资本结构分析</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse7" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="proportionOfFixedAssets">固定资产比重(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="proportionOfFixedAssets" class="form-control"
+																id="proportionOfFixedAssets" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="shareholderRate">股东权益比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="shareholderRate" class="form-control"
+																id="shareholderRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="longtermDebtRate">长期负债比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="longtermDebtRate" class="form-control" id="longtermDebtRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="fixedAssetsAndEquityRate">股东权益与固定资产比率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="fixedAssetsAndEquityRate" class="form-control"
+																id="fixedAssetsAndEquityRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="mainBusinessProfitRate">主营业务利润比重(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="mainBusinessProfitRate" class="form-control"
+																id="mainBusinessProfitRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="accountsReceivableIncomeRate">应收账款占收入比重(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="accountsReceivableIncomeRate" class="form-control"
+																id="accountsReceivableIncomeRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="liquidityIncomeRate">流动资金创收率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="liquidityIncomeRate" class="form-control"
+																id="liquidityIncomeRate" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="totalAssetsProfitMargin">总资产利润率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="totalAssetsProfitMargin"
+																class="form-control" id="totalAssetsProfitMargin" placeholder="10.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="loanRecoveryDuringReportingPeriod">报告期内货款回收率(%)</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="loanRecoveryDuringReportingPeriod" class="form-control"
+																id="loanRecoveryDuringReportingPeriod" placeholder="10.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer">
+								<div class="form-group">
+									<div class="col-sm-4"></div>
+									<div class="col-sm-3">
+										<button type="button" class="btn btn-default cancel"
+											data-dismiss="modal">取消</button>
+									</div>
+									<div class="col-sm-3">
+										<button type="submit" id="btn_save"
+											class="btn btn-default add" 
+											onclick="saveUser()">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+
+
+			<form class="form-horizontal" role="form" id="addFormAnaly"
+				data-toggle="validator">
+				<div class="modal fade" id="ModalAnaly" aria-hidden="true" data-backdrop="static" tabindex="-1"
+					role="dialog" aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="addModalAnaly">添加</h4>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="recUid" name="recUid"> <input
+									type="hidden" id="AnalyEdit" name="AnalyEdit">
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="r_corpId">企业名称</label>
+									<div class="col-sm-6">
+										<select id="r_corpId" name="r_corpId" class="form-control">
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label"
+										for="financeComprehensiveEval">财务综合评定</label>
+									<div class="col-sm-6">
+											<textarea rows="3" name="financeComprehensiveEval"
+												class="form-control" id="financeComprehensiveEval" placeholder="财务综合评定"></textarea>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label"
+										for="financeIndicatorsAnaly">财务指标分析</label>
+									<div class="col-sm-6">
+									
+											<textarea rows="3" name="financeIndicatorsAnaly"
+												class="form-control" id="financeIndicatorsAnaly" placeholder="财务指标分析"></textarea>
+										
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="wholeRiskEval">企业整体风险评价</label>
+									<div class="col-sm-6">
+										<textarea rows="3" name="wholeRiskEval"
+												class="form-control" id="wholeRiskEval" placeholder="企业整体风险评价"></textarea>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<div class="form-group">
+										<div class="col-sm-4" id="btn_blank"></div>
+										<div class="col-sm-3">
+											<button type="button" class="btn btn-default cancel"
+												data-dismiss="modal">取消</button>
+										</div>
+										<div class="col-sm-3">
+											<button type="submit" id="btn_save"
+												class="btn btn-default add" 
+												onclick="saveUserAnaly()">保存</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="panel-body">
+				<table id="corpConditionList" class="table" cellspacing="0"
+					width="100%">
+				</table>
+				<table id="corpEvalListTable" class="table" cellspacing="0"
+					width="100%">
+				</table>
+			</div>
+		</div>
+	</section>
+
+</body>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IPayCommitmentDao" >
+
+	
+  
+  <select id="selectCommitmentList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+   	p.pay_no payNo,p.pay_date payDate,p.pay_m payM,p.deposit_m depositM,
+   	p.deposit_m_paid depositMPaid,p.remark remark,p.audit_result auditResult,
+   	c.corp_id corpId,c.corp_name corpName,c.max_credit_amount maxCreditAmount,
+   	f.finance_id financeId,f.finance_start_date financeStartDate,
+   	f.finance_end_date financeEndDate,f.finance_amount financeAmount
+    from pay_commitment_info p
+    left join corp_info c on p.dealer_id = c.corp_id
+    left join finance_info f on p.finance_no = f.finance_id
+    <where>
+	     1 = 1
+	    <if test="corpName != null and corpName != ''">
+		  and c.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')
+		</if> 
+	    <if test="corpId != null and corpId !='' ">  
+	        and c.corp_id = #{corpId}   
+	    </if>
+	
+	    <if test="payDate != null and payDate !='' ">  
+	        and p.pay_date = #{payDate}
+	    </if>
+	    <if test="financeId != null and financeId !='' ">  
+	        and f.finance_id = #{financeEndDate}
+	    </if>
+    </where>
+  </select>
+  
+</mapper>

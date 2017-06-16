@@ -1,0 +1,38 @@
+$(document).ready(function() {
+	
+});
+
+function start(){
+//	发起流程
+ var data = CloudUtils.convertStringJson('addForm');
+ var options = {
+			url : '../../refDeposit/startProcess',
+			data : data,
+			callBackFun : function(data) {
+				if (data.result == 0) {
+					bootbox.alert(data.resultNote);
+				} else {
+					return false;
+				}
+			},
+			errorCallback : function(data) {
+				return false;
+			}
+		};
+ CloudUtils.ajax(options);
+}
+
+/**
+ * 获取融资信息
+ */
+function getFinanceInfo(){
+//	获取值
+//	进行计算
+	var depositPayableAmount = CloudUtils.Math(CloudUtils.Math(financeJson.paymentAmount,financeJson.cashDepositRate,"mul"),100,"div");
+	financeJson.depositPayableAmount = depositPayableAmount;
+//	设置值
+	 CloudUtils.setForm(financeJson,"addForm");
+}
+
+//假数据
+var financeJson = {"financeAmount": 1000,"paymentDate":"2017-5-1","paymentAmount":32809,"cashDepositRate":10};

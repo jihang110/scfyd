@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.finance.IInvoiceManagerDao">
+	<select id="selectInvoiceManagerList" parameterType="hashmap"
+		resultType="hashmap">
+		select
+		rec_uid recUid,
+		project_name projectName,
+		invoice_url invoiceUrl,
+		invoice_no invoiceNo,
+		invoice_amt invoiceAmt,
+		contract_no contractNo,
+		bill_unit billUnit,
+		DATE_FORMAT(invoice_date,'%Y-%m-%d') invoiceDate,
+		DATE_FORMAT(invoice_start_date,'%Y-%m-%d') invoiceStartDate,
+		DATE_FORMAT(invoice_end_date,'%Y-%m-%d') invoiceEndDate,
+		invoice_currency invoiceCurrency,
+		case
+			when invoice_currency = '0' then '人民币'
+			when invoice_currency = '1' then '美元'
+		end invoiceCurrencyExcel,
+		invoice_balance invoiceBalance,
+		invoice_status invoiceStatus,
+		case
+			when invoice_status = '0' then '未过期'
+			when invoice_status = '1' then '已过期'
+		end invoiceStatusExcel
+		from invoice_management
+		<where>
+			status = 1
+			<if test="projectName != null and projectName!=''">
+				and project_name LIKE CONCAT(CONCAT('%', #{projectName}), '%')
+			</if>
+			<if test="contractNo != null and contractNo!=''">
+				and contract_no LIKE CONCAT(CONCAT('%', #{contractNo}), '%')
+			</if>
+			<if test="corpId != null">
+	  			and corp_id = #{corpId}
+			</if>
+			<if test="createUserId != null">
+	  			and create_user_id = #{createUserId}
+		    </if>
+		</where>
+		order by invoice_date desc
+	</select>
+	<insert id="insertInvoiceManager" parameterType="hashmap">
+		insert into invoice_management (
+		rec_uid,
+		corp_id,
+		project_name,
+		invoice_url,
+		invoice_no,
+		invoice_amt,
+		contract_no,
+		bill_unit,
+		invoice_date,
+		invoice_start_date,
+		invoice_end_date,
+		invoice_currency,
+		invoice_balance,
+		invoice_status,
+		create_user_id
+		)
+		values (
+		#{recUid},
+		#{corpId},
+		#{projectName},
+		#{invoiceUrl},
+		#{invoiceNo},
+		#{invoiceAmt},
+		#{contractNo},
+		#{billUnit},
+		#{invoiceDate},
+		#{invoiceStartDate},
+		#{invoiceEndDate},
+		#{invoiceCurrency},
+		#{invoiceBalance},
+		#{invoiceStatus},
+		#{createUserId} 
+		)
+	</insert>
+
+	<update id="updateInvoiceManager" parameterType="hashmap">
+    update invoice_management
+    <set>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceUrl != null">
+        invoice_url = #{invoiceUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceNo != null">
+        invoice_no = #{invoiceNo,jdbcType=TIMESTAMP},
+      </if>
+      <if test="invoiceAmt != null">
+        invoice_amt = #{invoiceAmt,jdbcType=DECIMAL},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="billUnit != null">
+        bill_unit = #{billUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceDate != null">
+        invoice_date = #{invoiceDate,jdbcType=DECIMAL},
+      </if>
+      <if test="invoiceStartDate != null">
+        invoice_start_date = #{invoiceStartDate,jdbcType=VARCHAR},
+      </if>
+     <if test="invoiceEndDate != null">
+        invoice_end_date = #{invoiceEndDate,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceCurrency != null">
+        invoice_currency = #{invoiceCurrency,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceBalance != null">
+        invoice_balance = #{invoiceBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="invoiceStatus != null">
+        invoice_status = #{invoiceStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+   </update>
+   
+   <delete id="deleteInvoiceManager" parameterType="java.lang.String">
+    delete from invoice_management
+    where rec_uid = #{recUid}
+  </delete>
+
+</mapper>

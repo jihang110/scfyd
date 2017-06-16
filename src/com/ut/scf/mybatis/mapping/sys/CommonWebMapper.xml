@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.ICommonWebDao">
+  <select id="selectCommonWebList" parameterType="hashmap" resultType="hashmap">
+	select 
+	rec_uid recUid,
+	website_name websiteName, 
+	website_address websiteAddress,
+	corp_id corpId,
+	note note,
+	create_time createTime
+    from user_common_website
+    <where>
+    corp_id is null or (1=1
+        <if test="corpId != null">
+	        and corp_id = #{corpId}
+		</if>
+		<if test="createUserId != null">
+	  		and create_user_id = #{createUserId}
+		</if>
+		<if test="websiteName != null">
+	  		and website_name LIKE CONCAT('%',#{websiteName},'%')
+		</if>)
+    </where>
+    order by create_time desc
+  </select>
+
+
+  
+  <delete id="deleteCommonWeb" parameterType="hashmap">
+    delete from user_common_website
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <insert id="insertCommonWeb" parameterType="hashmap">
+    insert into user_common_website (rec_uid, website_name, website_address, 
+      note, create_time, create_user_id, corp_id
+      )
+    values (#{recUid}, #{websiteName}, #{websiteAddress}, #{note},now(),
+       #{createUserId}, #{corpId})
+  </insert>
+  
+  <update id="updateCommonWeb" parameterType="hashmap">
+    update user_common_website
+    <set>
+      <if test="websiteName != null">
+        website_name = #{websiteName},
+      </if>
+      <if test="websiteAddress != null">
+        website_address = #{websiteAddress},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+    </set>
+    where rec_uid = #{recUid}
+  </update>
+</mapper>

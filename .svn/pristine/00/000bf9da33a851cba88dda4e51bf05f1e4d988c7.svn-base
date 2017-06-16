@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.asset.IDunManageDao">
+  
+   <select id="selectDunManageList" parameterType="hashmap" resultType="hashmap">
+  	select
+	 d.rec_uid recUid, 
+	 d.corp_id corpId,
+	 c.corp_name corpName, 
+	 d.project_name projectName, 
+	 d.contract_no contractNo,
+	 d.rel_sale_corp_name relSaleCorpName,
+	 d.is_recourse isRecourse, 
+	 d.factor_type factorType,
+	 d.create_user_name createUserName,
+	 DATE_FORMAT(d.start_date,'%Y-%m-%d') startDate, 
+     d.buyer_id buyerId, 
+     d.seller_id sellerId, 
+     d.contacts,
+     d.contacts1, 
+     d.contacts2, 
+     d.telephone_number telephoneNumber,
+     d.telephone_number1 telephoneNumber1,
+     d.telephone_number2 telephoneNumber2, 
+     d.address, 
+     d.note, 
+     d.operation_note operationNote,
+     d.operation_note1 operationNote1, 
+     d.operation_note2 operationNote2,
+     return_visit_material returnVisitMaterial, 
+     return_visit_material1 returnVisitMaterial1, 
+     return_visit_material2 returnVisitMaterial2
+    from dun_management d join corp_info c on d.corp_id=c.corp_id
+    where 1=1 and c.status = 1
+		<if test="corpId != null">
+	  		and d.corp_id = #{corpId}
+		</if>
+		<if test="projectName != null ">
+	  		and d.project_name LIKE CONCAT('%',#{projectName},'%')
+		</if>
+		<if test="contractNo != null ">
+	  		and d.contract_no LIKE CONCAT('%',#{contractNo},'%')
+		</if>
+<!-- 		<if test="relaCorpId != null">
+	  		and d.rela_corp_id = #{relaCorpId}
+		</if> -->
+		<if test="createUserId != null">
+	  		and d.create_user_id = #{createUserId}
+		</if>
+    order by d.create_time desc
+  </select>
+  
+  <insert id="insertDunManage" parameterType="hashmap">
+   	insert into dun_management (rec_uid, corp_id, project_name, 
+      contract_no,rel_sale_corp_name, is_recourse, factor_type,create_user_name, 
+      start_date, buyer_id, seller_id, 
+      contacts,contacts1,contacts2, telephone_number,telephone_number1,telephone_number2, address, 
+      note, operation_note,operation_note1,operation_note2, 
+      return_visit_material,return_visit_material1,return_visit_material2,
+      create_user_id, create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{contractNo,jdbcType=VARCHAR},#{relSaleCorpName,jdbcType=VARCHAR}, #{isRecourse,jdbcType=TINYINT}, #{factorType,jdbcType=TINYINT},#{createUserName,jdbcType=VARCHAR}, 
+      #{startDate,jdbcType=TIMESTAMP}, #{buyerId,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, 
+      #{contacts,jdbcType=VARCHAR},#{contacts1,jdbcType=VARCHAR},#{contacts2,jdbcType=VARCHAR}, #{telephoneNumber,jdbcType=VARCHAR},#{telephoneNumber1,jdbcType=VARCHAR},#{telephoneNumber2,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{note,jdbcType=VARCHAR}, #{operationNote,jdbcType=VARCHAR},#{operationNote1,jdbcType=VARCHAR},#{operationNote2,jdbcType=VARCHAR},
+      #{returnVisitMaterial,jdbcType=VARCHAR},#{returnVisitMaterial1,jdbcType=VARCHAR},#{returnVisitMaterial2,jdbcType=VARCHAR},
+      #{createUserId,jdbcType=VARCHAR}, now())
+  </insert>
+  
+  <delete id="deleteDunManage" parameterType="java.lang.String">
+    delete from dun_management
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateDunManage" parameterType="hashmap">
+     update dun_management
+    set project_name = #{projectName,jdbcType=VARCHAR},
+      contract_no = #{contractNo,jdbcType=VARCHAR},
+      rel_sale_corp_name = #{relSaleCorpName,jdbcType=VARCHAR},
+      is_recourse = #{isRecourse,jdbcType=TINYINT},
+      factor_type = #{factorType,jdbcType=TINYINT},
+      expense_create_time = #{expenseCreateTime,jdbcType=TIMESTAMP},
+      create_user_name = #{createUserName,jdbcType=VARCHAR},
+      start_date = #{startDate,jdbcType=TIMESTAMP},
+      buyer_id = #{buyerId,jdbcType=VARCHAR},
+      seller_id = #{sellerId,jdbcType=VARCHAR},
+      contacts = #{contacts,jdbcType=VARCHAR},
+      contacts1 = #{contacts1,jdbcType=VARCHAR},
+      contacts2 = #{contacts2,jdbcType=VARCHAR},
+      telephone_number = #{telephoneNumber,jdbcType=VARCHAR},
+      telephone_number1 = #{telephoneNumber1,jdbcType=VARCHAR},
+      telephone_number2 = #{telephoneNumber2,jdbcType=VARCHAR},
+      address = #{address,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
+      operation_note = #{operationNote,jdbcType=VARCHAR},
+      operation_note1 = #{operationNote1,jdbcType=VARCHAR},
+      operation_note2 = #{operationNote2,jdbcType=VARCHAR},
+      return_visit_material = #{returnVisitMaterial,jdbcType=VARCHAR},
+      return_visit_material1 = #{returnVisitMaterial1,jdbcType=VARCHAR},
+      return_visit_material2 = #{returnVisitMaterial2,jdbcType=VARCHAR}
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+   </update>
+</mapper>

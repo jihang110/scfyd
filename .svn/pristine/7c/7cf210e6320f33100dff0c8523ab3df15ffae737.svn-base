@@ -1,0 +1,234 @@
+$(function(){
+	initTable();
+	loadDate2();
+	chooseDateType();
+});
+function initTable(){
+	$('#financeCountTable').bootstrapTable('destroy');  
+	$("#financeCountTable").bootstrapTable({  
+         method: "post", 
+         url: "../../CountAnalyse/financeInfo", 
+         striped: true,  //表格显示条纹  
+         //pagination: true, //启动分页  
+         //pageSize: 5,  //每页显示的记录数  
+         //pageNumber:1, //当前第几页  
+         //pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+//         判断时间，补全时间
+           var financeStartDate = jsonData.financeStartDate;
+           var financeEndDate = jsonData.financeEndDate;
+           debugger
+           if((financeStartDate.split("-").length == 1&&financeEndDate.split("-").length==1)&&(financeStartDate!=""&&financeEndDate!="")){
+        	   financeStartDate = financeStartDate +"-01-01";
+        	   financeEndDate = financeEndDate +"-01-01";
+           }else if(financeStartDate.split("-").length == 2&&financeEndDate.split("-").length==2){
+        	   financeStartDate = financeStartDate +"-01";
+        	   financeEndDate = financeEndDate +"-01";
+           }
+           var param = {    
+        		   agencyName :jsonData.txt_agencyName,
+        		   financeStartDate:financeStartDate,
+        		   financeEndDate:financeEndDate
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+        		 showChart(res);
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+	 	        field: 'agencyName',
+	 	        title: '客户名称',
+	 	        align: 'center',
+			            valign: 'middle'
+			 	},{
+	 	        field: 'agencyNum',
+	 	        title: '组织机构代码证号',
+	 	        align: 'center',
+			            valign: 'middle'
+			 	},{
+	 	        field: 'financeAmountSum',
+	 	        title: '总计融资金额',
+	 	        align: 'center',
+			    valign: 'middle'
+			 	}, {
+		 	        field: 'payAmtSum',
+		 	        title: '总计放款金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'financeAlreadySum',
+		 	        title: '已还融资金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'financeBalanceSum',
+		 	        title: '未还融资金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'overdueFinanceAmountSum',
+		 	        title: '逾期融资金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'toBeFinanceAmountSum',
+		 	        title: '待放款金额',
+		 	        align: 'center',
+		            valign: 'middle',
+		            visible:false
+		 	    }]
+       });  
+}
+
+function showChart(data){
+	//销毁
+	echarts.dispose(document.getElementById('echart'));
+	 var myChart = echarts.init(document.getElementById('echart'));
+	 //var financeAmountTotal = 0;
+	 //var payAmtTotal = 0;
+	 var financeAlreadyTotal = 0;
+	 var financeBalanceTotal = 0;
+	 var overdueFinanceAmountTotal = 0;
+	 var toBeFinanceAmountTotal = 0;
+	 $.each(data.dataList, function(index, value) {
+		 //financeAmountTotal += value.financeAmountSum;
+		 //payAmtTotal += value.payAmtSum;
+		 financeAlreadyTotal += value.financeAlreadySum;
+		 financeBalanceTotal += value.financeBalanceSum;
+		 overdueFinanceAmountTotal += value.overdueFinanceAmountSum;
+		 toBeFinanceAmountTotal += value.toBeFinanceAmountSum
+		});
+     // 指定图表的配置项和数据
+     var option = {
+        tooltip: {
+     trigger: 'item',
+     formatter: "{a} <br/>{b}: {c} ({d}%)"
+ },
+ legend: {
+     orient: 'vertical',
+     x: 'left',
+     data:['总计放款金额','总计待放款金额','已还融资金额','未还融资金额','逾期融资金额','待放款金额']
+ },
+ series: [
+     {
+         name:'访问来源',
+         type:'pie',
+         selectedMode: 'single',
+         radius: [0, '30%'],
+
+         label: {
+             normal: {
+                 position: 'inner'
+             }
+         },
+         labelLine: {
+             normal: {
+                 show: false
+             }
+         },
+         data:[
+             {value:financeAlreadyTotal+financeBalanceTotal+overdueFinanceAmountTotal, name:'总计放款金额', selected:true},
+             {value:toBeFinanceAmountTotal, name:'总计待放款金额'}
+         ]
+     },
+     {
+         name:'访问来源',
+         type:'pie',
+         radius: ['40%', '55%'],
+
+         data:[
+             {value:financeAlreadyTotal, name:'已还融资金额'},
+             {value:financeBalanceTotal, name:'未还融资金额'},
+             {value:overdueFinanceAmountTotal, name:'逾期融资金额'},
+             {value:toBeFinanceAmountTotal, name:'待放款金额'}
+         ]
+     }
+ ]
+     };
+     // 使用刚指定的配置项和数据显示图表。
+     myChart.setOption(option);
+}
+
+function searchFun(){
+	initTable();
+}
+
+function loadDate2(){
+	$('#financeStartDate,#financeEndDate').datetimepicker('remove');
+	$("#financeStartDate,#financeEndDate").datetimepicker({
+		 language: 'zh-CN',
+	       autoclose: 1,
+	       todayBtn: true,// 显示今天时间
+	       pickerPosition: "bottom-left",
+	       minuteStep: 5,
+	       format: 'yyyy-mm-dd',
+	       minView: 'month'　　　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+	    });
+}
+
+function loadDate0(){
+	$('#financeStartDate,#financeEndDate').datetimepicker('remove');
+	$('#financeStartDate,#financeEndDate').datetimepicker({
+		language: 'zh-CN',
+		autoclose: 1,
+		todayHighlight: true,
+		format: 'yyyy',
+		startView: 4,
+        minView: 4,
+		todayBtn: true,
+		initialDate : new Date() ,
+		pickerPosition: "bottom-left"
+	});
+}
+
+function loadDate1(){
+	$('#financeStartDate,#financeEndDate').datetimepicker('remove');
+	$('#financeStartDate,#financeEndDate').datetimepicker({
+		language: 'zh-CN',
+		autoclose: 1,
+		todayHighlight: true,
+		format: 'yyyy-mm',
+		startView: 3,
+        minView: 3,
+		todayBtn: true,
+		initialDate : new Date() ,
+		pickerPosition: "bottom-left"
+	});
+}
+
+function chooseDateType(){
+	$("#chooseDateType").click(function(){
+		$('#financeStartDate,#financeEndDate').val("");
+		var dateType = $("input[type='radio']:checked").val();
+		//切换日历
+		if(dateType == "0"){
+			loadDate0();
+		}else if(dateType == "1"){
+			loadDate1();
+		}else if(dateType == "2"){
+			loadDate2();
+		}
+	})
+}

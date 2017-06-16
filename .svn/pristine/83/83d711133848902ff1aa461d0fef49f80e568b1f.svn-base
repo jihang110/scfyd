@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IAgencyDao" >
+
+  <select id="agencyList" resultType="hashmap" parameterType="hashmap" >
+    select
+    	ci.corp_name corpName,
+    	ci.agency_num agencyNum,
+    	ci.max_credit_amount maxCreditAmount,
+    	ci.office_address officeAddress,
+    	ci.contact_info contactInfo,
+    	ci.fixed_phone fixedPhone,
+    	ci.area area,
+    	ci.represent represent,
+    	ci.first_two_years_pickup_num firstTwoYearsPickupNum,
+    	ci.first_two_years_retail_num firstTwoYearsRetailNum,
+    	ci.first_two_years_sale_rank firstTwoYearsSaleRank,
+    	ci.this_year_plan_pickup_num thisYearPlanPickupNum,
+    	ci.this_year_plan_sales thisYearPlanSales,
+    	ci.note note
+    from corp_info ci
+    <where>
+        ci.status=1
+    	<if test="agencyCode!=null and agencyCode!='' ">  
+            and ci.agency_num LIKE CONCAT(CONCAT('%', #{agencyCode}),'%')   
+        </if>  
+    	<if test="agencyName!=null and agencyName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')   
+        </if>
+    </where>
+  </select>
+
+</mapper>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+  <title>经销商管理</title>
+  <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/bootstrap.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script>
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script src="../../js/bootstrap-treeview.js" type="text/javascript"></script>
+  <script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+  <script src="../../js/validation-init.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <!--dynamic table initialization -->
+  <script type="text/javascript" src="../../js/project/dykManager/agencyAdd.js"></script>
+</head>
+
+<body class="iframeBody">
+<section>
+    <div class="main-content-child" >
+    	<div class="row">
+    	<div class="title"><span>推荐经销商</span></div>
+    	</div>
+    	<div class="row	rowpad">
+     		<div class="form-group">
+	    		<form class="form-horizontal" role="form" id="noteForm">
+	    		  <div class="form-group">
+		            <label class="col-sm-4 control-label" for="note">备注</label>
+		            <div class="col-sm-3">
+		            	<textarea rows="3" name="note" class="form-control" id="note" maxlength="1000"></textarea>
+		            </div>
+		          </div>
+	            </form>
+            </div>
+        </div>
+        <div class="panel-body">
+        	<button id="btn_add" type="button" style="width:80px; margin-bottom: 10px; margin-left: 5px;" class="btn btn-default add" data-toggle="modal" onclick="add()">添加 </button>
+	        <table id="agencyListTable" class="table" cellspacing="0" width="100%">
+			</table>
+	    </div>
+	    <div>
+	    	<div class="col-sm-1 col-sm-offset-4" style="margin-left:36%;">
+	    		<button type="button" class="btn btn-default cancel"
+					data-dismiss="modal" onclick="javascript:history.go(-1)">取消
+				</button>
+			</div>
+			<div class="col-sm-1">
+				<button type="submit" id="btn_apply" class="btn btn-default save"
+					 onclick="apply()">保存
+				</button>
+	    	</div>
+	    </div>
+	    
+        <form class="form-horizontal" role="form" id="addForm"  data-toggle="validator">
+	        <div class="modal fade" id="addModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+		    <div class="modal-dialog" role="document">
+		    <input type="hidden" id="isEdit" name="isEdit">
+		    <input type="hidden" id="index" name="index">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="addModalLabel">经销商信息</h4>
+		        </div>
+		        <div class="modal-body">
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="corpName"><span class="required">*</span>经销商名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="corpName" class="form-control" id="corpName" placeholder="经销商名称">
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="agencyNum"><span class="required">*</span>经销商代码</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="agencyNum" class="form-control" id="agencyNum" placeholder="经销商代码">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="maxCreditAmount"><span class="required">*</span>最高授信额度</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="maxCreditAmount" class="form-control" id="maxCreditAmount" placeholder="0.00">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="officeAddress"><span class="required">*</span>公司地址</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="officeAddress" class="form-control" id="officeAddress" placeholder="公司地址">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="contactInfo"><span class="required">*</span>联系方式</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="contactInfo" class="form-control" id="contactInfo" placeholder="联系方式">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="fixedPhone"><span class="required">*</span>固定电话</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="fixedPhone" class="form-control" id="fixedPhone" placeholder="固定电话">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="area"><span class="required">*</span>所属区域</label>
+		          	<div class="col-sm-6">
+		            	<select id="area" name="area" class="form-control" onchange="changeArea(this.value);">
+		            		<option value=""></option>
+		                	<option value="0">东区事业部</option>
+		                	<option value="1">西区事业部</option>
+		                	<option value="2">南区事业部</option>
+		                	<option value="3">北区事业部</option>
+		                </select>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="represent"><span class="required">*</span>所属商代处</label>
+		          	<div class="col-sm-6">
+		            	<select id="represent" name="represent" class="form-control">
+		                </select>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="firstTwoYearsPickupNum"><span class="required">*</span>前2年度提车数量</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="firstTwoYearsPickupNum" class="form-control" id="firstTwoYearsPickupNum" placeholder="0">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="firstTwoYearsRetailNum"><span class="required">*</span>前2年度零售数量</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="firstTwoYearsRetailNum" class="form-control" id="firstTwoYearsRetailNum" placeholder="0">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="firstTwoYearsSaleRank"><span class="required">*</span>前2年度销售排名</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="firstTwoYearsSaleRank" class="form-control" id="firstTwoYearsSaleRank" placeholder="0">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="thisYearPlanPickupNum"><span class="required">*</span>本年度计划提车数量</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="thisYearPlanPickupNum" class="form-control" id="thisYearPlanPickupNum" placeholder="0">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="thisYearPlanSales"><span class="required">*</span>本年度计划销售额</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="thisYearPlanSales" class="form-control" id="thisYearPlanSales" placeholder="0.00">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="note"><span class="required">*</span>备注</label>
+		          	<div class="col-sm-6">
+		            	<input type="text" name="note" class="form-control" id="note" placeholder="备注">
+		          	</div>
+		          </div>
+		        </div>
+		       <div class="modal-footer">
+				  <div class="form-group">
+					<div class="col-sm-2 col-sm-offset-8">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" id="btn_save" class="btn btn-default save"
+							 onclick="addAgency()">保存
+						</button>
+					</div>
+				</div>
+				</div>
+	     	 </div>
+		    </div>
+		  </div>
+	  </form>
+    </div>
+</section>
+</body>
+</html>

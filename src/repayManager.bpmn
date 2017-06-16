@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="ssmRepayManager" name="还款登记" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="task_repay_pl" name="还款登记[项目经理]">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.ut.scf.service.pub.impl.TaskListenerImpl">
+          <activiti:field name="roleId">
+            <activiti:expression><![CDATA[ROLE000016]]></activiti:expression>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="task_repay_pl"></sequenceFlow>
+    <userTask id="task_repay_cw" name="知会汇款到账[财务部长]">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.ut.scf.service.pub.impl.TaskListenerImpl">
+          <activiti:field name="roleId">
+            <activiti:expression><![CDATA[ROLE000011]]></activiti:expression>
+          </activiti:field>
+        </activiti:taskListener>
+      </extensionElements>
+    </userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <sequenceFlow id="flow2" sourceRef="task_repay_pl" targetRef="task_repay_cw"></sequenceFlow>
+    <sequenceFlow id="flow3" sourceRef="task_repay_cw" targetRef="endevent1"></sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ssmRepayManager">
+    <bpmndi:BPMNPlane bpmnElement="ssmRepayManager" id="BPMNPlane_ssmRepayManager">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="130.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="task_repay_pl" id="BPMNShape_task_repay_pl">
+        <omgdc:Bounds height="55.0" width="105.0" x="210.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="task_repay_cw" id="BPMNShape_task_repay_cw">
+        <omgdc:Bounds height="55.0" width="105.0" x="360.0" y="160.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="35.0" width="35.0" x="510.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="165.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="210.0" y="187.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="315.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="360.0" y="187.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="465.0" y="187.0"></omgdi:waypoint>
+        <omgdi:waypoint x="510.0" y="187.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

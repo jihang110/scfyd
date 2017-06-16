@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+  <title>流程管理</title>
+  <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../js/bootstrap-daterangepicker/daterangepicker-bs3.css" rel="stylesheet" />
+  <link href="../../FontAwesome-3.2/css/font-awesome.css" rel="stylesheet" />
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+  <script src="../../js/validation-init.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <!--dynamic table initialization -->
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script src="../../js/bpm/flowManager/handleOverFlowManager.js" type="text/javascript"></script>
+  <script src="../../js/bpm/flowManager/FlowMngCommon.js" type="text/javascript"></script>
+  <script type="text/javascript" src="../../js/bootstrap-daterangepicker/daterangepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-daterangepicker/moment.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-daterangepicker/date.js"></script>
+  
+  <style>
+  	.oneline {
+  		word-break: keep-all;
+		white-space: nowrap;
+  	}
+  	.left {
+  		text-align: left !important;
+  		margin-left: 10px;
+  		width: 300px;
+  		word-break: break-all;
+  	}
+  </style>
+</head>
+
+<body class="iframeBody">
+<section>
+    <div class="main-content-child" >
+    	<div class="row">
+    		<div class="title"><span>已结流程</span></div>
+    	</div>
+    	<!-- 检索 -->
+    	<div class="row	rowpad">
+     	  <div class="form-group">
+    		<form class="form-horizontal" role="form" id="searchForm">
+    			<div class="col-sm-2">
+	               <input type="text" class="form-control" id="projectName" name="projectName" placeholder="项目名称" />
+	            </div>
+	            <div class="col-sm-3 has-feedback" style="width:250px;">
+	               <input class="form-control" id="createTime" style="cursor: pointer;" name="createTime" type="text" placeholder="完结时间" readonly/>
+	               <span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+	            </div>
+	            <div class="col-sm-3">
+	               <select id="procInsName" name="procInsName" class="form-control">
+	                   <option value="">全部</option>
+	                   <option value="1">标准流程</option>
+                	   <option value="2">特殊事项审批</option>
+                	   <option value="3">在线签约</option>
+                	   <option value="4">融资直通车</option>
+                	   <option value="5">特殊事项快速审批</option>
+                   </select>
+	            </div>
+	            <div class="col-sm-2">
+	               <select id="priState" name="priState" class="form-control">
+	                   <option value="">全部</option>
+	                   <option value="4">终止</option>
+                	   <option value="5">结束</option>
+                   </select>
+	            </div>
+	            <div class="col-sm-2" >
+	               <a onclick="searchFun()" class="btn btn-primary search">查找</a>
+	            </div> 
+            </form>
+          </div>
+        </div>
+        <!-- 项目详情 -->
+    	<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="detailModalLabel">项目详情</h4>
+		        </div>
+		        <div class="modal-body">
+		          <div class="panel-body">
+		            <div style="width:100%; margin-top: -15px; margin-bottom: 5px;">项目流程</div>
+			        <table id="detailTable" class="table"></table>
+		     	  </div>
+		        </div>
+	      	  </div>
+	    	</div>
+	 	</div>
+	 	
+	 	<!-- 详情展示div -->
+	 	<div id="div_detail"></div>
+
+		<!-- 已结流程列表 -->
+		<div class="panel-body">
+	        <table id="hndlOverFlowListTable" class="table"></table>
+     	</div>
+    </div>
+</section>
+
+</body>
+</html>

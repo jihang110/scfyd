@@ -1,0 +1,62 @@
+package com.ut.scf.pojo;
+
+import java.util.Date;
+/**
+ * 
+ * @author changxin
+ *
+ */
+public class CommonWeb {
+	private String recUid;
+	private String websiteName;
+	private String websiteAddress;
+	private String note;
+	private String createUserId;
+	private Date createTime;
+	private String corpId;
+	public String getRecUid() {
+		return recUid;
+	}
+	public void setRecUid(String recUid) {
+		this.recUid = recUid;
+	}
+	public String getWebsiteName() {
+		return websiteName;
+	}
+	public void setWebsiteName(String websiteName) {
+		this.websiteName = websiteName;
+	}
+	public String getWebsiteAddress() {
+		return websiteAddress;
+	}
+	public void setWebsiteAddress(String websiteAddress) {
+		this.websiteAddress = websiteAddress;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	public String getCreateUserId() {
+		return createUserId;
+	}
+	public void setCreateUserId(String createUserId) {
+		this.createUserId = createUserId;
+	}
+	public Date getCreateTime() {
+		return createTime;
+	}
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	public String getCorpId() {
+		return corpId;
+	}
+	public void setCorpId(String corpId) {
+		this.corpId = corpId;
+	}
+	
+	
+	
+}

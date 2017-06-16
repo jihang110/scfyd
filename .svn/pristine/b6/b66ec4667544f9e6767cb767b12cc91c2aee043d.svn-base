@@ -1,0 +1,38 @@
+package com.ut.scf.service.project.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.service.project.IAgencyService;
+@Service("agencyService")
+public class AgencyServiceImpl implements IAgencyService {
+
+//	@Resource
+//	ProcessEngine processEngine;
+//	
+//	String processInstanceId = "agencyTest1";//流程实例ID  
+	@Override
+	public void addAgency(String json) {
+//		TaskService taskService = processEngine.getTaskService();//获取任务的Service，设置和获取流程变量  
+//	      
+//	    //查询当前办理人的任务ID  
+//	    Task task = taskService.createTaskQuery()  
+//	            .processInstanceId(processInstanceId)//使用流程实例ID  
+//	            .taskAssignee("yu")//任务办理人  
+//	            .singleResult();  
+//	    taskService.setVariable(task.getId(), "agencyJson", json);
+	}
+//	
+//	public void getProcessVariables(){  
+//	    TaskService taskService = processEngine.getTaskService();  
+//	    //获取当前办理人的任务ID  
+//	    Task task = taskService.createTaskQuery()  
+//	            .processInstanceId(processInstanceId)  
+//	            .taskAssignee("yu")  
+//	            .singleResult();  
+//	      
+//	    //获取流程变量【基本类型】  
+//	    String person = (String) taskService.getVariable(task.getId(), "agencyJson");  
+//	    System.out.println("======================="+person);  
+//	      
+//	}  
+}

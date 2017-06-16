@@ -1,0 +1,9 @@
+package com.ut.scf.service.pub;
+
+import com.ut.scf.reqbean.pub.StuInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IcustManagerService {
+	
+	public BaseRespBean getStuInfoList(StuInfoListReqBean stuInfoListReqBean);
+}

@@ -1,0 +1,55 @@
+package com.ut.scf.service.pub.impl;
+
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Vector;
+
+import org.activiti.engine.delegate.DelegateTask;
+import org.activiti.engine.delegate.Expression;
+import org.activiti.engine.delegate.TaskListener;
+import org.springframework.web.context.ContextLoader;
+import org.springframework.web.context.WebApplicationContext;
+
+import com.ut.scf.dao.pub.ICustDao;
+
+public class TaskListenerImpl implements TaskListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -123037493041558708L;
+	private Expression roleId;
+	private static WebApplicationContext ctx = ContextLoader.getCurrentWebApplicationContext();	
+	private ICustDao custDao = ctx.getBean(ICustDao.class);
+	//@Resource private ICustDao custDao;
+	 /**设置任务的办理人（个人任务和组任务）*/  
+    @Override  
+    public void notify(DelegateTask delegateTask) {  
+    	try {  
+            String roleIds = (String) roleId.getValue(delegateTask);
+            roleIds = roleIds.toUpperCase();
+            Vector<String> users = new Vector<String>();
+    		String corpId = "";
+    		Map<String, Object> paramMap = new HashMap<String, Object>();
+    		paramMap.put("corpId", corpId);
+    		paramMap.put("roleId", roleIds);
+    		List<Map<String, Object>> userList = custDao.getUserByRole(paramMap);
+    		for(Map<String, Object> user :userList){
+    			users.add(user.get("username").toString());
+    		}
+    		
+    		delegateTask.addCandidateUsers(users);  
+        } catch (Exception e) {  
+            e.printStackTrace();  
+        } 
+    }  
+    
+	public Expression getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Expression roleId) {
+		this.roleId = roleId;
+	}
+}

@@ -1,0 +1,204 @@
+$(document).ready(function() {
+	$("form").attr("autocomplete","off");
+	CloudUtils.getMenuNames("nav");
+	//modal绑定事件
+	$('#addModal').on('hidden.bs.modal', function(){
+		$("#addForm")[0].reset();
+	});
+	initTable();
+	// 金额项目千分位符表示 
+	numFormat();
+});
+
+window.operateEvents = {
+	'click .detail': function (e, value, row, index) {
+		showDetailInfo(row);
+	}
+};
+
+function searchFun() {
+	initTable();
+}
+
+function initTable() { 
+	$('#agencyListTable').bootstrapTable('destroy');  
+	$("#agencyListTable").bootstrapTable({  
+         method: "post", 
+         url: "../../agency/list", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           $("#sysType").val(4);
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = JSON.parse(data);
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               agencyCode: jsonData.txt_agencyCode,
+               agencyName: jsonData.txt_agencyName,
+               sysType:jsonData.sysType
+               
+           };    
+           return JSON.stringify(param);
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'corpName',
+ 	        title: '经销商名称',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'agencyNum',
+ 	        title: '经销商代码',
+ 	        align: 'center',
+            valign: 'middle'
+ 	   }, {
+	        field: 'corpType',
+	        title: '企业类型',
+	        align: 'center',
+           valign: 'middle'
+ 	    },{
+ 	        field: 'maxCreditAmount',
+ 	        title: '最高授信额度',
+ 	        align: 'center',
+            valign: 'middle',
+            formatter: function(value,row,index){
+ 	            return $.number(value, 2);
+ 	        }
+ 	    }, {
+ 	        field: 'officeAddress',
+ 	        title: '公司地址',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'contactInfo',
+ 	        title: '联系方式',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '固定电话',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'area',
+ 	        title: '所属区域',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
+ 	    }, {
+ 	        field: 'represent',
+ 	        title: '所属商代处',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
+ 	    }, {
+ 	        field: 'firstTwoYearsPickupNum',
+ 	        title: '前2年度提车数量',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function(value,row,index){
+ 	            return $.number(value, 0);
+ 	        }
+ 	    }, {
+ 	        field: 'firstTwoYearsRetailNum',
+ 	        title: '前2年度零售数量',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function(value,row,index){
+ 	            return $.number(value, 0);
+ 	        }
+ 	    }, {
+ 	        field: 'firstTwoYearsSaleRank',
+ 	        title: '前2年度销售排名',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function(value,row,index){
+ 	            return $.number(value, 0);
+ 	        }
+ 	    }, {
+ 	        field: 'thisYearPlanPickupNum',
+ 	        title: '本年度计划提车数量',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function(value,row,index){
+ 	            return $.number(value, 0);
+ 	        }
+ 	    }, {
+ 	        field: 'thisYearPlanSales',
+ 	        title: '本年度计划销售额',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false,
+            formatter: function(value,row,index){
+ 	            return $.number(value, 2);
+ 	        }
+ 	    }, {
+ 	        field: 'note',
+ 	        title: '备注',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
+ 	    }, {
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	        align: 'center',
+            valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#278bdd;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+}
+
+function showDetailInfo(row) {
+	$("#addModal").modal({backdrop: 'static', keyboard: false});
+	CloudUtils.setForm(row, "addForm");
+	$("#addForm").find('input,select').attr("disabled", true);
+}
+
+function accAgency() {
+	$('#mainFrame',top.document).attr('src','project/dykManager/agencyAdd.html');
+}
+
+/**
+ * 金额项目千分位符表示
+ */
+function numFormat(){
+	$("input[name='maxCreditAmount']").number(true, 2);
+	$("input[name='firstTwoYearsPickupNum']").number(true, 0);
+	$("input[name='firstTwoYearsRetailNum']").number(true, 0);
+	$("input[name='firstTwoYearsSaleRank']").number(true, 0);
+	$('input[name="thisYearPlanPickupNum"]').number(true, 0);
+	$('input[name="thisYearPlanSales"]').number(true, 2);
+}

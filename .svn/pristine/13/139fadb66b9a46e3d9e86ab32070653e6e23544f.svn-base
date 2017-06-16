@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.finance.ICollectionManageDao">
+  <select id="selectCollectionManageList" parameterType="hashmap" resultType="hashmap">
+  	select
+	m.rec_uid recUid, 
+	m.corp_id corpId,
+	c.corp_name corpName, 
+	m.project_name projectName, 
+	m.collection_company collectionCompany, 
+	DATE_FORMAT(m.collection_date,'%Y-%m-%d') collectionDate, 
+	m.payee, 
+	m.collection_company_account collectionCompanyAccount, 
+    m.collection_amount collectionAmount, 
+    m.source_description sourceDescription, 
+    m.contract_no contractNo, 
+    m.collection_type collectionType, 
+    m.collection_plan collectionPlan
+    from collection_management m join corp_info c on m.corp_id=c.corp_id
+    <where>
+        1=1 and c.status = 1
+		<if test="projectName != null and projectName!=''">
+	  		and m.project_name LIKE CONCAT(CONCAT('%', #{projectName}), '%')
+		</if>
+		<if test="corpId != null">
+	  		and m.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  		and m.corp_id in ${userCorpList}
+		</if>
+		<if test="contractNo != null and contractNo!=''">
+	  		and m.contract_no LIKE CONCAT(CONCAT('%', #{contractNo}), '%')
+		</if>
+		<if test="relaCorpId != null">
+	  		and m.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and m.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by m.create_time desc
+  </select>
+  
+  <insert id="insertCollectionManage" parameterType="hashmap">
+   	 insert into collection_management (rec_uid, corp_id, project_name, 
+      collection_company, collection_date, payee, 
+      collection_company_account, collection_amount, 
+      source_description, contract_no, collection_type, 
+      collection_plan, rela_corp_id, create_user_id, 
+      create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{collectionCompany,jdbcType=VARCHAR}, #{collectionDate,jdbcType=TIMESTAMP}, #{payee,jdbcType=VARCHAR}, 
+      #{collectionCompanyAccount,jdbcType=VARCHAR}, #{collectionAmount,jdbcType=DECIMAL}, 
+      #{sourceDescription,jdbcType=VARCHAR}, #{contractNo,jdbcType=VARCHAR}, #{collectionType,jdbcType=TINYINT}, 
+      #{collectionPlan,jdbcType=VARCHAR}, #{relaCorpId,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, 
+      now())
+  </insert>
+  
+  <delete id="deleteCollectionManage" parameterType="java.lang.String">
+    delete from collection_management
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateCollectionManage" parameterType="hashmap">
+    update collection_management
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionCompany != null">
+        collection_company = #{collectionCompany,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionDate != null">
+        collection_date = #{collectionDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="payee != null">
+        payee = #{payee,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionCompanyAccount != null">
+        collection_company_account = #{collectionCompanyAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionAmount != null">
+        collection_amount = #{collectionAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="sourceDescription != null">
+        source_description = #{sourceDescription,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="collectionType != null">
+        collection_type = #{collectionType,jdbcType=TINYINT},
+      </if>
+      <if test="collectionPlan != null">
+        collection_plan = #{collectionPlan,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+   </update>
+</mapper>

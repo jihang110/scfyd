@@ -1,0 +1,138 @@
+$(function(){
+	initTable();
+});
+function initTable(){
+	$('#countGuaranteeTable').bootstrapTable('destroy');  
+	$("#countGuaranteeTable").bootstrapTable({  
+         method: "post", 
+         url: "../../CountAnalyse/GuaranteeInfo", 
+         striped: true,  //表格显示条纹  
+         //pagination: true, //启动分页  
+         //pageSize: 5,  //每页显示的记录数  
+         //pageNumber:1, //当前第几页  
+         //pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+           var param = {    
+        		   agencyName :jsonData.txt_agencyName
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+        		 showChart(res);
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+	 	        field: 'agencyName',
+	 	        title: '客户名称',
+	 	        align: 'center',
+			            valign: 'middle'
+			 	},{
+	 	        field: 'agencyNum',
+	 	        title: '组织机构代码证号',
+	 	        align: 'center',
+			            valign: 'middle'
+			 	},{
+	 	        field: 'financAemountSum',
+	 	        title: '总计应缴保证金金额',
+	 	        align: 'center',
+			    valign: 'middle'
+			 	},{
+		 	        field: 'payAmtSum',
+		 	        title: '总计实缴保证金金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'payAmtSum',
+		 	        title: '总计未缴保证金金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },{
+		 	        field: 'payAmtSum',
+		 	        title: '总计剩余保证金金额',
+		 	        align: 'center',
+		            valign: 'middle'
+		 	    },]
+       });  
+}
+
+function showChart(data){
+	 var myChart = echarts.init(document.getElementById('echart'));
+	 var financAemountTotal = 0;
+	 var payAmtTotal = 0;
+	 $.each(data.dataList, function(index, value) {
+		 financAemountTotal += value.financAemountSum;
+		 payAmtTotal += value.payAmtSum;
+		});
+     // 指定图表的配置项和数据
+     var option = {
+        tooltip: {
+     trigger: 'item',
+     formatter: "{a} <br/>{b}: {c} ({d}%)"
+ },
+ legend: {
+     orient: 'vertical',
+     x: 'left',
+     data:['总计融资金额','总计放款金额']
+ },
+ series: [
+     {
+         name:'访问来源',
+         type:'pie',
+         selectedMode: 'single',
+         radius: [0, '30%'],
+
+         label: {
+             normal: {
+                 position: 'inner'
+             }
+         },
+         labelLine: {
+             normal: {
+                 show: false
+             }
+         },
+         data:[
+             {value:financAemountTotal, name:'总计融资金额', selected:true},
+             {value:payAmtTotal, name:'总计放款金额'}
+         ]
+     },
+     {
+         name:'访问来源',
+         type:'pie',
+         radius: ['40%', '55%'],
+
+         data:[
+             {value:financAemountTotal, name:'总计融资金额'},
+             {value:payAmtTotal, name:'总计放款金额'}
+         ]
+     }
+ ]
+     };
+     // 使用刚指定的配置项和数据显示图表。
+     myChart.setOption(option);
+}
+
+function searchFun(){
+	initTable();
+}

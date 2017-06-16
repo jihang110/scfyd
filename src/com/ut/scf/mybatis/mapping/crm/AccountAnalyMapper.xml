@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.IAccountAnalyDao">
+<select id="selectAccountAnalyList" resultType="hashmap" parameterType="hashmap">
+	select r.rec_uid recUid, r.corp_id corpId, r.buyer_name buyerName, c.corp_name corpName,
+	r.contract_id contractId, r.invoice_id invoiceId, r.invoice_amount invoiceAmount, 
+	DATE_FORMAT(r.invoice_time,'%Y-%m-%d') invoiceTime, DATE_FORMAT(r.expected_payment_time,'%Y-%m-%d') expectedPaymentTime, 
+	DATE_FORMAT(r.actual_payment_time,'%Y-%m-%d') actualPaymentTime, r.actual_payment_amount actualPaymentAmount,
+    r.if_expired ifExpired,r.if_overdue ifOverdue,r.overdue_days overdueDays 
+    from receive_account_analy r JOIN corp_info c on r.corp_id = c.corp_id
+    where 1=1 and c.status = 1
+	<if test="corpId != null">
+	  and r.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and r.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and r.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and r.create_user_id = #{createUserId}
+	</if>
+</select>
+<insert id="insertAccountAnaly" parameterType="hashmap">
+	 insert into receive_account_analy (rec_uid, corp_id, buyer_name, 
+      contract_id, invoice_id, invoice_amount, 
+      invoice_time, expected_payment_time, actual_payment_time, 
+      actual_payment_amount, if_expired, if_overdue, 
+      overdue_days, rela_corp_id, create_user_id, 
+      create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{buyerName,jdbcType=VARCHAR}, 
+      #{contractId,jdbcType=VARCHAR}, #{invoiceId,jdbcType=VARCHAR}, #{invoiceAmount,jdbcType=DECIMAL}, 
+      #{invoiceTime,jdbcType=TIMESTAMP}, #{expectedPaymentTime,jdbcType=TIMESTAMP}, #{actualPaymentTime,jdbcType=TIMESTAMP}, 
+      #{actualPaymentAmount,jdbcType=DECIMAL}, #{ifExpired,jdbcType=TINYINT}, #{ifOverdue,jdbcType=TINYINT}, 
+      #{overdueDays,jdbcType=SMALLINT}, #{relaCorpId,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, 
+      now())
+</insert>
+
+<delete id="deleteAccountAnaly" parameterType="java.lang.String">
+	delete from receive_account_analy
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+</delete>
+
+<update id="updateAccountAnaly" parameterType="hashmap">
+	update receive_account_analy
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="buyerName != null">
+        buyer_name = #{buyerName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractId != null">
+        contract_id = #{contractId,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceId != null">
+        invoice_id = #{invoiceId,jdbcType=VARCHAR},
+      </if>
+      <if test="invoiceAmount != null">
+        invoice_amount = #{invoiceAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="invoiceTime != null">
+        invoice_time = #{invoiceTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expectedPaymentTime != null">
+        expected_payment_time = #{expectedPaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actualPaymentTime != null">
+        actual_payment_time = #{actualPaymentTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actualPaymentAmount != null">
+        actual_payment_amount = #{actualPaymentAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="ifExpired != null">
+        if_expired = #{ifExpired,jdbcType=TINYINT},
+      </if>
+      <if test="ifOverdue != null">
+        if_overdue = #{ifOverdue,jdbcType=TINYINT},
+      </if>
+      <if test="overdueDays != null">
+        overdue_days = #{overdueDays,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+</update>
+
+<select id="accountAnalyProportion" resultType="hashmap" parameterType="hashmap">
+	select floor(datediff(now(),r.invoice_time) / 30) as level, count(*) count,
+	sum(r.invoice_amount) amount from  receive_account_analy r 
+	JOIN corp_info c on r.corp_id = c.corp_id 
+	where 1 = 1 and c.status = 1
+	<if test="corpId != null">
+		and r.corp_id = #{corpId}
+	</if>
+	<if test="relaCorpId != null">
+	  and r.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and r.create_user_id = #{createUserId}
+	</if>
+	 group by level
+</select>
+
+</mapper>

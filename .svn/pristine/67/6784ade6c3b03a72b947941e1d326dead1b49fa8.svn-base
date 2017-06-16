@@ -1,0 +1,896 @@
+package com.ut.scf.web.controller.bpm;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.ScfBizConsts;
+import com.ut.scf.core.dict.ScfCacheDict;
+import com.ut.scf.core.dict.ScfConsts;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.reqbean.bpm.CheckReqBean;
+import com.ut.scf.reqbean.bpm.ContractAddReqBean;
+import com.ut.scf.reqbean.bpm.CreditAddReqBean;
+import com.ut.scf.reqbean.bpm.FinanceAddReqBean;
+import com.ut.scf.reqbean.bpm.FlowSearchPageReqBean;
+import com.ut.scf.reqbean.bpm.LendingApplicationAddReqBean;
+import com.ut.scf.reqbean.bpm.ProDetailReqBean;
+import com.ut.scf.reqbean.bpm.ProjectAddReqBean;
+import com.ut.scf.reqbean.bpm.RiskCtrlReptAddReqBean;
+import com.ut.scf.reqbean.bpm.SpMatterAddReqBean;
+import com.ut.scf.reqbean.bpm.WorkItemReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.service.bpm.IExpenseService;
+import com.ut.scf.service.bpm.IWorkFlowService;
+import com.ut.scf.web.controller.BaseJsonController;
+
+/**
+ * 工作流
+ * @author zhangyx
+ *
+ */
+@Controller
+@RequestMapping("/workflow")
+public class WorkFlowController extends BaseJsonController {
+	
+	// LOG
+	private static final Logger log = LoggerFactory
+			.getLogger(WorkFlowController.class);
+	
+	@Resource
+	private IWorkFlowService workflowService;
+	
+	@Resource 
+	private IExpenseService expenseService;
+	
+	/**
+	 * 特殊事项审批流程发起
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/startSpProcess", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean startSpProcess(HttpSession httpSession,
+			@Valid @RequestBody SpMatterAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		
+		// 获取用户信息
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String roleIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_ROLE_ID);
+		log.debug("roleIdSession: {}", roleIdSession);
+		if(!"ROLE000003".equals(roleIdSession)) {
+			log.warn("roleType has error");
+			respBean.setResult(ErrorCodeEnum.USER_INSUFFICIENT_AUTHORITY);
+			return respBean;
+		}
+		paramMap.put("username", userNameSession);// 用户名
+		paramMap.put("proMembId", userIdSession);
+		paramMap.put("corpId", corpIdSession); // 企业ID
+		paramMap.put("projectName", paramMap.get("proName"));
+		// 项目名称要存在
+		respBean = expenseService.checkExpense(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 创建流程
+		respBean = workflowService.create(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 流程创建成功后添加流程实例与项目名称对应表
+		respBean = expenseService.addPriProject(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	/**
+	 * 标准流程发起
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/startNmProcess", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean startNmProcess(HttpSession httpSession,
+			@Valid @RequestBody ProjectAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		
+		// 获取用户信息
+		String userIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		String corpIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String roleIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_ID);
+		log.debug("roleIdSession: {}", roleIdSession);
+		int roleTypeSession = (int) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_TYPE);
+		log.debug("roleTypeSession: {}", roleTypeSession);
+		if(!"ROLE000003".equals(roleIdSession)) {
+			log.warn("roleType has error");
+			respBean.setResult(ErrorCodeEnum.USER_INSUFFICIENT_AUTHORITY);
+			return respBean;
+		}
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		// 立项人员名称ID
+		paramMap.put("proMembId", userIdSession);
+		// 立项人员名称 TODO
+		paramMap.put("proMembName", userNameSession);
+		// 项目名称
+		paramMap.put("projectName", paramMap.get("proName"));
+		
+		// 关联买方名称要存在
+		Map<String, Object> nameParamMap = new HashMap<String, Object>();
+		nameParamMap.put("corpName", reqBean.getRelBuyName());
+		nameParamMap.put("sysType", "4");
+		// 保理商类型只能查看自己的客户企业数据
+		if (roleTypeSession == ScfBizConsts.ROLE_TYPE_FACTOR) {
+			nameParamMap.put("relaCorpId", corpIdSession);
+		}
+		respBean = expenseService.checkCorpName(nameParamMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 关联卖方名称要存在
+		nameParamMap.put("corpName", reqBean.getRelSaleName());
+		nameParamMap.put("sysType", "5");
+		respBean = expenseService.checkCorpName(nameParamMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 1.检查项目名称不能重复
+		respBean = expenseService.hasProNm(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 2.创建流程
+		respBean = workflowService.create(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 3.流程创建成功后添加费用表
+		respBean = expenseService.addExpense(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 4.流程创建成功后添加流程实例与项目名称对应表
+		respBean = expenseService.addPriProject(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		return respBean;
+	}
+	
+	/**
+	 * 在线申请签约流程发起
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/startOnlineProcess", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean startOnlineProcess(HttpSession httpSession,
+			@Valid @RequestBody ContractAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		
+		// 获取用户信息
+		String userIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		String corpIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String roleIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_ID);
+		log.debug("roleIdSession: {}", roleIdSession);
+		int roleTypeSession = (int) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_TYPE);
+		log.debug("roleTypeSession: {}", roleTypeSession);
+		if(!"ROLE000003".equals(roleIdSession)) {
+			log.warn("roleType has error");
+			respBean.setResult(ErrorCodeEnum.USER_INSUFFICIENT_AUTHORITY);
+			return respBean;
+		}
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		// 立项人员名称ID
+		paramMap.put("proMembId", userIdSession);
+		// 立项人员名称 
+		paramMap.put("proMembName", userNameSession);
+		// 项目名称
+		paramMap.put("projectName", paramMap.get("proName"));
+		paramMap.put("createUserId", userIdSession);
+		
+		// 1.检查项目名称不能重复
+		respBean = expenseService.hasPriProNm(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 2.创建流程
+		respBean = workflowService.create(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 4.流程创建成功后添加流程实例与项目名称对应表
+		respBean = expenseService.addPriProject(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	/**
+	 * 融资直通车流程发起
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/startFinanceProcess", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean startFinanceProcess(HttpSession httpSession,
+			@Valid @RequestBody FinanceAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		
+		// 获取用户信息
+		String userIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		String corpIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String roleIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_ID);
+		log.debug("roleIdSession: {}", roleIdSession);
+		int roleTypeSession = (int) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_TYPE);
+		log.debug("roleTypeSession: {}", roleTypeSession);
+		if(!"ROLE000003".equals(roleIdSession)) {
+			log.warn("roleType has error");
+			respBean.setResult(ErrorCodeEnum.USER_INSUFFICIENT_AUTHORITY);
+			return respBean;
+		}
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		// 立项人员名称ID
+		paramMap.put("proMembId", userIdSession);
+		// 项目名称
+		paramMap.put("projectName", paramMap.get("proName"));
+		
+		// 关联买方名称要存在
+		Map<String, Object> nameParamMap = new HashMap<String, Object>();
+		nameParamMap.put("corpName", reqBean.getRelBuyName());
+		nameParamMap.put("sysType", "4");
+		// 保理商类型只能查看自己的客户企业数据
+		if (roleTypeSession == ScfBizConsts.ROLE_TYPE_FACTOR) {
+			nameParamMap.put("relaCorpId", corpIdSession);
+		}
+		respBean = expenseService.checkCorpName(nameParamMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 关联卖方名称要存在
+		nameParamMap.put("corpName", reqBean.getRelSaleName());
+		nameParamMap.put("sysType", "5");
+		respBean = expenseService.checkCorpName(nameParamMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		// 1.检查项目名称不能重复
+		respBean = expenseService.hasProNm(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 2.创建流程
+		respBean = workflowService.create(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 3.流程创建成功后添加费用表
+		if ("".equals(paramMap.get("commission"))) {
+			paramMap.put("commission", null);
+		}
+		if ("".equals(paramMap.get("managementFeeRate"))) {
+			paramMap.put("managementFeeRate", null);
+		}
+		if ("".equals(paramMap.get("penaltyIntRate"))) {
+			paramMap.put("penaltyIntRate", null);
+		}
+		respBean = expenseService.addExpense(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		// 4.流程创建成功后添加流程实例与项目名称对应表
+		respBean = expenseService.addPriProject(paramMap);
+		if (respBean.getResult() != 0) {
+			return respBean;
+		}
+		
+		return respBean;
+	}
+	
+	/**
+	 * 未结流程一览取得
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/not", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean procNotList(HttpSession httpSession,
+			@Valid @RequestBody FlowSearchPageReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		
+		respBean = workflowService.getNotProcList(reqBean);
+		return respBean;
+	}
+	
+	/**
+	 * 已结流程一览取得
+	 * @param httpSession
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/over", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean workFlowOverList(HttpSession httpSession,
+			@Valid @RequestBody FlowSearchPageReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		
+		respBean = workflowService.getOverProcList(reqBean);
+		return respBean;
+	}
+	
+	/**
+	 * 工作项详情一览取得
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/detail", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean wkiDetailList(HttpSession httpSession,
+			@Valid @RequestBody ProDetailReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.getWkiDetailList(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 查看项目详情
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/info", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean proDetailInfo(HttpSession httpSession,
+			@Valid @RequestBody ProDetailReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.getProDetailInfo(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_特殊事项审批
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_spMatterForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applySpMatter(HttpSession httpSession,
+			@Valid @RequestBody SpMatterAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_立项管理
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_normalForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyNm(HttpSession httpSession,
+			@Valid @RequestBody ProjectAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		// 立项人员名称
+		paramMap.put("proMembName", userNameSession);
+		paramMap.put("projectName", paramMap.get("proName"));
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_授信申请
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_creditForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyCredit(HttpSession httpSession,
+			@Valid @RequestBody CreditAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_风控报告
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_riskCtrlForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyRiskCtrl(HttpSession httpSession,
+			@Valid @RequestBody RiskCtrlReptAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_合同申请
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_contractForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyCnt(HttpSession httpSession,
+			@Valid @RequestBody ContractAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		paramMap.put("createUserId", userIdSession);
+		paramMap.put("relaCorpId", ScfCacheDict.relaCorpIdMap.get(reqBean.getCorpId()));
+		
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_放款申请
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_loanForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyLoan(HttpSession httpSession,
+			@Valid @RequestBody LendingApplicationAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		paramMap.put("createUserId", userIdSession);
+		respBean = expenseService.addCntFlowExpense(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_融资直通车
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_financeForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyFinance(HttpSession httpSession,
+			@Valid @RequestBody FinanceAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		paramMap.put("createUserId", userIdSession);
+
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 申请_在线申请签约
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/apply_onlineForm", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean applyOnline(HttpSession httpSession,
+			@Valid @RequestBody ContractAddReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		paramMap.put("createUserId", userIdSession);
+		paramMap.put("relaCorpId", ScfCacheDict.relaCorpIdMap.get(reqBean.getCorpId()));
+		
+		respBean = workflowService.reApply(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 审批
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/check", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean chkWorkItem(HttpSession httpSession,
+			@Valid @RequestBody CheckReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		// 获取用户信息
+		String corpIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.chkWorkItem(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 终止流程
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/terminate", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean terminate(
+			HttpSession httpSession,
+			@Valid @RequestBody WorkItemReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.terminate(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 权限转移
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/transfer", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean transfer(
+			HttpSession httpSession,
+			@Valid @RequestBody WorkItemReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String userIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USER_ID);
+		log.debug("userIdSession: {}", userIdSession);
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("createUserId", userIdSession);
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		
+		respBean = workflowService.transfer(paramMap);
+		return respBean;
+	}
+	
+	/**
+	 * 查询未结任务数量
+	 * @param httpSession
+	 * @param reqBean
+	 * @param bindingResult
+	 * @return
+	 * @throws IOException
+	 */
+	@RequestMapping(value = "/getOnPassageItemCount", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean getOnPassageItemCount(
+			HttpSession httpSession,
+			@Valid @RequestBody WorkItemReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		String userNameSession = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
+		log.debug("userNameSession: {}", userNameSession);
+		String corpIdSession = (String) httpSession.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("username", userNameSession);
+		paramMap.put("corpId", corpIdSession);
+		respBean = workflowService.getOnPassageItemCount(paramMap);
+		return respBean;
+	}
+}

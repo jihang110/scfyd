@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.IDebtVerificationAnalysisDao">
+  
+  <select id="selectDebtVerificationAnalysisList" parameterType="hashmap" resultType="hashmap">
+    select 
+   	dv.debt_va_id debtVaId, dv.corp_id corpId, 
+   	dv.rigid_debt_analysis rigidDebtAnalysis, 
+    dv.implicit_debt_analysis implicitDebtAnalysis,
+    dv.comprehensive_evaluation comprehensiveEvaluation,
+    ci.corp_name corpName,
+    dv.oper_year operYear
+    from debt_verification_analysis dv
+    join corp_info ci on ci.corp_id=dv.corp_id
+    <where>
+        1=1 and ci.status = 1
+        <if test="corpName!=null and corpName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')   
+        </if>
+        <if test="corpId != null">
+		  and dv.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	 		and dv.corp_id in ${userCorpList}
+		</if>
+		<if test="relaCorpId != null">
+	  		and dv.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and dv.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by dv.create_time desc
+  </select>
+  
+  <delete id="deleteDebtVerificationAnalysis" parameterType="hashmap">
+    delete from debt_verification_analysis
+    where debt_va_id = #{debtVaId}
+  </delete>
+  
+  <insert id="insertDebtVerificationAnalysis" parameterType="hashmap">
+    insert into debt_verification_analysis (debt_va_id, oper_year, corp_id, rela_corp_id, 
+      create_time, create_user_id, rigid_debt_analysis, 
+      implicit_debt_analysis, comprehensive_evaluation
+      )
+    values (#{debtVaId}, #{operYear}, #{corpId}, #{relaCorpId}, 
+     now(), #{createUserId}, #{rigidDebtAnalysis}, 
+      #{implicitDebtAnalysis}, #{comprehensiveEvaluation}
+      )
+  </insert>
+  
+  <update id="updateDebtVerificationAnalysis" parameterType="hashmap">
+    update debt_verification_analysis
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="operYear != null">
+        oper_year = #{operYear},
+      </if>
+      <if test="relaCorpId != null">
+        rela_corp_id = #{relaCorpId},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime},
+      </if>
+      <if test="createUserId != null">
+        create_user_id = #{createUserId},
+      </if>
+      <if test="rigidDebtAnalysis != null">
+        rigid_debt_analysis = #{rigidDebtAnalysis},
+      </if>
+      <if test="implicitDebtAnalysis != null">
+        implicit_debt_analysis = #{implicitDebtAnalysis},
+      </if>
+      <if test="comprehensiveEvaluation != null">
+        comprehensive_evaluation = #{comprehensiveEvaluation},
+      </if>
+    </set>
+    where debt_va_id = #{debtVaId}
+  </update>
+</mapper>

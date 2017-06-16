@@ -1,0 +1,193 @@
+package com.ut.scf.service.project.impl;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import cn.bestsign.sdk.BestSignSDK;
+import cn.bestsign.sdk.domain.vo.params.ReceiveUser;
+import cn.bestsign.sdk.domain.vo.params.SendUser;
+import cn.bestsign.sdk.integration.Constants.CONTRACT_NEEDVIDEO;
+import cn.bestsign.sdk.integration.Constants.USER_TYPE;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.auto.RepaymentInfoMapper;
+import com.ut.scf.dao.project.IBatchInfoDao;
+import com.ut.scf.dao.project.IRepayPlanDao;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.ISignContractService;
+
+@Service("signContractService")
+public class SignContractServiceImpl implements ISignContractService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	private static String MID = "E0000000000000000009";
+	private static String PEM = "MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAMyxNwqvSr8MPt1TRjJUSl8NPL/y2cbWcuWvpUoRNoPMOiqV4Pq36ZASLmvjY9OCW3CkvINED/rWPP2ppZ+KYd5hxM9DZJE4wmou54KTCY/9z0XwpWE5Kat8bg9cKsZGS43Irf9U7Uk85aDRCA5bL55Y8QHVi6WOSG3woISUCeP3AgMBAAECgYB+inPPjCx2TRiz9J4p0QglGObcd0KAdOSU7/AMCPYdpmyzFPL/rCCc61B9bBazlBv5WC4eLD6AwF72JiF4rrDvEWDpp6d/4u7TO01wRzpKkbbbhiUUONYWkbGd6hqY33GIaKXxgh+wSRPbyw93zCrdKQNJpGN/wTEzG0GlKFZcQQJBAO2jm+hoBB8o/XyCYAgd9pwvF4zEWTVucIMMY+0ZSoVZ6yVkUVYpQ4Ocb5fI398z8axybWShwPRUgc+dLOz/ExcCQQDcge681gxZN5+f1TyYt3V9zECU3rkBufUvodthq2ZFIJ8ntjhsdmbJNtzZ6myUeFIFXQeuvz2/Lr2jyQzdd8IhAkA6ovM2bmwN8ERT86uUdShDs48BCfXlLEIQ4/7II0RzERPnnxA+zWG+WNxkPImY/q00WuvJN+xvnWaGfwb1156zAkEAx7DLWSum5yzeW8qqI8sQlanhWnAQryWOi2JS4DJuXW/bcgUtN9xJ3TLX8mi/h/0mmkDTckcyTe6wQqESC4YmwQJBALpmEvN42xTd9BapxqAQscrL51HOM1LzyleMu9qA5O+YDH66wQh3ICIPqwrtDKLVuUqkTaWQcpzRLAtUtwluykQ=";
+	private static String HOST = "https://www.bestsign.info";
+
+	private static String RECEIVE_EMAIL = "1234567@qq.com";
+	private static String RECEIVE_NAME = "Test1";
+	private static String RECEIVE_MOBILE = "13812345678";
+
+	private static String SEND_EMAIL = "22345678@163.com";
+	private static String SEND_NAME = "Test2";
+	private static String SEND_MOBILE = "13912345678";
+
+	@Resource
+	private IBatchInfoDao iBatchInfoDao;
+
+	@Resource
+	private RepaymentInfoMapper repaymentInfoMapper;
+
+	@Resource
+	private IRepayPlanDao iRepayPlanDao;
+
+	// 获取批次信息
+	@Override
+	public BaseRespBean batchInfoList(PageInfoBean page) {
+		PageRespBean respBean = new PageRespBean();
+		List<Map<String, Object>> list = iBatchInfoDao.getBatchInfoList(page);
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	// 获取还款计划
+	@Override
+	public BaseRespBean repaymentInfoList(Map<String, Object> paramMap) {
+		List<Map<String, Object>> list = iRepayPlanDao
+				.selectRepayPlanInfo(paramMap);
+		ListRespBean respBean = new ListRespBean();
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	// 获取超人所需费用
+	@Override
+	public String getCrReqAmtByBatchId(Map<String, Object> paramMap) {
+		return iRepayPlanDao.selectCrReqAmtByBatchId(paramMap);
+	}
+
+	// 上上签
+	// 发送合同 返回合同编号
+	@Override
+	public Map<String, String> sendContract(String path) throws Exception {
+		BestSignSDK sdk = BestSignSDK.getInstance(MID, PEM, HOST);
+		byte[] fileData = getResource(path);
+		ReceiveUser[] userlist = { new ReceiveUser(RECEIVE_EMAIL, RECEIVE_NAME,
+				RECEIVE_MOBILE, USER_TYPE.PERSONAL, CONTRACT_NEEDVIDEO.NONE,
+				false) };
+		SendUser senduser = new SendUser(SEND_EMAIL, SEND_NAME, SEND_MOBILE, 3,
+				false, USER_TYPE.PERSONAL, false, "title", "");
+		JSONObject lastContinfoList = sdk.sjdsendcontractdocUpload(userlist,
+				senduser, fileData);
+		log.info("发送合同：{}", lastContinfoList.toJSONString());
+		String fileId = getLastFileId(lastContinfoList);
+		String signId = getLastContractId(lastContinfoList);
+		Map<String, String> map = new HashMap<>();
+		map.put("fileId", fileId);
+		map.put("signId", signId);
+		return map;
+	}
+
+	// 合同查看
+	@Override
+	public String viewContract(String signid, String fileid) throws Exception {
+		BestSignSDK sdk = BestSignSDK.getInstance(MID, PEM, HOST);
+		String result = sdk.ViewContract(signid, fileid);
+		return result;
+	}
+
+	// 上上签 签署合同
+	@Override
+	public JSONObject autoSignFopp(String signid) throws Exception {
+		BestSignSDK sdk = BestSignSDK.getInstance(MID, PEM, HOST);
+		// 自动签这份合同
+		@SuppressWarnings("serial")
+		Map<String, Object> data = new HashMap<String, Object>() {
+			{
+				put("pagenum", 1);
+				put("signx", 0.5);
+				put("signy", 0.1);
+			}
+		};
+
+		@SuppressWarnings("serial")
+		Map<String, Object> data1 = new HashMap<String, Object>() {
+			{
+				put("pagenum", 1);
+				put("signx", 0.5);
+				put("signy", 0.3);
+			}
+		};
+
+		String Coordinatelist = "[" + JSON.toJSONString(data) + ","
+				+ JSON.toJSONString(data1) + "]";
+
+		JSONObject lastContinfoList = sdk.AutoSignFopp(RECEIVE_EMAIL, signid,
+				Coordinatelist, "1", "", "");
+		log.info("签署合同：{}", lastContinfoList.toJSONString());
+		return lastContinfoList;
+
+	}
+
+	private byte[] getResource(String path) throws IOException {
+		File file = new File(path);
+		long fileSize = file.length();
+		if (fileSize > Integer.MAX_VALUE) {
+			return null;
+		}
+		FileInputStream fi = new FileInputStream(file);
+		byte[] buffer = new byte[(int) fileSize];
+		int offset = 0;
+		int numRead = 0;
+		while (offset < buffer.length
+				&& (numRead = fi.read(buffer, offset, buffer.length - offset)) >= 0) {
+			offset += numRead;
+		}
+
+		fi.close();
+		return buffer;
+	}
+
+	// 提取lastContinfoList的signid
+	private static String getLastContractId(JSONObject jsonObject) {
+		if (jsonObject == null) {
+			return "";
+		}
+		JSONObject response = jsonObject.getJSONObject("response");
+		JSONObject content = response.getJSONObject("content");
+		JSONArray continfoList = content.getJSONArray("contlist");
+		JSONObject contractInfo = continfoList.getJSONObject(0);
+		contractInfo = contractInfo.getJSONObject("continfo");
+		String signid = contractInfo.getString("signid");
+		return signid;
+	}
+
+	// 提取lastContinfoList的docid
+	private String getLastFileId(JSONObject jsonObject) {
+		JSONObject response = jsonObject.getJSONObject("response");
+		JSONObject content = response.getJSONObject("content");
+		JSONArray continfoList = content.getJSONArray("contlist");
+		JSONObject contractInfo = continfoList.getJSONObject(0);
+		contractInfo = contractInfo.getJSONObject("continfo");
+		String docid = contractInfo.getString("docid");
+		return docid;
+	}
+}

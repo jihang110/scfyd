@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <!-- classPathEntry:数据库的JDBC驱动,换成你自己的驱动位置 -->
+  <classPathEntry location="C:\Users\CL\.gradle\caches\modules-2\files-2.1\mysql\mysql-connector-java\5.1.38\dbbd7cd309ce167ec8367de4e41c63c2c8593cc5/mysql-connector-java-5.1.38.jar" />
+  <context id="context1">
+    <jdbcConnection connectionURL="jdbc:mysql://localhost:3306/scfcore?tinyInt1isBit=false" driverClass="com.mysql.jdbc.Driver" password="std" userId="std" />
+    <javaModelGenerator targetPackage="com.ut.scf.pojo" targetProject="scfcloud" />
+    <sqlMapGenerator targetPackage="com.ut.scf.mybatis.mapping" targetProject="scfcloud" />
+    <javaClientGenerator targetPackage="com.ut.scf.dao" targetProject="scfcloud" type="XMLMAPPER" />
+    <table schema="scfcore" tableName="corp_operate_analy">
+    </table>
+  </context>
+</generatorConfiguration>

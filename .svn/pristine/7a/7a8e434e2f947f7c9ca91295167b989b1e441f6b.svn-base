@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.ICorpDao">
+	<resultMap id="CorpDeptResultMap" type="com.ut.scf.pojo.auto.CorpDept">
+		<id column="dept_id" jdbcType="VARCHAR" property="deptId" />
+		<result column="dept_name" jdbcType="VARCHAR" property="deptName" />
+		<result column="corp_id" jdbcType="VARCHAR" property="corpId" />
+		<result column="parent_id" jdbcType="VARCHAR" property="parentId" />
+		<result column="contact_person" jdbcType="VARCHAR" property="contactPerson" />
+		<result column="contact_phone" jdbcType="VARCHAR" property="contactPhone" />
+		<result column="note" jdbcType="VARCHAR" property="note" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+	</resultMap>
+
+	<resultMap id="CorpInfoResultMap" type="com.ut.scf.pojo.auto.CorpInfo">
+		<id column="corp_id" jdbcType="VARCHAR" property="corpId" />
+		<result column="corp_name" jdbcType="VARCHAR" property="corpName" />
+		<result column="corp_type" jdbcType="VARCHAR" property="corpType" />
+		<result column="sys_type" jdbcType="SMALLINT" property="sysType" />
+		<result column="is_country" jdbcType="TINYINT" property="isCountry" />
+		<result column="legal_person" jdbcType="VARCHAR" property="legalPerson" />
+		<result column="control_person" jdbcType="VARCHAR" property="controlPerson" />
+		<result column="reg_date" jdbcType="TIMESTAMP" property="regDate" />
+		<result column="logo_url" jdbcType="VARCHAR" property="logoUrl" />
+		<result column="real_pay_cap" jdbcType="INTEGER" property="realPayCap" />
+		<result column="reg_cap" jdbcType="INTEGER" property="regCap" />
+		<result column="industry" jdbcType="VARCHAR" property="industry" />
+		<result column="reg_address" jdbcType="VARCHAR" property="regAddress" />
+		<result column="office_address" jdbcType="VARCHAR" property="officeAddress" />
+		<result column="spec_natural" jdbcType="VARCHAR" property="specNatural" />
+		<result column="busi_scope" jdbcType="VARCHAR" property="busiScope" />
+		<result column="history_evc" jdbcType="VARCHAR" property="historyEvc" />
+		<result column="rela_corp_id" jdbcType="VARCHAR" property="relaCorpId" />
+		<result column="staff_num" jdbcType="INTEGER" property="staffNum" />
+		<result column="fixed_phone" jdbcType="VARCHAR" property="fixedPhone" />
+		<result column="note" jdbcType="VARCHAR" property="note" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="status" jdbcType="TINYINT" property="status" />
+		<result column="ccy" jdbcType="VARCHAR" property="ccy" />
+		<result column="loanCardNo" jdbcType="VARCHAR" property="loanCardNo" />
+		<result column="nTaxReg" jdbcType="VARCHAR" property="nTaxReg" />
+		<result column="lTaxReg" jdbcType="VARCHAR" property="lTaxReg" />
+	</resultMap>
+
+	<select id="getCorpInfoList" resultType="hashmap" parameterType="hashmap">
+		select
+		ci.corp_id corpId, ci.corp_name corpName,ci.reg_cap regCap, ci.orgn_num orgnNum,
+		ci.corp_type corpType, ci.is_country isCountry, ci.sys_type sysType,
+		ci.note note,
+		ci.legal_person legalPerson,ci.ccy ccy, ci.control_person controlPerson,
+		ci.fixed_phone fixedPhone, ci.reg_date regDate, ci.logo_url logoUrl,
+		ci.staff_num staffNum, ci.real_pay_cap realPayCap, ci.industry
+		industry, ci.rela_corp_id relaCorpId, ci.reg_address regAddress,
+		ci.office_address officeAddress, ci.history_evc historyEvc,
+		ci.spec_natural specNatural, ci.busi_scope busiScope ,
+		temp.corp_name relaCorpName
+		from corp_info ci
+		LEFT JOIN corp_info temp on temp.corp_id=ci.rela_corp_id
+		<where>
+			ci.status=1
+			<if test="orgnNum != null and orgnNum !=''">
+				and ci.orgn_num LIKE CONCAT(CONCAT('%', #{orgnNum}),'%')
+			</if>
+			<if test="corpId!=null and corpId!='' ">
+				and ci.corp_id = #{corpId}
+			</if>
+			<if test="userCorpList !=null">
+				and ci.corp_id in ${userCorpList}
+			</if>
+			<if test="corpName!=null and corpName!='' ">
+				<choose>
+					<when test="corpNameIsAll == 1">
+						and ci.corp_name = #{corpName}
+					</when>
+					<otherwise>
+						and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')
+					</otherwise>
+				</choose>
+			</if>
+			<if test="legalPerson!=null and legalPerson!='' ">
+				and ci.legal_person LIKE CONCAT(CONCAT('%', #{legalPerson}),'%')
+			</if>
+			<if test="controlPerson!=null and controlPerson!='' ">
+				and ci.control_person LIKE CONCAT(CONCAT('%', #{controlPerson}),'%')
+			</if>
+			<if test="sysType!=null and sysType!='' ">
+				and ci.sys_type=#{sysType}
+			</if>
+			<if test="relaCorpId != null">
+				and ci.rela_corp_id = #{relaCorpId}
+			</if>
+			<if test="createUserId != null">
+				and ci.create_user_id = #{createUserId}
+			</if>
+		</where>
+	</select>
+	<select id="getCorpInfoByUserId" resultType="com.ut.scf.pojo.auto.CorpInfo"
+		parameterType="string">
+		SELECT
+		c.corp_name corpName,
+		c.agency_num agencyNum,
+		c.orgn_num orgnNum,
+		c.corp_id corpId
+		FROM
+		corp_info c
+		INNER JOIN sys_user u ON c.corp_id =
+		u.corp_id
+		<where>
+			u.user_id = #{userId}
+		</where>
+	</select>
+	<select id="countCorpByName" resultType="int" parameterType="hashmap">
+		select count(1)
+		from corp_info d
+		where d.status=1 and d.corp_name = #{corpName}
+		<if test="corpId != null and corpId!=''">
+			and d.corp_id!= #{corpId}
+		</if>
+		<if test="sysType != null and sysType!=''">
+			and d.sys_type= #{sysType}
+		</if>
+		<if test="relaCorpId != null">
+			and d.rela_corp_id = #{relaCorpId}
+		</if>
+	</select>
+
+	<insert id="insertCorp" parameterType="com.ut.scf.pojo.auto.CorpInfo">
+		insert into corp_info (corp_id, corp_name, corp_type,
+		sys_type, is_country, legal_person,
+		control_person, reg_date, logo_url,
+		real_pay_cap, ccy, loan_card_no,
+		industry, national_tax_registration, local_tax_registration,
+		reg_cap, reg_address, office_address,
+		spec_natural, busi_scope, history_evc,
+		rela_corp_id, staff_num, fixed_phone,
+		note, create_time, create_user_id, status)
+		values (#{corpId}, #{corpName}, #{corpType},
+		#{sysType}, #{isCountry}, #{legalPerson},
+		#{controlPerson}, #{regDate}, #{logoUrl},
+		#{realPayCap}, #{ccy}, #{loanCardNo},
+		#{industry}, #{nTaxReg}, #{lTaxReg},
+		#{regCap}, #{regAddress}, #{officeAddress},
+		#{specNatural}, #{busiScope}, #{historyEvc},
+		#{relaCorpId}, #{staffNum}, #{fixedPhone},
+		#{note},now(),#{createUserId},1)
+	</insert>
+
+	<update id="updateCorpInfoByPrimaryKey" parameterType="hashmap">
+		update corp_info
+		<set>
+			<if test="corpName != null">
+				corp_name = #{corpName},
+			</if>
+			<if test="corpType != null  and corpType !=''">
+				corp_type = #{corpType},
+			</if>
+			<if test="sysType != null and sysType !='' ">
+				sys_type = #{sysType},
+			</if>
+			<if test="isCountry != null">
+				is_country = #{isCountry},
+			</if>
+			<if test="legalPerson != null">
+				legal_person = #{legalPerson},
+			</if>
+
+			reg_cap = #{regCap},
+
+			<if test="ccy != null">
+				ccy = #{ccy},
+			</if>
+			<if test="loanCardNo != null">
+				loan_card_no = #{loanCardNo},
+			</if>
+			<if test="nTaxReg != null">
+				national_tax_registration = #{nTaxReg},
+			</if>
+			<if test="lTaxReg != null">
+				local_tax_registration = #{lTaxReg},
+			</if>
+
+			<if test="controlPerson != null">
+				control_person = #{controlPerson},
+			</if>
+			<if test="regDate != null">
+				reg_date = #{regDate},
+			</if>
+			<if test="logoUrl != null">
+				logo_url = #{logoUrl},
+			</if>
+			real_pay_cap = #{realPayCap},
+			<if test="industry != null">
+				industry = #{industry},
+			</if>
+			<if test="regAddress != null">
+				reg_address = #{regAddress},
+			</if>
+			<if test="officeAddress != null">
+				office_address = #{officeAddress},
+			</if>
+			<if test="specNatural != null">
+				spec_natural = #{specNatural},
+			</if>
+			<if test="busiScope != null">
+				busi_scope = #{busiScope},
+			</if>
+			<if test="historyEvc != null">
+				history_evc = #{historyEvc},
+			</if>
+			<if test="relaCorpId != null">
+				rela_corp_id = #{relaCorpId},
+			</if>
+
+			staff_num = #{staffNum},
+
+			<if test="fixedPhone != null">
+				fixed_phone = #{fixedPhone},
+			</if>
+			<if test="status != null">
+				status = #{status},
+			</if>
+			<if test="note != null">
+				note = #{note}
+			</if>
+		</set>
+		where corp_id = #{corpId} and status = 1
+	</update>
+
+	<select id="countDeptByCorpId" resultType="int" parameterType="string">
+		select count(1)
+		from corp_dept d
+		where d.status=1 and d.corp_id = #{corpId}
+	</select>
+
+	<select id="selectAllRelaCorp" resultType="map">
+		select c.corp_id corpId, c.rela_corp_id relaCorpId
+		from corp_info c
+		where c.status=1 and c.rela_corp_id is not null and c.rela_corp_id != ''
+	</select>
+
+	<select id="getAgencyInfoList" resultType="hashmap"
+		parameterType="hashmap">
+		select
+		ci.corp_id corpId,
+		ci.corp_name agencyName,
+		ci.agency_num agencyNum,
+		li.max_credit_amount maxCreditAmout,
+		li.use_able_credit_amt useAbleCrediAmt
+		from corp_info ci
+		LEFT JOIN limit_info li on ci.corp_id=li.corp_id
+		<where>
+			ci.sys_type =4
+			<if test="agencyName!=null and agencyName!='' ">
+				and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+			</if>
+		</where>
+	</select>
+
+	<select id="getAgencyRevenueList" resultType="hashmap"
+		parameterType="hashmap">
+		select
+		c.corp_id corpId,
+		c.corp_name corpName,
+		c.orgn_num orgnNum,
+		f.finance_id financeId,
+		f.finance_start_date financeStartDate,
+		f.finance_end_date financeEndDate,
+		f.finance_amount financeAmount,
+		f.pay_amt payAmt,
+		r.interest_sum interestSum,
+		r.this_interest thisInterest,
+        rf.repayment_id repaymentId
+		from
+		corp_info c
+		left join finance_info f ON c.corp_id = f.corp_id
+		left join revenue_management r ON f.finance_id = r.finance_id
+		left join repayment_finance_batch rf ON f.finance_id = rf.finance_id
+		<where>
+			f.finance_status = 2
+			<if test="agencyName!=null and agencyName!='' ">
+				and c.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+			</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,49 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+$(function () {
+	"use strict";
+    setForm();
+ });
+function setForm(){
+	var data = {};
+	data.taskId = taskId;
+	 var options = {
+		url : '../../custInfo/getTaskDataByTaskId',
+		data : JSON.stringify(data),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				debugger
+				var jsonData =  eval("(" + data.str + ")");
+				CloudUtils.setForm(jsonData,"detailForm");
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			//bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	 CloudUtils.ajax(options);
+}
+
+function doAgree(type){
+//	alert(type);
+	debugger
+	var data = CloudUtils.convertStringJson('detailForm');
+	data = eval("(" + data + ")");
+	data.agree = type;
+	data.taskId = taskId;
+	var options = {
+				url : '../../custInfo/doAgree',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					console.log(data);
+				},
+				errorCallback : function(data) {
+					//bootbox.alert(data.resultNote);
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+}

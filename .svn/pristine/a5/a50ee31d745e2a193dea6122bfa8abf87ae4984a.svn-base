@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IActivitiDao">
+    
+ <select id="selectAgencyTask" parameterType="map" resultType="map">
+	  	SELECT DISTINCT
+		RES.ID_ taskId,P.NAME_ procdefName,RES.PROC_INST_ID_ procInstId,RES.PROC_DEF_ID_ procDefId,RES.NAME_ taskName,
+		RES.TASK_DEF_KEY_ taskDefKey,DATE_FORMAT(RES.CREATE_TIME_,'%Y-%m-%d %T') createTime
+	from
+		activitiyd.ACT_RU_TASK RES
+	JOIN activitiyd.act_re_procdef P on P.ID_ = RES.PROC_DEF_ID_
+	INNER JOIN activitiyd.ACT_RU_IDENTITYLINK I ON I.TASK_ID_ = RES.ID_
+	
+	<where>
+		RES.ASSIGNEE_ IS NULL AND I.TYPE_ = 'candidate' 
+		<if test="userId !=null">
+			AND I.USER_ID_ = #{userId}
+		</if>
+	</where>
+	ORDER BY RES.ID_ ASC
+ </select>
+</mapper>

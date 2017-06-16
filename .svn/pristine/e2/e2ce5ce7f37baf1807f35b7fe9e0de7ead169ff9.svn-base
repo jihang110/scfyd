@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IFinanceInfoDao" >
+
+	<resultMap id="FinanceInfoResultMap" type="com.ut.scf.pojo.auto.FinanceInfo">
+		<id column="finance_id" jdbcType="VARCHAR" property="financeId" />
+	    <result column="apply_date" jdbcType="DATE" property="applyDate" />
+	    <result column="agency_name" jdbcType="VARCHAR" property="agencyName" />
+	    <result column="agency_num" jdbcType="VARCHAR" property="agencyNum" />
+	    <result column="max_credit" jdbcType="DECIMAL" property="maxCredit" />
+	    <result column="available_credit" jdbcType="DECIMAL" property="availableCredit" />
+	    <result column="finance_rate" jdbcType="DECIMAL" property="financeRate" />
+	    <result column="cash_rate" jdbcType="DECIMAL" property="cashRate" />
+	    <result column="finance_start_date" jdbcType="DATE" property="financeStartDate" />
+	    <result column="finance_end_date" jdbcType="DATE" property="financeEndDate" />
+	    <result column="finance_amount" jdbcType="DECIMAL" property="financeAmount" />
+	    <result column="expense" jdbcType="DECIMAL" property="expense" />
+	    <result column="margin_pay_date" jdbcType="DATE" property="marginPayDate" />
+	    <result column="margin_deposit" jdbcType="DECIMAL" property="marginDeposit" />
+	    <result column="actual_margin_pay" jdbcType="DECIMAL" property="actualMarginPay" />
+	    <result column="deposit_pay" jdbcType="DECIMAL" property="depositPay" />
+	    <result column="remark" jdbcType="VARCHAR" property="remark" />
+	    <result column="finance_status" jdbcType="VARCHAR" property="financeStatus" />
+	    <result column="audit_opinion" jdbcType="VARCHAR" property="auditOpinion" />
+	    <result column="opinion_note" jdbcType="VARCHAR" property="opinionNote" />
+	    <result column="his_opinion_note" jdbcType="VARCHAR" property="hisOpinionNote" />
+  	</resultMap>
+  
+  <select id="getFinanceInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+    finance_id financeId, apply_date applyDate, agency_name agencyName, agency_num agencyNum, max_credit maxCredit, available_credit availableCredit, finance_rate financeRate, 
+    cash_rate cashRate, finance_start_date financeStartDate, finance_end_date financeEndDate, finance_amount financeAmount, expense, margin_pay_date marginPayDate, 
+    margin_deposit marginDeposit, actual_margin_pay actualMarginPay, deposit_pay, remark, finance_status financeStatus, audit_opinion auditOpinion, 
+    opinion_note opinionNote, his_opinion_note hisOpinionNote
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+  </select>
+  
+</mapper>

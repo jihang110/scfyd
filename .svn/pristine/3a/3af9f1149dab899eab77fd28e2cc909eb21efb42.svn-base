@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.ISignContractDao" >
+
+
+  <select id="orderInfoByBatchId" resultType="hashmap" parameterType="hashmap" >
+   	SELECT
+		o.order_id orderId,
+		o.product_id productId,
+		o.product_name productName,
+		o.product_amt productAmt,
+		o.period,
+		o.loan,
+		o.seller_id sellerId,
+		o.seller_name sellerName,
+		o.cr_req_amt crReqAmt,
+		o.start_pay_amt startPayAmt,
+		o.pay_m payM,
+		o.start_pay_day startPayDay,
+		o.order_status orderStatus,
+		o.order_batch_id orderBatchId,
+		s.stu_name stuName,
+		s.gender,
+		s.age,
+		s.birth_date birthDate,
+		s.id_card idCard,
+		s.mobile_phone mobilePhone,
+		s.school_name schoolName,
+		s.grade,
+		s.nation,
+		s.graduate_date graduateDate
+	from
+		order_info o
+	INNER JOIN stu_info s ON o.stu_id = s.stu_id
+   	where o.order_batch_id= #{orderBatchId}
+   
+  </select>
+  
+  
+  
+  
+  
+</mapper>

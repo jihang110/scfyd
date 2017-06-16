@@ -1,0 +1,124 @@
+package com.ut.scf.service.project.impl;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.auto.FinanceInfoMapper;
+import com.ut.scf.dao.project.IFinanceInfoDao;
+import com.ut.scf.pojo.auto.FinanceInfo;
+import com.ut.scf.pojo.auto.FinanceInfoExample;
+import com.ut.scf.pojo.auto.FinanceInfoExample.Criteria;
+import com.ut.scf.reqbean.project.FinanceInfoUpdateReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IFinanceInfoService;
+
+@Service("financeInfoService")
+public class FinanceInfoServiceImpl implements IFinanceInfoService{
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+	
+	@Resource
+	private FinanceInfoMapper financeInfoMapper;
+	@Resource
+	private IFinanceInfoDao financeInfoDao;
+	
+	/**
+	 * 条件查询 分页获取financeInfo
+	 * 
+	 * @param paramMap
+	 * @param page
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getFinanceInfoList(Map<String, Object> paramMap,
+			PageInfoBean page) {
+		List<Map<String, Object>> list = financeInfoDao.getFinanceInfoList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		paramMap.get("agencyName");
+		paramMap.get("agencyNum");
+		paramMap.get("financeId");
+		paramMap.get("financeStartDate");
+		paramMap.get("financeEndDate");
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	/**
+	 * 新增 
+	 * 
+	 * @param paramMap
+	 * 
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean insertFinanceInfo(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		paramMap.put("financeId", ScfUUID.generate());
+		
+		FinanceInfo record = new FinanceInfo();
+		BeanUtil.mapToBean(paramMap, record);
+		int insertNum = financeInfoMapper.insert(record);
+		
+		log.debug("insert financeInfo num {}", insertNum);
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+
+		return respBean;
+	}
+
+	
+	/**
+	 * 删除   product
+	 * 
+	 * @param financeId
+	 */
+	@Override
+	public BaseRespBean deleteFinanceInfo(String financeId) {
+		BaseRespBean respBean = new BaseRespBean();
+		FinanceInfo record = new FinanceInfo();
+		record.setFinanceId(financeId);
+		int deleteNum = financeInfoMapper.deleteByPrimaryKey(financeId);
+		log.debug("delete product num {}", deleteNum);
+		if (deleteNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.DELETE_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean updateFinanceInfo(
+			FinanceInfoUpdateReqBean reqBean) {
+		BaseRespBean respBean = new BaseRespBean();
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		FinanceInfo record = new FinanceInfo();
+		BeanUtil.mapToBean(paramMap, record);
+		int updateNum = financeInfoMapper.updateByPrimaryKeySelective(record);
+		log.debug("update financeInfo num {}", updateNum);
+		if (updateNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+}

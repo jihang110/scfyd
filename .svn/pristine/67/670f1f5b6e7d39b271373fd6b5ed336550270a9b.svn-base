@@ -1,0 +1,31 @@
+package com.ut.scf.web.controller.project;
+
+import java.io.IOException;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ut.scf.service.project.IRepayMagagerService;
+
+@Controller
+@RequestMapping("/repay")
+public class RepayManagerController {
+	@Resource
+	private IRepayMagagerService repayMagagerService;
+
+	@RequestMapping(value = "/list")
+	public @ResponseBody Object corpUpdate(@RequestParam Map<String, String> map)
+			throws IOException {
+		String result = repayMagagerService
+				.httpURLConnectionPOST(map,
+						"http://api.fenqichaoren.com/p2p/finance/temp_finance_repay.php");
+		Object object = JSONObject.stringToValue(result);
+		return object;
+	}
+}

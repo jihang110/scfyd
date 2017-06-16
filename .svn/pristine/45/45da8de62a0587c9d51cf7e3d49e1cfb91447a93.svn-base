@@ -1,0 +1,203 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
+var procdefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procdefKey;
+var processDefinitionId = "";
+$(function(){
+	showTabs();
+	showGraph();
+	initTaskTable(procInstId);
+	getAllHisVal();
+});
+function showTabs(){
+	showOrHideButton();
+	//企业信息管理
+	debugger;
+	if(procdefKey=="custManage"){
+		debugger
+		if(taskDefKey=="usertask1"){
+			//在申请
+			CloudUtils.getTab("../../pubManager/custManager/custReapplyPackage.html","projectInfo");
+			jQuery.getScript("../../js/project/agencyCommon/custReapply.js");
+		}else{
+			//审批
+			CloudUtils.getTab("../../pubManager/custManager/custAgencyPackage.html","projectInfo");
+			jQuery.getScript("../../js/project/agencyCommon/custInfo.js");
+		}
+	}else if(procdefKey=="contractManager"){
+		if(taskDefKey=="task_contract_pm" ||taskDefKey=="task_contract_fw"){
+			CloudUtils.getTab('../../project/dykManager/contractManager/contractAgencyTask.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/contractManager/contractAgencyTask.js");
+		}
+	}
+}
+
+function showOrHideButton(){
+	if(taskDefKey=="usertask1"){
+		$(".reapplyButton").show();
+		$(".agencyButton").hide();
+	}else{
+		$(".reapplyButton").hide();
+		$(".agencyButton").show();
+	}
+}
+
+//图片
+function showGraph(){
+	$("#pic").attr("src", "../../activiti/graph?processDefinitionId="+processDefinitionId+
+			"&processInstanceId="+procInstId+"&taskId="+taskId);
+	$("#picModal").modal({backdrop: 'static', keyboard: false});
+}
+//历史
+function initTaskTable(procInstId){
+	$('#taskListTable').bootstrapTable('destroy');  
+	$("#taskListTable").bootstrapTable({  
+	     method: "post", 
+	     url: "../../activiti/getHistoryTaskList", 
+	     striped: false,  //表格显示条纹  
+	     search: false,  //是否启用查询  
+	     showColumns: false,  //显示下拉框勾选要显示的列  
+	     showRefresh: false,  //显示刷新按钮  
+	     sidePagination: "server", //表示服务端请求  
+	     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	     //设置为limit可以获取limit, offset, search, sort, order  
+	     queryParamsType : "undefined",   
+	     queryParams: function queryParams(params) {//设置查询参数  
+	       var param = {    
+	    	   procInstId: procInstId
+	       };    
+	       return JSON.stringify(param);                   
+	     },  
+	     responseHandler:function responseHandler(res) {
+	    	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+	    	 } else {
+	    		 alert(res.resultNote);
+	    		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+	    	 }
+	     },
+	     columns: [{
+		        field: 'procInstId',
+		        title: '进程Id',
+		        align: 'center',
+	            valign: 'middle',
+	            visible:false
+		    }, {
+		        field: 'taskId',
+		        title: 'taskId',
+		        align: 'center',
+	            valign: 'middle',
+	            visible:false
+	            
+		    },{
+		        field: 'name',
+		        title: '任务名称',
+		        align: 'center',
+	            valign: 'middle'
+		    }, {
+		        field: 'assignee',
+		        title: '办理人',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'createTime',
+		        title: '创建时间',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'endTime',
+		        title: '结束时间',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+	 	        field: 'operation',
+	 	        title: '编辑',
+	 	        align: 'center',
+	 	       formatter:function(value,row,index){
+	 	        	var d = '<a class = "fa fa-list-ul detail" style="color:#d864fd;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+		 	        return d;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }]
+	   });  
+}
+//获取历审核的意见
+function getAllHisVal(){
+ 	$('#historyAdviceTable').bootstrapTable('destroy');  
+	$("#historyAdviceTable").bootstrapTable({  
+	     method: "post", 
+	     url: "../../activiti/getAllHistoryVariable", 
+	     striped: false,  //表格显示条纹  
+	     search: false,  //是否启用查询  
+	     showColumns: false,  //显示下拉框勾选要显示的列  
+	     showRefresh: false,  //显示刷新按钮  
+	     sidePagination: "server", //表示服务端请求  
+	     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	     //设置为limit可以获取limit, offset, search, sort, order  
+	     queryParamsType : "undefined",   
+	     queryParams: function queryParams(params) {//设置查询参数  
+	       var param = {    
+	    	   procInstId: procInstId
+	       };    
+	       return JSON.stringify(param);                   
+	     },  
+	     responseHandler:function responseHandler(res) {
+	    	 if (res.result==0) {
+	    		 debugger
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+	    	 } else {
+	    		 alert(res.resultNote);
+	    		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+	    	 }
+	     },
+	     columns: [{
+		        field: 'assignee',
+		        title: '办理人',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'createTime',
+		        title: '创建时间',
+		        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+		 	        return CloudUtils.FormatDate(value);
+	 	        }
+		    },{
+		        field: 'agree',
+		        title: '是否同意',
+		        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+	            	if(value=="0"){
+	            		return "是";
+	            	}else if(value="1"){
+	            		return "否";
+	            	}
+	 	        }
+		    },{
+		        field: 'advice',
+		        title: '意见',
+		        align: 'center',
+	            valign: 'middle'
+		    }]
+	   });  
+}
+
+function goback(){
+	history.go(-1);
+}

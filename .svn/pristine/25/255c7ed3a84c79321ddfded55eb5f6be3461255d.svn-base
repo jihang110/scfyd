@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.IUserCorpJurDao">
+	<select id="selectCorpListByUserId" resultType="hashmap" parameterType="hashmap">
+	select 
+		j.rec_uid recUid, 
+		j.user_id userId, 
+		j.corp_id corpId,
+		c.corp_name corpName
+	from user_corp_jurisdiction j join corp_info c on j.corp_id=c.corp_id
+	<where>
+		c.status = 1 and
+		j.user_id = #{userId}
+	</where>
+	 order by j.create_time	
+	</select>
+
+	<insert id="insertUserCorpJur" parameterType="java.util.List">
+		INSERT INTO
+		user_corp_jurisdiction (rec_uid,user_id,corp_id,create_time) VALUES
+		<foreach collection="list" item="userCorpList" index="index" separator="," > 
+		(#{userCorpList.recUid},#{userCorpList.userId},#{userCorpList.corpId},now())
+		</foreach>
+	</insert>
+	
+	<delete id="deleteUserCorpJur" parameterType="java.lang.String">
+		DELETE from
+		user_corp_jurisdiction where user_id in
+		<foreach item="userIdArray" collection="array" open="(" separator="," close=")">
+			#{userIdArray}
+		</foreach>
+	</delete>
+	
+  <update id="updateUserCorpJur" parameterType="hashmap">
+ 	
+  </update>
+  
+  <select id="hasUserCorpJur" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from user_corp_jurisdiction j
+    <where>
+      j.user_id = #{userId}
+    </where>
+  </select>
+</mapper>

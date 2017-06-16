@@ -1,0 +1,193 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var nodeId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).nodeId;
+
+$(function () {
+	initCarInfoListTable();
+	setForm();
+	if (nodeId == "usertask3") {
+		$("#backTarget").val(0);
+		$("[name='agree']").click(function(){
+			if ($(this).val() == '0') {//同意
+				$("#backDiv").hide();
+			} else {//拒绝
+				$("#backDiv").show();
+			}
+		});
+	}	
+    getAllHisVal();
+    numFormat();
+    var agreeObj = $('[name="agree"]')
+    for (var i = 0; i < agreeObj.length; i++) {
+    	agreeObj[i].checked = false;
+    }
+	$("#advice").val("");
+});
+
+function initCarInfoListTable() { 
+	$('#carInfoListTable').bootstrapTable('destroy'); 
+	$("#carInfoListTable").bootstrapTable({  
+		method: "post", 
+        url: "", 
+        striped: true,  //表格显示条纹  
+        pagination: false, //启动分页  
+        search: false,  //是否启用查询  
+        showColumns: false,  //显示下拉框勾选要显示的列  
+        showRefresh: false,  //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType : "undefined",   
+        queryParams: function queryParams(params) {   //设置查询参数  
+          return null;
+        },  
+        responseHandler:function responseHandler(res) {
+       	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+       	 } else {
+       		 bootbox.alert(res.resultNote);
+       		 return {
+	        	 "rows": [],
+	        	 "total": 0
+        	 };
+       	 }
+        },
+         columns: [{
+	 	        field: 'fileUrl',
+	 	        title: '附件地址',
+	 	        align: 'center',
+	            valign: 'middle',
+	            visible: false
+		 	}, {
+	 	        field: 'fileName',
+	 	        title: '附件名称',
+	 	        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+					 var s = '<a href="/../..'+row.fileUrl+'" download="'+value+'">'+value+'</a>';
+			         return s;
+		           
+		        }
+	 	    }, {
+	 	        field: 'fileType',
+	 	        title: '文件格式',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'fileSize',
+	 	        title: '文件大小',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	            visible: false,
+	 	        formatter:function(value,row,index){
+	 	        	var r = '<a class = "fa fa-trash-o remove" style="color:#fa8564;padding:0px 5px;" title="删除" data-type="attach" href="javascript:void(0)"></a>';
+	 	            return r;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }]
+       });  
+}
+
+function setForm() {
+	var options = {
+		url : '../../commitment/getDataByTaskId',
+		data : JSON.stringify({
+			taskId : taskId,
+			varName : "payApplyJson"
+		}),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var json = JSON.parse(data.str);
+				var carListInfo = json.carListInfo;
+				CloudUtils.setForm(json, "addForm");
+				$.each(JSON.parse(carListInfo), function(i, row) {
+					$("#carInfoListTable").bootstrapTable('append', row);
+				});
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}
+
+function getAllHisVal(){
+	var options = {
+		url : '../../commitment/getAllHistoryVariable',
+		data : '{"procInstId":"'+procInstId+'"}',
+		callBackFun : function(data) {
+			$.each(data.dataList, function(i, rec) {
+				var s = '<li>';
+				s+= rec.assignee + ' ';
+				s+= CloudUtils.FormatDate(rec.createTime) + ' ';
+				s+= rec.taskName + ' ';
+				s+= (rec.agree == '0' ? '同意' : '拒绝') + ' ';
+				s+= rec.advice;
+				s+= '</li>';
+				$("#histroyAdvice").append(s);
+			});
+//			for (var i = 0; i < data.dataList.length; i++) {
+//				var s = '<li>';
+//				s+= 
+//				var s = '<li>'+data.dataList[i].assignee +" "+CloudUtils.FormatDate(data.dataList[i].createTime)+" "+data.dataList[i].taskName+" "+data.dataList[i].advice+'</li>';
+//				$("#histroyAdvice").append(s);
+//			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}
+
+function numFormat(){
+	$("#maxCredit").number(true, 2);
+	$("#availableCredit").number(true, 2);
+	$("#payM").number(true, 2);
+	$("#guaranteeAmt").number(true, 2);
+	$("#payActGuarantee").number(true, 2);
+	$("#guaranteeDiff").number(true, 2);
+	$("#financeAmount").number(true, 2);
+}
+
+function save() {
+	var data = CloudUtils.convertStringJson('addForm');
+	var json = eval("(" + data + ")");
+	json.taskId = taskId;
+	json.procInstId = procInstId;
+	if (nodeId != 'usertask3') {
+		json.backTarget = "";
+	}
+	
+	var options = {
+			url : '../../commitment/doAgree',
+			data : JSON.stringify(json),
+			callBackFun : function(data) {
+				if(data.result==0){
+					$('#mainFrame',top.document).attr('src','project/dykManager/payCommitmentManager.html');
+				}else{
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			},
+			errorCallback:function(data){
+				bootbox.alert("error");
+			}
+	};
+	CloudUtils.ajax(options);
+}

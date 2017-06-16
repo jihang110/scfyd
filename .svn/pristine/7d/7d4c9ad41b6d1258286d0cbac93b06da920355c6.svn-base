@@ -1,0 +1,9 @@
+package com.ut.scf.service.query;
+
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IFinanceQueryService {
+
+	BaseRespBean carInfoList(String financeId);
+
+}

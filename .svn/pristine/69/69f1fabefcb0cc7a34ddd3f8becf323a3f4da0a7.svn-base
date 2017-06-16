@@ -1,0 +1,233 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var nodeId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).nodeId;
+
+$(document).ready(function() {
+	dateload();
+	var agree = getAgree();
+	if (agree == "1") {
+		$("#divAdvice").show();
+		// 保证金情报取得
+		getFinanceInfo("1");
+	} else {
+		// 融资信息取得
+		getFinanceInfo("0");
+		// 保证金收取比例取得
+		ajaxProGuarantee();
+	}
+	formValidator();
+	numFormat();
+});
+
+function dateload(){
+	 $('#guaranteePayDate').datetimepicker({
+      language: 'zh-CN',
+      autoclose: 1,
+      todayBtn: true,// 显示今天时间
+      pickerPosition: "bottom-left",
+      minuteStep: 5,
+      format: 'yyyy-mm-dd',
+      minView: 'month',　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+      initialDate : new Date()
+     });
+}
+
+function save() {
+	var data = CloudUtils.convertStringJson('addForm');
+	data = eval("(" + data + ")");
+	data.taskId = taskId;
+	
+	var options = {
+			url : '../../finance/applyGuarantee',
+			data : JSON.stringify(data),
+			callBackFun : function(data) {
+				if(data.result==0){
+					$('#mainFrame',top.document).attr('src','project/dykManager/financeInfoManager.html');
+				}else{
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			},
+			errorCallback:function(data){
+				bootbox.alert("error");
+			}
+	};
+	CloudUtils.ajax(options);
+}
+
+
+//form验证规则
+function formValidator(){
+	$('#addForm').bootstrapValidator({
+	      message: 'This value is not valid',
+	      excluded: ':disabled',
+	      feedbackIcons: {
+	          valid: 'glyphicon glyphicon-ok',
+	          invalid: 'glyphicon glyphicon-remove',
+	          validating: 'glyphicon glyphicon-refresh'
+	      },
+	      fields: {
+	    	  agencyName: {
+	              validators: {
+	                  notEmpty: {
+	                      message: '经销商名称不能为空'
+	                  }
+	              }
+	          },
+	          agencyNum: {
+	        	  validators: {
+	        		  notEmpty: {
+	                      message: '经销商名称不能为空'
+	                  },
+	        		  numeric: {message: '只能输入数字'},
+	                  stringLength: {
+	                      max: 100,
+	                      message: '长度为0-100'
+	                  }
+		          }
+	          },
+	          cashRate:{
+	        	  validators: {
+	        		  notEmpty: {message: '费率不能为空'},
+	        		  numeric: {message: '只能输入数字'},
+	        		  callback: {  
+	                        message: '保证金收取比例在0.00~100.00之间',  
+	      						callback: function(value, validator) { 
+	      						return parseFloat(value)>= 0&&parseFloat(value)<=100;
+	                        }  
+	                    } 
+	                  
+		          }
+	          },
+	          financeRate:{
+	        	  validators: {
+	        		  notEmpty: {message: '融资比例不能为空'},
+	        		  numeric: {message: '只能输入数字'},
+	        		  callback: {  
+	                        message: '保证金收取比例在0.00~100.00之间',  
+	      						callback: function(value, validator) { 
+	      						return parseFloat(value)>= 0&&parseFloat(value)<=100;
+	                        }  
+	                    } 
+	                  
+		          }
+	          },
+	          availableCredit:{
+	        	  validators: {
+	        		  notEmpty: {message: '可用授信额度不能为空'},
+	        		  numeric: {message: '只能输入数字'}
+	        	  }
+	          },
+	          maxCredit:{
+	        	  validators: {
+	        		  notEmpty: {message: '最高授信额度不能为空'},
+	        		  numeric: {message: '只能输入数字'}
+	        	  } 
+	          },
+	          expense:{
+	        	  validators: {
+	        		  notEmpty: {message: '费用不能为空'},
+	        		  numeric: {message: '只能输入数字'}
+	        	  } 
+	          },
+	          financeAmount:{
+	        	  validators: {
+	        		  notEmpty: {message: '费用不能为空'},
+	        		  numeric: {message: '只能输入数字'}
+	        	  } 
+	          }
+	      }
+		})
+		.on('success.form.bv', function (e) {
+        // Prevent form submission
+        e.preventDefault();
+        // Get the form instance
+        var $form = $(e.target);
+        // Get the BootstrapValidator instance
+        var bv = $form.data('bootstrapValidator')
+		});
+}
+
+function numFormat(){
+	$("#financeAmount").number(true, 2);	//融资金额
+	$("#guaranteeRate").number(true, 2);	//保证金收取比例
+	$("#payAbleGuarantee").number(true, 2);	//应缴保证金金额
+	$("#payActGuarantee").number(true, 2);	//实缴保证金金额
+}
+
+function ajaxProGuarantee() {
+	var options = {
+		url : '../../finance/getProGuarantee',
+		data : '{"productId":"product01"}',
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				// 保证金收取比例
+				var guaranteeRate = data.guaranteeRate;
+				$("#guaranteeRate").val(guaranteeRate);
+				// 应缴保证金金额
+				var financeAmount = $("#financeAmount").val();
+				var a = CloudUtils.Math(financeAmount, guaranteeRate, "mul");
+				var b = CloudUtils.Math(a, 100, "div");
+				$("#payAbleGuarantee").val(CloudUtils.ccyFormatNoPre(b, 2));
+			} else {
+				bootbox.alert(data.resultNote);
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}
+
+function getAgree() {
+	var agree = '';
+	var options = {
+		url : '../../finance/getTaskDataByTaskId',
+		data : JSON.stringify({
+			taskId: taskId
+		}),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				agree = data.str;
+			} else {
+				bootbox.alert(data.resultNote);
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+	
+	return agree;
+}
+
+function getFinanceInfo(handleType) {
+	var options = {
+		url : '../../finance/getFinanceInfo',
+		data : JSON.stringify({
+			taskId: taskId,
+			handleType: handleType
+		}),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var obj = JSON.parse(data.str);
+				CloudUtils.setForm(obj, "addForm");
+			} else {
+				bootbox.alert(data.resultNote);
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}

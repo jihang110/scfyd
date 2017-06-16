@@ -1,0 +1,38 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.dao.auto.OrderInfoMapper;
+import com.ut.scf.pojo.auto.OrderInfo;
+import com.ut.scf.pojo.auto.OrderInfoExample;
+import com.ut.scf.pojo.auto.OrderInfoExample.Criteria;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IOrderManagerService;
+
+@Service("orderManagerService")
+public class OrderManagerServiceImpl implements IOrderManagerService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Resource
+	private OrderInfoMapper orderInfoMapper;
+
+	// 获取根据订单号获取订单信息
+	@Override
+	public BaseRespBean orderInfoById(List<String> orderIds) {
+		PageRespBean respBean = new PageRespBean();
+		OrderInfoExample example = new OrderInfoExample();
+		Criteria criteria = example.createCriteria();
+		criteria.andOrderIdIn(orderIds);
+		List<OrderInfo> orderInfos = orderInfoMapper.selectByExample(example);
+		respBean.setDataList(orderInfos);
+		return respBean;
+	}
+}

@@ -1,0 +1,30 @@
+package com.ut.scf.service.bpm;
+
+import java.util.Map;
+
+import com.ut.scf.reqbean.bpm.FlowSearchPageReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IWorkFlowService {
+
+	public BaseRespBean create(Map<String, Object> paramMap);
+	
+	public BaseRespBean terminate(Map<String, Object> paramMap);
+	
+	public BaseRespBean transfer(Map<String, Object> paramMap);
+	
+	public BaseRespBean getNotProcList(FlowSearchPageReqBean reqBean);
+	
+	public BaseRespBean getOverProcList(FlowSearchPageReqBean reqBean);
+	
+	public BaseRespBean getWkiDetailList(Map<String, Object> paramMap);
+	
+	public BaseRespBean getProDetailInfo(Map<String, Object> paramMap);
+	
+	public BaseRespBean reApply(Map<String, Object> paramMap);
+	
+	public BaseRespBean chkWorkItem(Map<String, Object> paramMap);
+	
+	public BaseRespBean getOnPassageItemCount(Map<String, Object> paramMap);
+	
+}

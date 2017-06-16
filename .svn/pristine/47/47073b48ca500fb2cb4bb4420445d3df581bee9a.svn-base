@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="ThemeBucket">
+<link rel="shortcut icon" href="#" type="image/png">
+
+<title>password</title>
+
+<link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/style-responsive.css" rel="stylesheet">
+<link href="../../css/bootstrap-table.css" rel="stylesheet">
+<link href="../../css/bootstrap.min.css" rel="stylesheet">
+<link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+<link href="../../css/sysfun.css" rel="stylesheet">
+
+<script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/CloudUtils.js"></script>
+<script src="../../js/password.js"></script>
+<script src="../../js/store.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js"></script>
+<script type="text/javascript"
+	src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/zh_CN.js"></script>
+<script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+<script src="../../js/sysManager/userManager/pwdManager.js"
+	type="text/javascript"></script>
+</head>
+
+<body class="iframeBody">
+	<section>
+		<div class="main-content-child">
+		 <div class="nav" id="nav">
+		 </div> 
+		  <form id="pwdModify" role="form" class="form-horizontal">
+				<!-- <div class="main-content-child"
+					style="margin-top: 30x; margin-left: 0px; background: #ffffff; padding-top: 20px;"> -->
+				<div style="background: #ffffff">
+					<input type="hidden" name="userId" id="userId"> 
+					<input type="hidden" name="code2" id="code2" value="2378">
+					<div class="container" style="margin-left: 200px;">
+						<div class="form-group" style="margin-top: 30px;">
+							<label class="col-sm-2 control-label" for="oldPassword"
+								style="font-family: 华文细黑; color: #969aa3; font-size: 16px;"><span class="required">*</span>当前密码</label>
+							<div class="col-sm-4">
+								<input type="password" name="oldPassword" class="form-control"
+									id="oldPassword" required
+									style="width: 269px; height: 40px; border: 1px solid #d0d0d0;">
+								<div class="help-block with-errors"></div>
+							</div>
+						</div>
+						<div class="form-group" style="margin-top: 20px;">
+							<label class="col-sm-2 control-label" for="newPassword"
+								style="font-family: 华文细黑; color: #969aa3; font-size: 16px;"><span class="required">*</span>新密码</label>
+							<div class="col-sm-4">
+								<input type="password" name="newPassword" class="form-control"
+									id="newPassword" required
+									style="width: 269px; height: 40px; border: 1px solid #d0d0d0;">
+								<div class="help-block with-errors"></div>
+							</div>
+						</div>
+						<div class="form-group" style="margin-top: 20px;">
+							<label class="col-sm-2 control-label" for="confirmPassword"
+								style="font-family: 华文细黑; color: #969aa3; font-size: 16px;"><span class="required">*</span>确认新密码</label>
+							<div class="col-sm-4">
+								<input type="password" name="confirmPassword"
+									data-match="#password" class="form-control"
+									id="confirmPassword" data-match-error="Not match" required
+									style="width: 269px; height: 40px; border: 1px solid #d0d0d0;">
+							</div>
+						</div>
+						<div class="form-group" style="margin-top: 30px;">
+							<div class="col-sm-offset-2 col-sm-10" style="margin-right: 0px;">
+								<button type="submit" id="btn_submit" class="btn btn-primary"
+									data-dismiss="modal" 
+									style="width: 127px; height: 40px; margin-left: 70px;">保&nbsp&nbsp&nbsp存</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- </div> -->
+			</form>
+		</div>
+	</section>
+</body>
+</html>

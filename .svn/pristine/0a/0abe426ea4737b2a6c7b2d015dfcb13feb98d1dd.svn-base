@@ -1,0 +1,103 @@
+package com.scf.service.test.pub;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.project.IFinanceInfoDao;
+import com.ut.scf.reqbean.project.FinanceInfoUpdateReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IFinanceInfoService;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:spring-mybatis-test.xml" })
+public class FinanceInfoTest {
+	
+	private static final Logger log = LoggerFactory.getLogger(FinanceInfoTest.class);
+	
+	@Autowired
+	private IFinanceInfoService financeInfoService;
+	
+	@Autowired
+	private IFinanceInfoDao financeInfoDao;
+	
+	@Test
+	public void getFinanceInfoListTest()
+	{
+		PageInfoBean page = new PageInfoBean();
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		PageRespBean respBean = new PageRespBean();
+		log.info("-----------------getFinanceInfoListTest start-----------");
+		paramMap.put("agencyName","");
+		paramMap.put("agencyNum","");
+		financeInfoService.getFinanceInfoList(paramMap, page);
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		List<Map<String, Object>> list = financeInfoDao.getFinanceInfoList(paramMap, page);
+		respBean.setDataList(list);
+		log.info("----------------getFinanceInfoListTest : ------------" + respBean);
+		Assert.assertNotNull(respBean);
+		log.info("-----------------getFinanceInfoListTest end------------------");
+	}
+
+	@Test
+	public void addFinanceInfo()
+	{
+		log.info("addFinanceInfo start");
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("agencyName","测试");
+		paramMap.put("applyDate",new Date(1280977330000L));
+		paramMap.put("agencyNum","1236");
+		paramMap.put("availableCredit",new BigDecimal(625));
+		paramMap.put("financeRate",new BigDecimal(233));
+		paramMap.put("cashRate",new BigDecimal(233666));
+		paramMap.put("financeStartDate",new Date(1280977330000L+24*3600*1000L));
+		paramMap.put("financeEndDate",new Date(1280977330000L+48*3600*1000L));
+		paramMap.put("financeAmount",new BigDecimal(233666));
+		paramMap.put("expense",new BigDecimal(233666));
+		paramMap.put("remark","jjjs");
+		paramMap.put("maxCredit",new BigDecimal(100000));
+		BaseRespBean respBean = financeInfoService.insertFinanceInfo(paramMap);
+		log.info("addFinanceInfo : " + respBean);
+		Assert.assertNotNull(respBean);
+		log.info("addFinanceInfo end");
+	}
+	
+	@Test
+	public void updateFinanceInfo()
+	{
+		log.info("updateFinanceInfo start");
+		FinanceInfoUpdateReqBean reqBean = new FinanceInfoUpdateReqBean();
+		reqBean.setFinanceId("2c9983075c3f2bf249a83f2bf2f10000");
+		reqBean.setFinanceEndDate(new Date());
+		reqBean.setFinanceStartDate(new Date());
+		BaseRespBean respBean = financeInfoService.updateFinanceInfo(reqBean);
+		log.info("updateFinanceInfo : " + respBean);
+		Assert.assertNotNull(respBean);
+		log.info("updateFinanceInfo end");
+	}
+	
+	@Test
+	public void deleteFinanceInfo(){
+		log.info("deleteFinanceInfo start");
+		String financeId = "111111";
+		financeInfoService.deleteFinanceInfo(financeId);
+		BaseRespBean respBean = financeInfoService.deleteFinanceInfo(financeId);
+		log.info("deleteFinanceInfo :"+respBean);
+		Assert.assertNotNull(respBean);
+		log.info("deleteFinanceInfo end");
+	}
+}

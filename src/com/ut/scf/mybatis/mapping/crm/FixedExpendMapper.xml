@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.IFixedExpendDao">
+<select id="selectFixedExpendList" resultType="hashmap" parameterType="hashmap">
+	select fe.rec_uid recUid,fe.corp_id corpId,c.corp_name corpName,
+	 fe.oper_time operTime, fe.water_amount waterAmount, fe.water_money waterMoney,
+	 fe.electricity_amount electricityAmount, fe.electricity_money electricityMoney, fe.gas_amount gasAmount,
+	 fe.gas_money gasMoney,fe.payment_situation paymentSituation,fe.rest
+	 
+	 from fixed_expend fe join corp_info c on fe.corp_id = c.corp_id 
+	 where 1=1 and c.status=1
+    <if test="corpId != null">
+	  and fe.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and fe.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and fe.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and fe.create_user_id = #{createUserId}
+	</if>
+</select>
+	
+<insert id="insertFixedExpend" parameterType="hashmap">
+	insert into fixed_expend ( rec_uid ,corp_id ,
+	 oper_time , water_amount , water_money ,
+	 electricity_amount , electricity_money , gas_amount ,
+	 gas_money ,payment_situation,rest,  rela_corp_id, create_user_id, create_time )
+	 values ( #{recUid}, #{corpId}, #{operTime}, #{waterAmount}, #{waterMoney}, #{electricityAmount},
+	 #{electricityMoney},#{gasAmount}, #{gasMoney}, #{paymentSituation}, #{rest}, 
+	 #{relaCorpId},#{createUserId}, now())
+</insert>
+
+<delete id="deleteFixedExpend" parameterType="java.lang.String">
+	delete from fixed_expend where rec_uid = #{recUid}
+</delete>
+
+<update id="updateFixedExpend" parameterType="hashmap">
+	update fixed_expend
+	<set>
+      <if test="operTime != null">
+        oper_time = #{operTime},
+      </if>
+      <if test="waterAmount != null">
+        water_amount = #{waterAmount},
+      </if>
+      <if test="waterMoney != null">
+        water_money = #{waterMoney},
+      </if>
+      <if test="electricityAmount != null">
+        electricity_amount = #{electricityAmount},
+      </if>
+      <if test="electricityMoney != null">
+        electricity_money = #{electricityMoney},
+      </if>
+      <if test="gasAmount != null">
+        gas_amount = #{gasAmount},
+      </if>
+      <if test="gasMoney != null">
+        gas_money = #{gasMoney},
+      </if>
+      <if test="paymentSituation != null">
+        payment_situation = #{paymentSituation},
+      </if>
+      rest = #{rest}
+    </set>
+    where rec_uid = #{recUid}
+</update>
+
+<select id="hasOneYear" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from fixed_expend ni
+    <where>
+        1=1
+         <if test="operTime!=null and operTime!='' ">  
+            and ni.oper_time = #{operTime}
+        </if>
+        <if test="corpId != null">
+		    and ni.corp_id = #{corpId}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ni.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ni.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+
+</mapper>

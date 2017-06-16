@@ -1,0 +1,8 @@
+package com.ut.scf.service.sys;
+
+
+public interface ISequenceService {
+
+	String getNextKeyValue(String keyName);
+
+}

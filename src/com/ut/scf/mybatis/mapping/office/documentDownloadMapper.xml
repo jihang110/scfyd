@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.office.documentDownloadDao">
+  <select id="selectdocumentDownloadList" parameterType="hashmap" resultType="hashmap">
+	select 
+	i.rec_uid recUid,
+	i.corp_id coprId, 
+	i.title,
+	i.user_id userId,
+	s.username,
+	i.document_content documentContent, 
+	DATE_FORMAT(i.release_date,'%Y-%m-%d') releaseDate,  
+	i.document_url documentUrl,
+	DATE_FORMAT(i.create_time,'%Y-%m-%d %H:%i:%s') createTime
+    from document_download i join sys_user s on i.user_id = s.user_id
+    <where>
+    	<if test="title != null ">
+	   i.title LIKE CONCAT('%',#{title},'%') 
+	</if>
+    
+    </where>
+        
+		
+    
+    order by i.create_time desc
+  </select>
+
+   <select id="selectdocumentDownload" parameterType="java.lang.String" resultType="hashmap">
+	select 
+	corp_id coprId, 
+	title, 
+	user_id userId, 
+	document_content documentContent, 
+	DATE_FORMAT(release_date,'%Y-%m-%d') releaseDate, 
+	document_url documentUrl
+    from document_download
+    where rec_uid = #{recUid}
+  </select>
+  
+  <delete id="deletedocumentDownload" parameterType="java.lang.String">
+    delete from document_download
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <insert id="insertdocumentDownload" parameterType="hashmap">
+    insert into document_download (rec_uid, corp_id, title, 
+      user_id, document_content, release_date, 
+      document_url, create_user_id, create_time
+      )
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=VARCHAR}, #{documentContent,jdbcType=VARCHAR}, #{releaseDate,jdbcType=TIMESTAMP}, 
+      #{documentUrl,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  
+  <update id="updatedocumentDownload" parameterType="hashmap">
+    update document_download
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="documentContent != null">
+        document_content = #{documentContent,jdbcType=VARCHAR},
+      </if>
+      <if test="releaseDate != null">
+        release_date = #{releaseDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="documentUrl != null">
+        document_url = #{documentUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

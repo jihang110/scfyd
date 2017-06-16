@@ -1,0 +1,256 @@
+$(document).ready(function() {
+	$('#addModal').on('hidden.bs.modal', function() {
+		$("#addForm")[0].reset();
+		$("#addForm").bootstrapValidator('resetForm', true);
+	});
+	dateload();
+	$("#repayDate").val(CloudUtils.getcurrentdate());
+	initRepayTable();
+	initCarDetailTable();
+	
+} );
+
+window.operateEvents = {
+		'click .detail': function (e, value, row, index) {
+			detailFun(row,0);
+	    }
+};
+
+function addFun() {
+	$("#btn_blank").removeClass('col-sm-7').addClass('col-sm-4');
+	initCarDetailTable();
+	$("#addModalLabel").text("添加");
+    $('#addModal').modal({backdrop: 'static', keyboard: false});//防止点击空白/ESC 关闭
+    $('#isEdit').val(1); //新增1；修改2
+}
+
+function searchFun(){
+	initRepayTable();
+}
+
+function saveRepayInfo(){
+	var modal = $('#addModal');
+	var data = CloudUtils.convertStringJson('addForm');
+    var jsonData = eval("(" + data + ")");
+    var isEdit = $('#isEdit').val();
+    if(isEdit == 1){
+//   	 经销商进入流程
+ 	var options = {
+ 			url : '../../repayInfo/startProcess',
+ 			data : data,
+ 			callBackFun : function(data) {
+ 				 bootbox.alert(data.resultNote);
+ 			},
+ 			errorCallback : function(data) {
+ 				bootbox.alert(data.resultNote);
+ 				return false;
+ 			}
+ 		};
+   	 
+	 CloudUtils.ajax(options);
+    }
+}
+
+function detailFun(row) {
+ 	$('#detailModal').modal();
+ 	CloudUtils.setForm(row,'detailForm');
+ 	$('#detailForm input').attr('readonly',true);
+    $("#btn_blank").removeClass('col-sm-4').addClass('col-sm-7');
+}
+
+
+function dateload(){
+	 $('#currentRepayDate,#repayDate').datetimepicker({
+      language: 'zh-CN',
+      autoclose: 1,
+      todayBtn: true,// 显示今天时间
+      pickerPosition: "bottom-left",
+      minuteStep: 5,
+      format: 'yyyy-mm-dd',
+      minView: 'month',　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+      initialDate : new Date() //参考financeInfoManager.js
+     });
+//	 $('#currentRepayDate').datetimepicker('setEndDate', new Date());
+}
+
+/*function initDate(){
+	var today=new Date();
+	var submitTime=today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+'';
+//	$("#startDate").val(submitTime);
+	$("#endDate").attr("placeholder","选择融资到期日");
+	
+}*/
+
+function initRepayTable() { 
+	$('#repayInfoList').bootstrapTable('destroy'); 
+	$("#repayInfoList").bootstrapTable({  
+		 method: "post", 
+         url: "../../repayInfo/list", 
+         striped: true,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var currentRepayDate = $("#currentRepayDate").val();
+           var jsonData = eval("(" + data + ")");
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               isPage : 1,
+               repaymentId: jsonData.repaymentId,
+               currentRepayDate:currentRepayDate
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'repaymentId',
+ 	        title: '还款编号',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
+ 	    }, {
+ 	        field: 'currentRepayDate',
+ 	        title: '还款日期',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    }, {
+ 	        field: 'principalArrivalAmt',
+ 	        title: '还款总金额',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    }, {
+ 	        field: 'currentPayablePrincipal',
+ 	        title: '还本金金额',
+ 	       align: 'center',
+           valign: 'middle'
+ 	    },{
+ 	        field: 'currentPayableInterest',
+ 	        title: '还利息金额',
+ 	        align: 'center',
+ 	        valign: 'middle'
+ 	    },{
+ 	        field: 'productName',
+ 	        title: '赎车明细',
+ 	        align: 'center',
+ 	        valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	        	var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }
+ 	    ]
+       });  
+}
+
+function initCarDetailTable() { 
+	$('#carDetailTable').bootstrapTable('destroy'); 
+	$("#carDetailTable").bootstrapTable({  
+		 method: "post", 
+         url: "../../repayInfo/list", 
+         striped: true,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               isPage : 1,
+               productName: jsonData.productName,
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'carId',
+ 	        title: '车架号',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'currentPrice',
+ 	        title: '实际车价(元)',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    }, {
+ 	        field: 'financeId',
+ 	        title: '融资编号',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    }, {
+ 	        field: 'financeStartDate',
+ 	        title: '融资起始日',
+ 	       align: 'center',
+           valign: 'middle'
+ 	    },{
+ 	        field: 'financeEndDate',
+ 	        title: '融资到期日',
+ 	        align: 'center',
+ 	        valign: 'middle'
+ 	    },{
+ 	        field: 'payment',
+ 	        title: '付款金额',
+ 	        align: 'center',
+ 	        valign: 'middle'
+ 	    },{
+ 	        field: 'paymentBal',
+ 	        title: '付款余额',
+ 	        align: 'center',
+ 	        valign: 'middle'
+ 	    },{
+ 	        field: 'interestPayable',
+ 	        title: '应还利息金额',
+ 	        align: 'center',
+ 	        valign: 'middle'
+ 	    }
+ 	    ]
+       });  
+}

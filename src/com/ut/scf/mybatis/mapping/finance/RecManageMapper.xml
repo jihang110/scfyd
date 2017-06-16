@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.finance.IRecManageDao">
+  <select id="selectRecManageList" parameterType="hashmap" resultType="hashmap">
+  	select
+	  r.rec_uid recUid, 
+	  r.corp_id corpId,
+	  c.corp_name corpName,  
+	  r.project_name projectName, 
+	  r.contract_no contractNo, 
+	  r.balance_account balanceAccount, 
+	  r.expense_type expenseType, 
+      r.pay_amount payAmount, 
+      r.actual_amount actualAmount, 
+      r.should_repay_amount shouldRepayAmount, 
+	  r.create_time createTime
+    from reconciliation_management r join corp_info c on r.corp_id=c.corp_id
+    <where>
+        r.status = 1 and c.status = 1
+		<if test="projectName != null and projectName!=''">
+	  		and r.project_name LIKE CONCAT(CONCAT('%', #{projectName}), '%')
+		</if>
+		<if test="corpId != null">
+	  		and r.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  		and r.corp_id in ${userCorpList}
+		</if>
+		<if test="contractNo != null and contractNo!=''">
+	  		and r.contract_no LIKE CONCAT(CONCAT('%', #{contractNo}), '%')
+		</if>
+		<if test="createUserId != null">
+	  		and r.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by r.create_time desc
+  </select>
+  
+  <select id="countExistRecord" parameterType="hashmap" resultType="int">
+  	select
+	  count(1)
+    from reconciliation_management
+    where project_name = #{projectName}
+      and expense_type = #{expenseType}
+      and corp_id = #{corpId}
+  </select>
+  
+  <insert id="insertRecManage" parameterType="hashmap">
+    insert into reconciliation_management (rec_uid, corp_id, project_name, 
+      contract_no, balance_account, expense_type, 
+      pay_amount, 
+      actual_amount, should_repay_amount, 
+       create_user_id, create_time
+      )
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{contractNo,jdbcType=VARCHAR}, #{balanceAccount,jdbcType=VARCHAR}, #{expenseType,jdbcType=VARCHAR}, 
+      #{payAmount,jdbcType=DECIMAL},
+      #{actualAmount,jdbcType=DECIMAL}, #{shouldRepayAmount,jdbcType=DECIMAL}, 
+      #{createUserId,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  
+  <delete id="deleteRecManage" parameterType="java.lang.String">
+    delete from reconciliation_management
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateRecManage" parameterType="hashmap">
+   update reconciliation_management
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      <if test="balanceAccount != null">
+        balance_account = #{balanceAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="expenseType != null">
+        expense_type = #{expenseType,jdbcType=VARCHAR},
+      </if>
+      <if test="payAmount != null">
+        pay_amount = #{payAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="actualAmount != null">
+        actual_amount = #{actualAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="shouldRepayAmount != null">
+        should_repay_amount = #{shouldRepayAmount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+  </update>
+  
+  <update id="updateStatus" parameterType="hashmap">
+    update reconciliation_management
+    <set>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where project_name = #{projectName} and corp_id = #{corpId}
+  </update>
+</mapper>

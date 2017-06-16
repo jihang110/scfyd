@@ -1,0 +1,376 @@
+package com.ut.scf.service.bpm.impl;
+
+import java.sql.Timestamp;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sunyard.sunflow.client.SunflowClient;
+import com.sunyard.sunflow.engine.dataclass.WMTAttribute;
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.ScfCacheDict;
+import com.ut.scf.core.util.ScfDateUtil;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.bpm.IExpenseDao;
+import com.ut.scf.dao.bpm.IPriProjectDao;
+import com.ut.scf.dao.finance.IRecManageDao;
+import com.ut.scf.dao.sys.ICorpDao;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.bpm.IExpenseService;
+
+@Service("expenseService")
+public class ExpenseServiceImpl implements IExpenseService {
+	private static final Logger log = LoggerFactory.getLogger(ExpenseServiceImpl.class);
+	
+	@Resource private IExpenseDao expenseDao;
+	@Resource private IPriProjectDao priProjectDao;
+	@Resource private IRecManageDao recManageDao;
+	@Resource private ICorpDao corpDao;
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getExpenseList(Map<String, Object> paramMap) {
+		List<Map<String, Object>> list = expenseDao.selectExpenseList(paramMap);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean addExpense(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (expenseDao.countProjectName(paramMap) > 0) {
+			respBean.setResult(ErrorCodeEnum.PROJECT_NAME_EXIST);
+			return respBean;
+		}
+		// 生成主键Id
+		paramMap.put("recUid", ScfUUID.generate());
+		int insertNum = expenseDao.insertExpense(paramMap);
+		log.debug("insert Expense num {}", insertNum);
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean addPriProject(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		int insertNum = priProjectDao.insertPriProject(paramMap);
+		log.debug("insert PriProject num {}", insertNum);
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean hasProNm(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (expenseDao.countProjectName(paramMap) > 0) {
+			respBean.setResult(ErrorCodeEnum.PROJECT_NAME_EXIST);
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean hasPriProNm(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (priProjectDao.countProjectName(paramMap) > 0) {
+			respBean.setResult(ErrorCodeEnum.PROJECT_NAME_EXIST);
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean checkExpense(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (expenseDao.countProjectName(paramMap) <= 0) {
+			respBean.setResult(ErrorCodeEnum.PROJECT_NAME_NOT_EXIST);
+			return respBean;
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean updateExpense(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		int updateNum = expenseDao.updateExpense(paramMap);
+		log.debug("update Expense num {}", updateNum);
+		if (updateNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean deleteExpense(String recUid) {
+		BaseRespBean respBean = new BaseRespBean();
+		int deleteNum = expenseDao.deleteExpense(recUid);
+		log.debug("delete Expense num {}", deleteNum);
+		if (deleteNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.DELETE_FAILED);
+			return respBean;
+		}
+		return respBean;
+	}
+
+	private int reApply(Map<String, Object> paramMap) {
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long workItemId = (long) paramMap.get("workItemId");
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			// checkout
+			int workState = sunflowClient
+					.getWorkItemStatusByWorkItemID(workItemId);
+			if (workState == 1) {
+				sunflowClient.checkOutWorkItem(workItemId);
+			} else if (workState == 2) {
+				sunflowClient.applyWorkItem(workItemId);
+			} else if (workState == 6) {
+				return 2;
+			}
+			
+			// checkin
+			WMTAttribute[] attrs = sunflowClient.getWorkItemRelevantData(
+					workItemId, null, areaCode);
+			String attributesName = "";
+			int attrType = 0;
+			
+			for (WMTAttribute attr : attrs) {
+				attributesName = attr.getAttributeName();
+				attrType = attr.getAttributeType();
+				
+				if (paramMap.containsKey(attributesName)) {
+					// 属性类型 int - 1 bool - 2 double - 3 String - 4 Timestamp
+					// - 5 Date - 6 Array - 7 File - 8 Object - 9 Binary -
+					// 10
+					if (attrType == 1) {
+						attr.setIntValue(Integer.parseInt(paramMap.get(attributesName).toString()));
+					} else if (attrType == 2) {
+						attr.setBooleanValue(Boolean.parseBoolean(paramMap.get(attributesName).toString()));
+					} else if (attrType == 3) {
+						attr.setDoubleValue(Double.parseDouble(paramMap.get(attributesName).toString()));
+					} else if (attrType == 4) {
+						attr.setStringValue(paramMap.get(attributesName) == null ?
+								"" : String.valueOf(paramMap.get(attributesName)));
+					} else if (attrType == 5) {
+						attr.setTimestampValue(Timestamp.valueOf(paramMap.get(attributesName).toString()));
+					} else if (attrType == 6) {
+						attr.setDateValue(ScfDateUtil.parseDate(paramMap.get(attributesName).toString()));
+					} else if (attrType == 7) {
+						attr.setArrayValue(paramMap.get(attributesName));
+					} else if (attrType == 8) {
+						// wa.setFileValue(arg0);
+					} else if (attrType == 9) {
+						attr.setObjectValue(paramMap.get(attributesName));
+					} else if (attrType == 10) {
+						// wa.setBinaryValue(arg0);
+					}
+				}
+			}
+			
+			sunflowClient.modifyWorkItemRelevantData(workItemId, attrs, areaCode);
+			sunflowClient.checkInWorkItem(workItemId);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			return 0;
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return 1;
+	}
+	
+	private Map<String, Object> queryAttrs(Map<String, Object> paramMap){
+		Map<String, Object> map = new HashMap<String, Object>();
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long procInsId = (long) paramMap.get("procInsId");
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			WMTAttribute[] attrs = sunflowClient.getProcessRelevantData(
+					procInsId, null, areaCode);
+			String attributesName = "";
+			int attrType = 0;
+			
+			for (WMTAttribute attr : attrs) {
+				attributesName = attr.getAttributeName();
+				attrType = attr.getAttributeType();
+				
+				if (attrType == 1) {
+					map.put(attributesName, attr.getIntValue());
+				} else if (attrType == 2) {
+					map.put(attributesName, attr.getBooleanValue());
+				} else if (attrType == 3) {
+					map.put(attributesName, attr.getDoubleValue());
+				} else if (attrType == 4) {
+					map.put(attributesName, attr.getStringValue());
+				} else if (attrType == 5) {
+					map.put(attributesName, attr.getTimestampValue());
+				} else if (attrType == 6) {
+					map.put(attributesName, attr.getDateValue());
+				} else if (attrType == 7) {
+					map.put(attributesName, attr.getArrayValue());
+				} else if (attrType == 8) {
+					// wa.setFileValue(arg0);
+				} else if (attrType == 9) {
+					map.put(attributesName, attr.getObjectValue());
+				} else if (attrType == 10) {
+					// wa.setBinaryValue(arg0);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			return null;
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return map;
+	}
+	
+	/**
+	 * 更新费用表、同时插入对账管理表
+	 */
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean addCntFlowExpense(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		Map<String, Object> map = queryAttrs(paramMap);
+		map.put("projectName", map.get("proName"));
+		map.put("balanceAccount", map.get("repaymentCorpAcount"));
+		map.put("repayTime", map.get("repaymentDate"));
+		
+		int updateExpenseNum = expenseDao.updateExpense(map);
+		log.debug("update Expense num {}", updateExpenseNum);
+		
+		//一条费用表记录对应五条对账管理记录
+		String createUserId =  paramMap.get("createUserId").toString();
+		int insertRecManageNum1 = 0;
+		int insertRecManageNum2 = 0;
+		int insertRecManageNum3 = 0;
+		int insertRecManageNum4 = 0;
+		int insertRecManageNum5 = 0;
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "手续费 ");
+		map.put("shouldRepayAmount", "".equals(map.get("commission")) ? null : map.get("commission"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum1 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num1 {}", insertRecManageNum1);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "管理费");
+		map.put("shouldRepayAmount", "".equals(map.get("managementFee")) ? null : map.get("managementFee"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum2 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num2 {}", insertRecManageNum2);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "利息 ");
+		map.put("shouldRepayAmount", "".equals(map.get("interest")) ? null : map.get("interest"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum3 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num3 {}", insertRecManageNum3);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "违约金 ");
+		map.put("shouldRepayAmount", "".equals(map.get("penalty")) ? null : map.get("penalty"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum4 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num4 {}", insertRecManageNum4);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "融资金额 ");
+		map.put("shouldRepayAmount", "".equals(map.get("loanAmt")) ? null : map.get("loanAmt"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum5 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num5 {}", insertRecManageNum5);
+		
+		int wkApplyNum = reApply(paramMap);
+		log.debug("apply workItem num {}", wkApplyNum);
+		if (wkApplyNum == 0) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			return respBean;
+		} else if (wkApplyNum == 2) {
+			respBean.setResult(ErrorCodeEnum.WKI_STATE_ERROR);
+			return respBean;
+		}
+		
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean checkCorpName(Map<String, Object> paramMap) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (corpDao.countCorpByName(paramMap) <= 0) {
+			String sysType = paramMap.get("sysType").toString();
+			// 买方
+			if ("4".equals(sysType)) {
+				respBean.setResult(ErrorCodeEnum.BUY_CORP_NAME_NOT_EXIST);
+				// 卖方
+			} else if ("5".equals(sysType)) {
+				respBean.setResult(ErrorCodeEnum.SALE_CORP_NAME_NOT_EXIST);
+			}
+			
+			return respBean;
+		}
+		return respBean;
+	}
+}

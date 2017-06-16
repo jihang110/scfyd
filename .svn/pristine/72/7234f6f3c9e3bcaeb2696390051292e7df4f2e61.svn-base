@@ -1,0 +1,229 @@
+package com.ut.scf.service.project.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.impl.util.json.JSONArray;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.dao.auto.FactorContractFileInfoMapper;
+import com.ut.scf.dao.auto.FactorContractInfoMapper;
+import com.ut.scf.dao.project.IFactorContractInfoDao;
+import com.ut.scf.pojo.auto.FactorContractFileInfo;
+import com.ut.scf.pojo.auto.FactorContractFileInfoExample;
+import com.ut.scf.pojo.auto.FactorContractFileInfoExample.Criteria;
+import com.ut.scf.pojo.auto.FactorContractInfo;
+import com.ut.scf.pojo.auto.FactorContractInfoExample;
+import com.ut.scf.reqbean.project.ContractFileReqBean;
+import com.ut.scf.reqbean.project.ContractReqBean;
+import com.ut.scf.reqbean.project.ContractUpdateReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.project.IContractMagagerService;
+import com.ut.scf.service.sys.ISequenceService;
+
+@Service("contractManagerService")
+public class ContractManagerServiceImpl implements IContractMagagerService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+
+	@Resource
+	private FactorContractInfoMapper factorContractInfoMapper;
+	@Resource
+	private FactorContractFileInfoMapper factorContractFileInfoMapper;
+	@Resource
+	private IFactorContractInfoDao factorContractInfoDao;
+	@Resource
+	private ISequenceService iSequenceService;
+
+	// 添加 保理合同
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean addFactorContract(Map<String, Object> map) {
+		BaseRespBean baseRespBean = new BaseRespBean();
+		String pmFileInfo = (String) map.get("pmFileInfo");
+		JSONArray jsonArray = new JSONArray((String) map.get("fileInfo"));
+		JSONArray jsonArray2;
+		FactorContractInfo factorContractInfo = new FactorContractInfo();
+		BeanUtil.mapToBean(map, factorContractInfo);
+		if (factorContractInfo.getProductType() == 0
+				&& factorContractInfo.getContractType() == 0) {
+			String contractNoString = iSequenceService.getNextSequence(
+					factorContractInfo.getAgencyCorpName(), "yw");
+		}
+
+		int result = factorContractInfoMapper.insert(factorContractInfo);
+		int resultFile = 0;
+		resultFile += inserFileInfo(jsonArray,
+				factorContractInfo.getContractNo());
+		if (pmFileInfo != null && pmFileInfo != "") {
+			jsonArray2 = new JSONArray(pmFileInfo);
+			resultFile += inserFileInfo(jsonArray2,
+					factorContractInfo.getContractNo());
+		}
+		if (result < 1 || resultFile < 1) {
+			baseRespBean.setResult(ErrorCodeEnum.FAILED);
+		}
+		return baseRespBean;
+	}
+
+	private int inserFileInfo(JSONArray jsonArray, String contractNo) {
+		int resultFile = 0;
+		FactorContractFileInfo factorContractFileInfo;
+		for (int i = 0; i < jsonArray.length(); i++) {
+			JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+			factorContractFileInfo = new FactorContractFileInfo();
+			factorContractFileInfo.setContractNo(contractNo);
+			factorContractFileInfo
+					.setFileName(jsonObject.getString("fileName"));
+			factorContractFileInfo.setFilePath(jsonObject.getString("fileUrl"));
+			factorContractFileInfo
+					.setFileSize(jsonObject.getString("fileSize"));
+			factorContractFileInfo
+					.setFileType(jsonObject.getString("fileType"));
+
+			resultFile += factorContractFileInfoMapper
+					.insert(factorContractFileInfo);
+		}
+		return resultFile;
+	}
+
+	// 修改
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean modFactorContract(ContractUpdateReqBean reqBean) {
+		BaseRespBean baseRespBean = new BaseRespBean();
+		try {
+
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+			// 删除附件
+			FactorContractFileInfoExample example = new FactorContractFileInfoExample();
+			Criteria criteria = example.createCriteria();
+			criteria.andContractNoEqualTo(reqBean.getContractNo());
+			factorContractFileInfoMapper.deleteByExample(example);
+
+			JSONArray jsonArray = new JSONArray(reqBean.getFileInfo());
+
+			FactorContractInfo factorContractInfo = new FactorContractInfo();
+			factorContractInfo.setContractNo(reqBean.getContractNo());
+			factorContractInfo.setSignDate(sdf.parse(reqBean.getSignDate()));
+			factorContractInfo.setContractDueDate(sdf.parse(reqBean
+					.getContractDueDate()));
+			factorContractInfo.setContractType((byte) 0);
+			factorContractInfo.setContractValDate(sdf.parse(reqBean
+					.getContractValDate()));
+			int result = factorContractInfoMapper
+					.updateByPrimaryKeySelective(factorContractInfo);
+
+			int resultFile = 0;
+
+			FactorContractFileInfo factorContractFileInfo;
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject jsonObject = (JSONObject) jsonArray.get(i);
+				factorContractFileInfo = new FactorContractFileInfo();
+				factorContractFileInfo.setContractNo(reqBean.getContractNo());
+				factorContractFileInfo.setFileName(jsonObject
+						.getString("fileName"));
+				factorContractFileInfo.setFilePath(jsonObject
+						.getString("fileUrl"));
+				factorContractFileInfo.setFileSize(jsonObject
+						.getString("fileSize"));
+				factorContractFileInfo.setFileType(jsonObject
+						.getString("fileType"));
+
+				resultFile += factorContractFileInfoMapper
+						.insert(factorContractFileInfo);
+			}
+			if (result < 1 || resultFile < 1) {
+				baseRespBean.setResult(ErrorCodeEnum.EXCEL_ERROR.ADD_FAILED);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return baseRespBean;
+	}
+
+	@Override
+	public BaseRespBean factorContractList(ContractReqBean reqBean) {
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		List<Map<String, Object>> resultList = factorContractInfoDao
+				.contractList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(resultList);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean factorContractFileList(ContractFileReqBean reqBean) {
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		List<Map<String, Object>> resultList = factorContractInfoDao
+				.contractFileList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(resultList);
+		return respBean;
+	}
+
+	// 验证是否有保理合同 传入 产品类型
+	@Override
+	public BaseRespBean checkFactorContact(ContractReqBean reqBean) {
+		BaseRespBean baseRespBean = new BaseRespBean();
+		FactorContractInfoExample example = new FactorContractInfoExample();
+		com.ut.scf.pojo.auto.FactorContractInfoExample.Criteria criteria = example
+				.createCriteria();
+		criteria.andContractTypeEqualTo((byte) 0);
+		criteria.andProductTypeEqualTo(reqBean.getProductType());
+		List<FactorContractInfo> list = factorContractInfoMapper
+				.selectByExample(example);
+		if (list.size() > 0) {
+			baseRespBean.setResult(ErrorCodeEnum.FACTOR_CONTRACT_INFO);
+		}
+		return baseRespBean;
+	}
+
+	// 生成订单合同编号
+	// YYYYMMDD+两位数字
+	@Override
+	public String getContractNo() {
+		String sequence = factorContractInfoDao.selectContractSequence();
+		if (sequence == null) {
+			sequence = "0";
+		}
+		int tempSeq = Integer.parseInt(sequence) + 1;
+		if (tempSeq > 99) {
+			tempSeq = 1;
+		}
+		sequence = String.format("%02d", tempSeq);
+		String contractNo = dateFormat.format(new Date()) + sequence;
+		return contractNo;
+	}
+
+}

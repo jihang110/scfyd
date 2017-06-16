@@ -1,0 +1,77 @@
+	    		<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+		          <input type="hidden" name="corpId" id="corpId">
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="payDate">付款日期</label>
+		            <div class="col-sm-3">
+		            	<input name="payDate" class="form-control" id="payDate" type="text" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label" for="agencyName"><span class="required"></span>经销商名称</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="agencyName" class="form-control" id="agencyName" readonly>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label" for="agencyNum"><span class="required"></span>经销商代码</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="agencyNum"  name="agencyNum"  readonly/>
+	                </div>
+		            <label class="col-sm-2 control-label"  for="maxCredit">最高授信额度</label>
+		            <div class="col-sm-3">
+		            	<input type="text" id="maxCredit" name="maxCredit" class="form-control" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="availableCredit">可用授信额度</label>
+		            <div class="col-sm-3">
+		            	<input type="text" id="availableCredit" name="availableCredit" class="form-control" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label" for="payM">付款金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payM" class="form-control" id="payM" readonly>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="guaranteeAmt">保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="guaranteeAmt" class="form-control" id="guaranteeAmt" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="payActGuarantee">实缴保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payActGuarantee" class="form-control" id="payActGuarantee" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="guaranteeDiff">保证金金额差</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="guaranteeDiff" class="form-control" id="guaranteeDiff" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="financeId">融资编号</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="financeId" class="form-control" id="financeId" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="financeStartDate">融资起始日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeStartDate" class="form-control" id="financeStartDate" type="text" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="financeEndDate">融资到期日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeEndDate" class="form-control" id="financeEndDate" type="text" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="financeAmount">融资金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="note">备注</label>
+		            <div class="col-sm-3">
+					    <textarea id="note"  rows="3" name="note" class="form-control" readonly></textarea>
+		          	</div>
+		          </div>
+		        </form>
+		        <div class="row" style="margin-bottom: 10px;margin-top: 60px;margin-left: 100px;width:810px;">
+					<table id="carInfoListTable" class="table table-bordered" cellspacing="0" style="border: 1px #e5e5e5 solid">
+					</table>
+				</div>

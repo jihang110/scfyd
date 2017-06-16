@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.IUserMarkDao">
+  <select id="selectUserMarkList" parameterType="hashmap" resultType="hashmap">
+	select 
+	rec_uid recUid,
+	mark_name markName, 
+	mark_desc markDesc,
+	corp_id corpId,
+	note note,
+	create_time createTime
+    from user_notepad_mark
+    <where>
+        corp_id is null or (1=1
+        <if test="corpId != null">
+	        and corp_id = #{corpId}
+		</if>
+		<if test="createUserId != null">
+	  		and create_user_id = #{createUserId}
+		</if>)
+    </where>
+    order by create_time desc
+  </select>
+
+  
+  <delete id="deleteUserMark" parameterType="hashmap">
+    delete from user_notepad_mark
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <insert id="insertUserMark" parameterType="hashmap">
+    insert into user_notepad_mark (rec_uid, mark_name, mark_desc, 
+      note, create_time, create_user_id, corp_id
+      )
+    values (#{recUid}, #{markName}, #{markDesc}, #{note},now(),
+       #{createUserId}, #{corpId})
+  </insert>
+  
+  <update id="updateUserMark" parameterType="hashmap">
+    update user_notepad_mark
+    <set>
+      <if test="type != null">
+        mark_name = #{markName},
+      </if>
+      <if test="title != null">
+        mark_desc = #{markDesc},
+      </if>
+      <if test="status != null">
+        note = #{note},
+      </if>
+    </set>
+    where rec_uid = #{recUid}
+  </update>
+</mapper>

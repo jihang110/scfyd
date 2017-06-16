@@ -1,0 +1,97 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var processInstanceId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).processInstanceId;
+var processDefinitionId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).processDefinitionId;
+$(function(){
+	showGraph();
+	initTaskTable(processInstanceId);
+});
+function goback(){
+	history.go(-1);
+}
+
+function showGraph(){
+	$("#pic").attr("src", "../../activiti/graph?processDefinitionId="+processDefinitionId+
+			"&processInstanceId="+processInstanceId+"&taskId="+taskId);
+	$("#picModal").modal({backdrop: 'static', keyboard: false});
+}
+
+function initTaskTable(procInstId){
+	$('#taskListTable').bootstrapTable('destroy');  
+	$("#taskListTable").bootstrapTable({  
+	     method: "post", 
+	     url: "../../activiti/getHistoryTaskList", 
+	     striped: false,  //表格显示条纹  
+	     search: false,  //是否启用查询  
+	     showColumns: false,  //显示下拉框勾选要显示的列  
+	     showRefresh: false,  //显示刷新按钮  
+	     sidePagination: "server", //表示服务端请求  
+	     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	     //设置为limit可以获取limit, offset, search, sort, order  
+	     queryParamsType : "undefined",   
+	     queryParams: function queryParams(params) {   //设置查询参数  
+	       var param = {    
+	    	   procInstId: procInstId
+	       };    
+	       return JSON.stringify(param);                   
+	     },  
+	     responseHandler:function responseHandler(res) {
+	    	 debugger
+	    	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+	    	 } else {
+	    		 alert(res.resultNote);
+	    		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+	    	 }
+	     },
+	     columns: [{
+		        field: 'procInstId',
+		        title: '进程Id',
+		        align: 'center',
+	            valign: 'middle',
+	            visible:false
+		    }, {
+		        field: 'taskId',
+		        title: 'taskId',
+		        align: 'center',
+	            valign: 'middle',
+	            visible:false
+	            
+		    }, {
+		        field: 'assignee',
+		        title: '办理人',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'name',
+		        title: '角色',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'createTime',
+		        title: '创建时间',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'endTime',
+		        title: '结束时间',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+	 	        field: 'operation',
+	 	        title: '编辑',
+	 	        align: 'center',
+	 	       formatter:function(value,row,index){
+	 	        	var d = '<a class = "fa fa-list-ul detail" style="color:#278bdd;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+		 	        return d;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }]
+	   });  
+}

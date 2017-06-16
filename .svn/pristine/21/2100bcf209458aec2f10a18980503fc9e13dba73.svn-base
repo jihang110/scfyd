@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IGaranteeMoneyDao" >
+  
+  <resultMap id="guaranteeMoneyInfoResultMap" type="com.ut.scf.pojo.auto.GuaranteeMoneyManagement">
+   	<id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="guarantee_money_rate" jdbcType="VARCHAR" property="guaranteeMoneyRate" />
+  </resultMap>
+  
+  <select id="getGaranteeMoneyPageList" resultType="hashmap"  parameterType="hashmap">
+    select product_id productId, product_name productName, guarantee_money_rate guaranteeMoneyRate
+    from  guarantee_money_management
+    where 1=1
+    <if test="productName != null and productName != ''">
+	  and product_name LIKE CONCAT(CONCAT('%', #{productName}),'%')
+	</if>
+  </select>
+  
+</mapper>

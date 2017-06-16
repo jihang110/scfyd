@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IFinanceInfoDao" >
+
+	<resultMap id="FinanceInfoResultMap" type="com.ut.scf.pojo.auto.FinanceInfo">
+		<id column="finance_id" jdbcType="VARCHAR" property="financeId" />
+	    <result column="apply_date" jdbcType="DATE" property="applyDate" />
+	    <result column="agency_name" jdbcType="VARCHAR" property="agencyName" />
+	    <result column="agency_num" jdbcType="VARCHAR" property="agencyNum" />
+	    <result column="max_credit" jdbcType="DECIMAL" property="maxCredit" />
+	    <result column="available_credit" jdbcType="DECIMAL" property="availableCredit" />
+	    <result column="finance_rate" jdbcType="DECIMAL" property="financeRate" />
+	    <result column="cash_rate" jdbcType="DECIMAL" property="cashRate" />
+	    <result column="finance_start_date" jdbcType="DATE" property="financeStartDate" />
+	    <result column="finance_end_date" jdbcType="DATE" property="financeEndDate" />
+	    <result column="finance_amount" jdbcType="DECIMAL" property="financeAmount" />
+	    <result column="expense" jdbcType="DECIMAL" property="expense" />
+	    <result column="finance_status" jdbcType="VARCHAR" property="financeStatus" />
+	    <result column="pay_id" jdbcType="VARCHAR" property="payId" />
+	    <result column="pay_date" jdbcType="DATE" property="payDate" />
+	    <result column="pay_amt" jdbcType="DECIMAL" property="payAmt" />
+  	</resultMap>
+  
+  <select id="getFinanceInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+    finance_id financeId, apply_date applyDate, agency_name agencyName, agency_num agencyNum, max_credit maxCredit, available_credit availableCredit, finance_rate financeRate, 
+    cash_rate cashRate, finance_start_date financeStartDate, finance_end_date financeEndDate, finance_amount financeAmount, expense, 
+    finance_status financeStatus, pay_id payId,pay_date payDate,pay_amt payAmt
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+  </select>
+  
+  <select id="getFinanceInfoGroupByName" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+   		agency_name agencyName,agency_num agencyNum,SUM(finance_amount) financAemountSum,SUM(pay_amt) payAmtSum
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+    GROUP BY agency_name
+  </select>
+  
+</mapper>

@@ -1,0 +1,8 @@
+package com.ut.scf.dao.pub;
+
+import java.util.List;
+import java.util.Map;
+
+public interface ICustDao {
+	List<Map<String, Object>> getUserByRole(Map<String, Object> paramMap);
+}

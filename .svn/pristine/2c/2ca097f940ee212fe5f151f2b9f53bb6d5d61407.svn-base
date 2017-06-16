@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.ICorpConditionDao">
+<select id="selectCorpConditionList" resultType="hashmap" parameterType="hashmap">
+	select cc.rec_uid recUid, cc.corp_id corpId, cc.oper_year operYear, c.corp_name corpName,  
+	cc.current_rate currentRate,
+	cc.quick_rate quickRate,cc.interest_coverage interestCoverage,
+	cc.cash_rate cashRate,
+	cc.assets_and_liabilities assetsAndLiabilities,
+	cc.equity_rate equityRate,cc.receivable_turnover_rate receivableTurnoverRate,
+	cc.receivable_turnover_rate_days receivableTurnoverRateDays,
+	cc.inventory_turnover inventoryTurnover,
+	cc.inventory_turnover_days inventoryTurnoverDays,
+	cc.current_assets_turnover currentAssetsTurnover,
+	cc.current_assets_turnover_days currentAssetsTurnoverDays,
+	cc.fixed_asset_turnover fixedAssetsTurnover,
+	cc.fixed_asset_turnover_days fixedAssetsTurnoverDays,
+	cc.total_asset_turnover totalAssetTurnover,
+	cc.total_asset_turnover_days totalAssetTurnoverDays,
+	cc.accounts_payable_turnover accountsPayableTurnover,
+	cc.accounts_payable_turnover_days accountsPayableTurnoverDays,
+	cc.cash_turnover cashTurnover,
+	cc.cash_turnover_days cashTurnoverDays,
+	cc.operating_margin operatingMargin,
+	cc.operating_net_profit operatingNetProfit,
+	cc.operating_gross_profit operatingGrossProfit,
+	cc.cost_margins costMargins,cc.cost_rate costRate,
+	cc.return_total_assets returnTotalAssets,
+	cc.return_net_assets returnNetAssets,
+	cc.main_business_revenue_growth mainBusinessRevenueGrowth,
+	cc.main_business_profit_growth mainBusinessProfitGrowth,
+	cc.net_profit_growth netProfitGrowth,
+	cc.total_asset_growth totalAssetGrowth,
+	cc.capital_maintenance_and_appreciation capitalMaintenanceAndAppreciation,
+	cc.cash_of_sales cashOfSales,
+	cc.cash_of_purchase cashOfPurchase,cc.net_operating_cash_to_sales netOperatingCashToSales,
+	cc.operating_cash_rate_of_return operatingCashRateOfReturn,
+	cc.net_operating_cash_to_profit netOperatingCashToProfit,
+	cc.net_operating_cash_to_debt netOperatingCashToDebt,
+	cc.proportion_of_fixed_assets proportionOfFixedAssets,
+	cc.shareholder_rate shareholderRate,cc.longterm_debt_rate longtermDebtRate,
+	cc.fixed_assets_and_equity_rate fixedAssetsAndEquityRate,
+	cc.main_business_profit_rate mainBusinessProfitRate,
+	cc.accounts_receivable_income_rate accountsReceivableIncomeRate,
+	cc.liquidity_income_rate liquidityIncomeRate,
+	cc.total_assets_profit_margin totalAssetsProfitMargin,
+	cc.loan_recovery_during_reporting_period loanRecoveryDuringReportingPeriod
+	 
+	 from corp_comprehensive_eval cc join corp_info c on cc.corp_id = c.corp_id 
+	 where 1=1 and c.status=1
+    <if test="corpId != null">
+	  and cc.corp_id = #{corpId}
+	</if>
+	 <if test="operYear != null">
+	  and cc.oper_year = #{operYear}
+	</if>
+	<if test="userCorpList !=null">
+	  and cc.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and cc.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and cc.create_user_id = #{createUserId}
+	</if>
+</select>
+	
+<insert id="insertCorpCondition" parameterType="hashmap">
+	insert into corp_comprehensive_eval ( rec_uid, corp_id, oper_year,  
+	current_rate,quick_rate,interest_coverage,cash_rate,
+	assets_and_liabilities,equity_rate,receivable_turnover_rate,
+	receivable_turnover_rate_days,inventory_turnover,
+	inventory_turnover_days,current_assets_turnover,
+	current_assets_turnover_days,fixed_asset_turnover,
+	fixed_asset_turnover_days,total_asset_turnover,
+	total_asset_turnover_days,accounts_payable_turnover,
+	accounts_payable_turnover_days,cash_turnover,
+	cash_turnover_days,operating_margin,operating_net_profit,
+	operating_gross_profit,cost_margins,cost_rate,
+	return_total_assets,return_net_assets,
+	main_business_revenue_growth,main_business_profit_growth,
+	net_profit_growth,total_asset_growth,
+	capital_maintenance_and_appreciation,cash_of_sales,
+	cash_of_purchase,net_operating_cash_to_sales,
+	operating_cash_rate_of_return,net_operating_cash_to_profit,
+	net_operating_cash_to_debt,proportion_of_fixed_assets,
+	shareholder_rate,longterm_debt_rate,
+	fixed_assets_and_equity_rate,main_business_profit_rate,
+	accounts_receivable_income_rate,liquidity_income_rate,
+	total_assets_profit_margin,loan_recovery_during_reporting_period,
+	rela_corp_id, create_user_id, create_time)
+	 
+	 values ( #{recUid}, #{corpId}, #{operYear}, 
+	 #{currentRate}, #{quickRate}, 
+	 #{interestCoverage}, #{cashRate},
+	 #{assetsAndLiabilities},#{equityRate},
+	 #{receivableTurnoverRate},#{receivableTurnoverRateDays},#{inventoryTurnover},
+	 #{inventoryTurnoverDays},#{currentAssetsTurnover},
+	 #{currentAssetsTurnoverDays},#{fixedAssetsTurnover},
+	 #{fixedAssetsTurnoverDays},#{totalAssetTurnover},
+	 #{totalAssetTurnoverDays},#{accountsPayableTurnover},
+	 #{accountsPayableTurnoverDays},#{cashTurnover},
+	 #{cashTurnoverDays},#{operatingMargin},
+	 #{operatingNetProfit},#{operatingGrossProfit},
+	 #{costMargins},#{costRate},
+	 #{returnTotalAssets},#{returnNetAssets},
+	 #{mainBusinessRevenueGrowth},#{mainBusinessProfitGrowth},
+	 #{netProfitGrowth},#{totalAssetGrowth},#{capitalMaintenanceAndAppreciation},
+	 #{cashOfSales},#{cashOfPurchase},#{netOperatingCashToSales},
+	 #{operatingCashRateOfReturn},#{netOperatingCashToProfit},
+	 #{netOperatingCashToDebt},#{proportionOfFixedAssets},
+	 #{shareholderRate}, #{longtermDebtRate},#{fixedAssetsAndEquityRate},
+	 #{mainBusinessProfitRate},
+	 #{accountsReceivableIncomeRate},#{liquidityIncomeRate},
+	 #{totalAssetsProfitMargin},#{loanRecoveryDuringReportingPeriod},
+	 #{relaCorpId},#{createUserId}, now())
+</insert>
+
+<delete id="deleteCorpCondition" parameterType="java.lang.String">
+	delete from corp_comprehensive_eval where rec_uid = #{recUid}
+</delete>
+
+<update id="updateCorpCondition" parameterType="hashmap">
+	update corp_comprehensive_eval
+	<set>
+      <if test="operYear != null">
+        oper_year = #{operYear,jdbcType=CHAR},
+      </if>
+      <if test="currentRate != null">
+        current_rate = #{currentRate,jdbcType=DECIMAL},
+      </if>
+      <if test="quickRate != null">
+        quick_rate = #{quickRate,jdbcType=DECIMAL},
+      </if>
+      <if test="interestCoverage != null">
+        interest_coverage = #{interestCoverage,jdbcType=DECIMAL},
+      </if>
+      <if test="cashRate != null">
+        cash_rate = #{cashRate,jdbcType=DECIMAL},
+      </if>
+      <if test="assetsAndLiabilities != null">
+        assets_and_liabilities = #{assetsAndLiabilities,jdbcType=DECIMAL},
+      </if>
+      <if test="equityRate != null">
+        equity_rate = #{equityRate,jdbcType=DECIMAL},
+      </if>
+      <if test="receivableTurnoverRate != null">
+        receivable_turnover_rate = #{receivableTurnoverRate,jdbcType=DECIMAL},
+      </if>
+      <if test="receivableTurnoverRateDays != null">
+        receivable_turnover_rate_days = #{receivableTurnoverRateDays,jdbcType=DECIMAL},
+      </if>
+      <if test="inventoryTurnover != null">
+        inventory_turnover = #{inventoryTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="inventoryTurnoverDays != null">
+        inventory_turnover_days = #{inventoryTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="currentAssetsTurnover != null">
+        current_assets_turnover = #{currentAssetsTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="currentAssetsTurnoverDays != null">
+        current_assets_turnover_days = #{currentAssetsTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="fixedAssetsTurnover != null">
+        fixed_asset_turnover = #{fixedAssetsTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="fixedAssetsTurnoverDays != null">
+        fixed_asset_turnover_days = #{fixedAssetsTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAssetTurnover != null">
+        total_asset_turnover = #{totalAssetTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAssetTurnoverDays != null">
+        total_asset_turnover_days = #{totalAssetTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="accountsPayableTurnover != null">
+        accounts_payable_turnover = #{accountsPayableTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="accountsPayableTurnoverDays != null">
+        accounts_payable_turnover_days = #{accountsPayableTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="cashTurnover != null">
+        cash_turnover = #{cashTurnover,jdbcType=DECIMAL},
+      </if>
+      <if test="cashTurnoverDays != null">
+        cash_turnover_days = #{cashTurnoverDays,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingMargin != null">
+        operating_margin = #{operatingMargin,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingNetProfit != null">
+        operating_net_profit = #{operatingNetProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingGrossProfit != null">
+        operating_gross_profit = #{operatingGrossProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="costMargins != null">
+        cost_margins = #{costMargins,jdbcType=DECIMAL},
+      </if>
+      <if test="costRate != null">
+        cost_rate = #{costRate,jdbcType=DECIMAL},
+      </if>
+      <if test="returnTotalAssets != null">
+        return_total_assets = #{returnTotalAssets,jdbcType=DECIMAL},
+      </if>
+      <if test="returnNetAssets != null">
+        return_net_assets = #{returnNetAssets,jdbcType=DECIMAL},
+      </if>
+      <if test="mainBusinessRevenueGrowth != null">
+        main_business_revenue_growth = #{mainBusinessRevenueGrowth,jdbcType=DECIMAL},
+      </if>
+      <if test="mainBusinessProfitGrowth != null">
+        main_business_profit_growth = #{mainBusinessProfitGrowth,jdbcType=DECIMAL},
+      </if>
+      <if test="netProfitGrowth != null">
+        net_profit_growth = #{netProfitGrowth,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAssetGrowth != null">
+        total_asset_growth = #{totalAssetGrowth,jdbcType=DECIMAL},
+      </if>
+      <if test="capitalMaintenanceAndAppreciation != null">
+        capital_maintenance_and_appreciation = #{capitalMaintenanceAndAppreciation,jdbcType=DECIMAL},
+      </if>
+      <if test="cashOfSales != null">
+        cash_of_sales = #{cashOfSales,jdbcType=DECIMAL},
+      </if>
+      <if test="cashOfPurchase != null">
+        cash_of_purchase = #{cashOfPurchase,jdbcType=DECIMAL},
+      </if>
+      <if test="netOperatingCashToSales != null">
+        net_operating_cash_to_sales = #{netOperatingCashToSales,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingCashRateOfReturn != null">
+        operating_cash_rate_of_return = #{operatingCashRateOfReturn,jdbcType=DECIMAL},
+      </if>
+       <if test="netOperatingCashToProfit != null">
+        net_operating_cash_to_profit = #{netOperatingCashToProfit,jdbcType=DECIMAL},
+      </if>
+       <if test="netOperatingCashToDebt != null">
+        net_operating_cash_to_debt = #{netOperatingCashToDebt,jdbcType=DECIMAL},
+      </if>
+       <if test="proportionOfFixedAssets != null">
+        proportion_of_fixed_assets = #{proportionOfFixedAssets,jdbcType=DECIMAL},
+      </if>
+       <if test="shareholderRate != null">
+        shareholder_rate = #{shareholderRate,jdbcType=DECIMAL},
+      </if>
+       <if test="longtermDebtRate != null">
+        longterm_debt_rate = #{longtermDebtRate,jdbcType=DECIMAL},
+      </if>
+       <if test="fixedAssetsAndEquityRate != null">
+        fixed_assets_and_equity_rate = #{fixedAssetsAndEquityRate,jdbcType=DECIMAL},
+      </if>
+       <if test="mainBusinessProfitRate != null">
+        main_business_profit_rate = #{mainBusinessProfitRate,jdbcType=DECIMAL},
+      </if>
+       <if test="accountsReceivableIncomeRate != null">
+        accounts_receivable_income_rate = #{accountsReceivableIncomeRate,jdbcType=DECIMAL},
+      </if>
+       <if test="liquidityIncomeRate != null">
+        liquidity_income_rate = #{liquidityIncomeRate,jdbcType=DECIMAL},
+      </if>
+       <if test="totalAssetsProfitMargin != null">
+        total_assets_profit_margin = #{totalAssetsProfitMargin,jdbcType=DECIMAL},
+      </if>
+       <if test="loanRecoveryDuringReportingPeriod != null">
+        loan_recovery_during_reporting_period = #{loanRecoveryDuringReportingPeriod,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+</update>
+
+<select id="selectCorpConditionById" parameterType="java.lang.String" resultType="hashmap">
+	select cc.rec_uid recUid, cc.corp_id corpId, cc.oper_year operYear, c.corp_name corpName,  
+	cc.current_rate currentRate,
+	cc.quick_rate quickRate,cc.interest_coverage interestCoverage,
+	cc.cash_rate cashRate,
+	cc.assets_and_liabilities assetsAndLiabilities,
+	cc.equity_rate equityRate,cc.receivable_turnover_rate receivableTurnoverRate,
+	cc.receivable_turnover_rate_days receivableTurnoverRateDays,
+	cc.inventory_turnover inventoryTurnover,
+	cc.inventory_turnover_days inventoryTurnoverDays,
+	cc.current_assets_turnover currentAssetsTurnover,
+	cc.current_assets_turnover_days currentAssetsTurnoverDays,
+	cc.fixed_asset_turnover fixedAssetsTurnover,
+	cc.fixed_asset_turnover_days fixedAssetsTurnoverDays,
+	cc.total_asset_turnover totalAssetTurnover,
+	cc.total_asset_turnover_days totalAssetTurnoverDays,
+	cc.accounts_payable_turnover accountsPayableTurnover,
+	cc.accounts_payable_turnover_days accountsPayableTurnoverDays,
+	cc.cash_turnover cashTurnover,
+	cc.cash_turnover_days cashTurnoverDays,
+	cc.operating_margin operatingMargin,
+	cc.operating_net_profit operatingNetProfit,
+	cc.operating_gross_profit operatingGrossProfit,
+	cc.cost_margins costMargins,cc.cost_rate costRate,
+	cc.return_total_assets returnTotalAssets,
+	cc.return_net_assets returnNetAssets,
+	cc.main_business_revenue_growth mainBusinessRevenueGrowth,
+	cc.main_business_profit_growth mainBusinessProfitGrowth,
+	cc.net_profit_growth netProfitGrowth,
+	cc.total_asset_growth totalAssetGrowth,
+	cc.capital_maintenance_and_appreciation capitalMaintenanceAndAppreciation,
+	cc.cash_of_sales cashOfSales,
+	cc.cash_of_purchase cashOfPurchase,cc.net_operating_cash_to_sales netOperatingCashToSales,
+	cc.operating_cash_rate_of_return operatingCashRateOfReturn,
+	cc.net_operating_cash_to_profit netOperatingCashToProfit,
+	cc.net_operating_cash_to_debt netOperatingCashToDebt,
+	cc.proportion_of_fixed_assets proportionOfFixedAssets,
+	cc.shareholder_rate shareholderRate,cc.longterm_debt_rate longtermDebtRate,
+	cc.fixed_assets_and_equity_rate fixedAssetsAndEquityRate,
+	cc.main_business_profit_rate mainBusinessProfitRate,
+	cc.accounts_receivable_income_rate accountsReceivableIncomeRate,
+	cc.liquidity_income_rate liquidityIncomeRate,
+	cc.total_assets_profit_margin totalAssetsProfitMargin,
+	cc.loan_recovery_during_reporting_period loanRecoveryDuringReportingPeriod
+	
+	from corp_comprehensive_eval cc JOIN corp_info c ON cc.corp_id = c.corp_id 
+    where cc.rec_uid = #{recUid} 
+</select>
+
+<select id="hasOneYear" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from corp_comprehensive_eval cc
+    <where>
+        1=1
+        <if test="operYear!=null and operYear!='' ">  
+            and cc.oper_year = #{operYear}
+        </if>
+        <if test="corpId != null">
+		    and cc.corp_id = #{corpId}
+		</if>
+		<if test="relaCorpId != null">
+	  		and cc.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and cc.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+
+
+<select id="calculateData" resultType="hashmap" parameterType="hashmap">
+		select
+		(ni.total_current_assets/ni.total_current_liabilities)*100 currentRate,<!-- 流动比率 -->
+		(ni.total_current_assets-ni.stock)/(ni.total_current_liabilities)*100 quickRate, <!-- 速动比率 -->
+  		(p.total_profit+p.financial_expense)/(p.financial_expense) interestCoverage,<!-- 利息保障倍数 -->
+		(ni.money_funds+ni.transactional_financial_assets)/(ni.total_current_liabilities)*100 cashRate,<!-- 现金比率 -->
+		(ni.total_liabilities)/(ni.total_assets)*100 assetsAndLiabilities,<!-- 资产负债率 -->
+		(ni.total_liabilities)/(ni.total_owners_equity)*100 equityRate, <!-- 产权比例 -->
+		(p.operating_gain)/(ni.average_accounts_receivable) receivableTurnoverRate, <!-- 应收账款周转率（次/年） -->
+		<!-- 360/((p.operating_gain)/(ni.average_accounts_receivable)) receivableTurnoverRateDays,应收账款周转天数（天/次） -->
+		(p.operating_cost)/(ni.average_inventory) inventoryTurnover,<!-- 存货周转率（次/年） -->
+		<!-- 360/((p.operating_cost)/(ni.average_inventory)) inventoryTurnoverDays  存货周转期（天/次） -->
+		(p.operating_gain)/(ni.average_current_assets) currentAssetsTurnover,<!-- 流动资产周转率（次/年 ) -->
+		<!-- 360/((p.operating_gain)/(ni.average_current_assets)) 流动资产周转期（天/次 -->
+		(p.operating_gain)/(ni.average_net_fixed_assets) fixedAssetsTurnover,<!-- 固定资产周转率（次/年） -->
+		<!-- 360/((p.operating_gain)/(ni.average_net_assets)) fixedAssetsTurnoverDays, 固定资产周转期（天/次） -->
+		(p.operating_gain)/(ni.average_total_assets) totalAssetTurnover,<!-- 总资产周转率（次/年） -->
+		<!-- 360/((p.operating_gain)/(ni.average_current_liabilities)) totalAssetTurnoverDays 总资产周转期 -->
+		(p.operating_cost)/(ni.average_accounts_payable) accountsPayableTurnover,<!-- 应付账款周转率（次/年） -->
+		<!-- 360/((p.operating_cost)/(ni.average_accounts_receivable)) accountsPayableTurnoverDays, 应付账款周转天数（天/次） -->
+		(p.operating_gain)/(ni.average_money_funds) cashTurnover,<!-- 现金周转率（次/年） -->
+		<!-- 360/((p.operating_gain)/(ni.total_assets_growth_rate)) cashTurnoverDays,现金周转天数（天/次） -->
+		(p.operating_profit)/(p.operating_gain)*100 operatingMargin,<!-- 营业利润率 -->
+		(p.net_profit)/(p.operating_gain)*100 operatingNetProfit,<!-- 营业净利率 -->
+		(p.operating_gain-p.operating_cost)/(p.operating_gain)*100 operatingGrossProfit,<!-- 营业毛利率 -->
+		(p.total_profit)/(total_cost)*100 costMargins,<!-- 成本费用利润率 -->
+		p.cost_expense_rate costRate,<!-- 成本费用率 -->
+		(p.total_profit+p.financial_expense)/(ni.average_total_assets)*100 returnTotalAssets,<!-- 总资产报酬率 -->
+		(p.net_profit)/(ni.average_net_assets)*100 returnNetAssets,<!-- 净资产收益率 -->
+		p.growth_rate mainBusinessRevenueGrowth,<!-- 主营业务收入增长率 -->
+		p.operating_profit_growth_rate mainBusinessProfitGrowth,<!-- 主营业务利润增长率 -->
+		p.net_profit_growth_rate netProfitGrowth,<!-- 净利润增长率 -->
+		ni.total_assets_growth_rate totalAssetGrowth,<!-- 总资产增长率 -->
+		(ni.undistributed_profit+p.net_profit)/(ni.undistributed_profit)*100 capitalMaintenanceAndAppreciation,<!-- 资本保值增值率 -->
+		(cf.income_from_selling_and_offering)/(p.operating_gain)*100 cashOfSales,<!-- 销售收现比率 -->
+		(cf.expend_of_sell_commodity)/(p.operating_gain)*100 cashOfPurchase,<!-- 购货付现比率 -->
+		(cf.net_amount_of_cash_flow)/(p.operating_gain)*100 netOperatingCashToSales,<!-- 经营现金净流量对销售收入比率 -->
+		(cf.net_amount_of_cash_flow)/(ni.total_owners_equity)*100 operatingCashRateOfReturn,<!-- 资产的经营现金流量回报率 -->
+		(cf.net_amount_of_cash_flow)/(p.net_profit)*100 netOperatingCashToProfit,<!-- 经营现金净流量对净利润的比率 -->
+		(cf.net_amount_of_cash_flow)/(ni.total_liabilities)*100 netOperatingCashToDebt,<!-- 经营现金净流量对负债比率 -->
+		(ni.fixed_assets)/(ni.total_assets)*100 proportionOfFixedAssets,<!-- 固定资产比重 -->
+		100-((ni.total_non_current_liabilities)/(total_owners_equity)*100) shareholderRate,<!-- 股东权益比率 -->
+		(ni.total_non_current_liabilities)/(ni.total_liabilities_and_owners_equity)*100 longtermDebtRate,<!-- 长期负债比率 -->
+		(ni.fixed_assets)/(ni.total_owners_equity)*100 fixedAssetsAndEquityRate,<!-- 股东权益与固定资产比率 -->
+		(p.operating_profit)/(p.total_profit)*100 mainBusinessProfitRate,<!-- 主营业务利润比重 -->
+		(ni.accounts_receivable)/(p.operating_gain)*100 accountsReceivableIncomeRate,<!-- 应收账款占收入比重 -->
+		(p.net_profit)/(ni.average_current_assets)*100 liquidityIncomeRate,<!-- 流动资金创收率 -->
+		(p.total_profit)/(ni.total_owners_equity)*100 totalAssetsProfitMargin<!-- 总资产利润率 -->
+		
+		FROM
+		negative_info ni
+		LEFT JOIN profit p on p.oper_year= ni.oper_year and p.corp_id=ni.corp_id
+		LEFT JOIN cash_flow cf on cf.oper_year=ni.oper_year and cf.corp_id=ni.corp_id
+		<where> 1=1
+			<if test="corpId != null">
+				and ni.corp_id = #{corpId}
+			</if>
+			<if test="operYear != null">
+				and ni.oper_year = #{operYear}
+			</if>
+		</where>
+	</select>
+
+</mapper>

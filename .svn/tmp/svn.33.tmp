@@ -1,0 +1,666 @@
+var isEdit = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).isEdit;
+$(function() {
+	 $("#isEdit").val(isEdit);
+	 CloudUtils.getMenuNames("nav");
+	 hideFun();
+     initShareHolderInfoTable();
+	 attachInfoTable();
+	 formValidator();
+	 getFormInfo();
+	 shareFormValidator();
+	 numFormat();
+	 HiddenformValidator();
+	 $('#shareInfoModal').on('hidden.bs.modal', function() {
+			$("#shareInfoForm").bootstrapValidator('resetForm', true);
+			$("#shareInfoForm")[0].reset();
+		});
+	 $('#detailModal').on('hidden.bs.modal', function() {
+			$("#detailForm").bootstrapValidator('resetForm', true);
+			$("#detailForm")[0].reset();
+		});
+ });
+ var shareIndex =0;
+ window.operateEvents = {
+		    'click .modify': function (e, value, row, index) {
+		    	if($(e.target).data('type')==="shareInfo"){
+		    		//修改
+		    		modShareFun(row,2);
+		    		shareIndex = index;
+		    	}
+		    },
+		    'click .remove':function (e, value, row, index) {
+		    	//$('#shareHolderInfoTable').bootstrapTable('removeByUniqueId', index);
+			     var attachData = $('#attachInfoTable').bootstrapTable('getData');
+		    	if($(e.target).data('type')==="shareInfo"){
+		    		var values = [];
+			    	values.push(row.shareName);
+			    	$('#shareHolderInfoTable').bootstrapTable('remove', {field: 'shareName', values: values});
+		    	}else if ($(e.target).data('type')==="attach"){
+		    		attachData.length
+		    		var values = [];
+			    	var num =$("#num").val();
+			    	num = attachData.length-1;
+			    	$("#num").val(num);
+			    	values.push(row.fileUrl);
+			    	$('#attachInfoTable').bootstrapTable('remove', {field: 'fileUrl', values: values});
+		    	}
+		    	
+			}
+ };
+ 
+ function getFormInfo(){
+	 var row = store.get('custRow');//从缓存中获取数据
+	 if(isEdit=="3"){
+		//修改 
+		 detailFun(row);
+		 initShareHolderInfoTable(row.corpId);
+		 attachInfoTable(row.corpId);
+	 }else if(isEdit=="2"){
+		 initShareHolderInfoTable(row.corpId);
+ 		attachInfoTable(row.corpId);
+ 		modFun(row, 2);
+	 }
+	
+ }
+ function hideFun(){
+		if (isEdit == 3){
+			$("#fileUpload").hide();
+			$("#addbutton").hide();
+		} else if (isEdit == 2) {
+			$("#fileUpload").show();
+			$("#addbutton").show();
+		} 
+	}
+
+  function detailFun(row) {
+	 	$('#detailModal').modal();
+	 	$("#addModalLabel").text("详情");
+	 	$("#detailForm").val("");
+	 	CloudUtils.setForm(row,'detailForm');
+	 	$('#detailForm input').attr('readonly',true);
+	 	$("select").attr("disabled",true);
+        document.getElementById("btn_save").style.display="none";
+	    $("#btn_blank").removeClass('col-sm-4').addClass('col-sm-7');
+	}
+ 
+ function modFun(row,isEdit){
+	$("#addModalLabel").text("修改");
+	$('#detailModal').modal();
+	$('#detailForm input').attr('readonly',false);
+ 	$("select").attr("disabled",false);
+    CloudUtils.setForm(row,'detailForm');
+	$('#isEdit').val(isEdit); //新增1;修改2
+ }
+ 
+ function modShareFun(row,isEdit){
+    $("#addshareInfoModalLabel").text("修改");
+	$('#shareInfoModal').modal();
+	CloudUtils.setForm(row,'shareInfoForm');
+	//
+	$('#isEdit2').val(isEdit); //新增1;修改2
+ }
+ 
+
+ function addFun(type){
+	
+	 $('#detailForm input').attr('readonly',false);
+	 	$("select").attr("disabled",false);
+	 	$("#file").attr("disabled",false);
+		$("#btn-add").attr("disabled",false);
+	 if(type === 0){
+		 $('#mainFrame',top.document).attr('src','pubManager/custManager/custAdd.html');
+		 $('#isEdit').val(1); //新增1;修改2 
+	 }else if(type === 1){
+		 $("#shareInfoModal").modal();
+		 $('#isEdit2').val(1); //新增1;修改2 
+	 }
+ }
+ 
+ function saveFun(type){
+	 $('#detailForm #agencyNumHidden,#detailForm,#shareInfoForm').data('bootstrapValidator').validate();
+	 var sysType = $("#sysType").val();
+	 if(sysType==4){
+		 $('#detailForm #agencyNumHidden').data('bootstrapValidator').validate();
+	 }
+	 if(!$('#detailForm,#shareInfoForm,#agencyNumHidden').data('bootstrapValidator').isValid()){  
+		    //没有通过校验 
+		 return false;
+		} else {
+		   //通过校验，可进行提交等操作
+	 if(type === 0){
+//			保存到数据库
+		 var data = CloudUtils.convertStringJson('detailForm');
+	     var jsonData = eval("(" + data + ")");
+	     var isEdit = $('#isEdit').val();
+	     var allTableData = $('#shareHolderInfoTable').bootstrapTable('getData');
+	     var attachData = $('#attachInfoTable').bootstrapTable('getData');
+	     jsonData.shareInfoList = allTableData;
+	     jsonData.attachInfoList = attachData;
+	     if(jsonData.sysType == 4){
+//	    	 经销商进入流程
+	    	 var options = {
+				url : '../../custInfo/checkAgencyNum',
+				data : JSON.stringify(jsonData),
+				callBackFun : function(data) {
+					if (data.result == 0) {
+						bootbox.alert(data.resultNote,function(){
+ 							cancle();
+ 						});
+					} else {
+						bootbox.alert(data.resultNote);
+ 						return false;
+ 						
+					}
+				},
+				errorCallback : function(data) {
+					return false;
+				}
+			};
+ 		 CloudUtils.ajax(options);
+	     }else{
+	    	 if (isEdit == 1) {
+	    		 var options = {
+	    					url : '../../custInfo/add',
+	    					data : JSON.stringify(jsonData),
+	    					callBackFun : function(data) {
+	    						if (data.result == 0) {
+	    							bootbox.alert(data.resultNote,function(){
+	    	 							cancle();
+	    	 						});
+	    						} else {
+	    							bootbox.alert(data.resultNote);
+	    	 						return false;
+	    						}
+	    					},
+	    					errorCallback : function(data) {
+	    						bootbox.alert(data.resultNote);
+	    						return false;
+	    					}
+	    				};
+	    		 CloudUtils.ajax(options);
+	    	     } else if(isEdit == 2){
+	    	    	 var options = {
+	    	 				url : '../../custInfo/mod',
+	    	 				data : JSON.stringify(jsonData),
+	    	 				callBackFun : function(data) {
+	    	 					if (data.result == 0) {
+	    	 						bootbox.alert(data.resultNote,function(){
+	    	 							cancle();
+	    	 						});
+	    	 					} else {
+	    	 						bootbox.alert(data.resultNote);
+	    	 						return false;
+	    	 					}
+	    	 				},
+	    	 				errorCallback : function(data) {
+	    	 					bootbox.alert(data.resultNote);
+	    	 					return false;
+	    	 				}
+	    	 			};
+	    	    	 CloudUtils.ajax(options);
+	    	     }
+	     }
+		 $("#detailModal").modal("hide");
+	 }else if(type ===1 ){
+		 var isEdit2 = $('#isEdit2').val();
+		  if (isEdit2 == 1) {// 新增1；修改2
+			  var data = CloudUtils.convertStringJson('shareInfoForm');
+//				 先只在页面显示，不录入数据库
+			 $("#shareHolderInfoTable").bootstrapTable('append', JSON.parse(data));
+		     } else if(isEdit2 == 2){
+		    	 var data = CloudUtils.convertStringJson('shareInfoForm');
+		    	$('#shareHolderInfoTable').bootstrapTable('updateRow', {index: shareIndex, row: JSON.parse(data)});
+		     }
+			$("#shareInfoModal").modal("hide");
+	 }
+		}
+ }
+ 
+// 初始化股东信息表
+ function initShareHolderInfoTable(corpId){
+	 $('#shareHolderInfoTable').bootstrapTable('destroy'); 
+		$("#shareHolderInfoTable").bootstrapTable({  
+	         method: "post", 
+	         url: "../../shareHolder/list", 
+	         striped: false,  //表格显示条纹  
+	         search: false,  //是否启用查询  
+	         showColumns: false,  //显示下拉框勾选要显示的列  
+	         showRefresh: false,  //显示刷新按钮  
+	         sidePagination: "server", //表示服务端请求  
+	         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	         //设置为limit可以获取limit, offset, search, sort, order  
+	         queryParamsType : "undefined",   
+	         queryParams: function queryParams(params) {   //设置查询参数  
+	            // var data = CloudUtils.convertStringJson('searchForm');
+	            // var jsonData = eval("(" + data + ")");
+	             var param = {    
+		                 pageNumber: params.pageNumber,    
+		                 pageSize: params.pageSize
+		             }; 
+				 if(corpId){
+					 param.corpId = corpId            	 
+	             } 
+	             return JSON.stringify(param);                   
+	           }, 
+	         responseHandler:function responseHandler(res) {
+	        	 if (res.result==0) {
+		        	 return {
+		        		 "rows": res.dataList,
+		        		 "total": res.records
+		        	 };
+
+	        	 } else {
+	        		 bootbox.alert(res.resultNote);
+	        		 return {
+				        	 "rows": [],
+				        	 "total": 0
+				        	 };
+	        	 }
+	         },
+	         columns: [ {
+	 	        field: 'shareName',
+	 	        title: '股东名称',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'shareProportion',
+	 	        title: '持股比例(%)',
+	 	        align: 'center',
+	             valign: 'middle',
+	             formatter:function(value){
+	             	return $.number(value, 2);
+	             }
+	 	    }, {
+	 	        field: 'registeredCapital',
+	 	        title: '注册资本份额',
+	 	        align: 'center',
+	             valign: 'middle',
+	             formatter:function(value){
+	             	return $.number(value, 2);
+	             }
+	 	    }, {
+	 	        field: 'registeredCapitalProportion',
+	 	        title: '注册资本占比(%)',
+	 	        align: 'center',
+	             valign: 'middle',
+	             formatter:function(value){
+	             	return $.number(value, 2);
+	             }
+	 	    }, {
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	        formatter:function(value,row,index){
+	 	        	var r = '<a class = "fa fa-trash-o remove" style="color:#278bdd;padding:0px 5px;" title="删除" data-type="shareInfo" href="javascript:void(0)"></a>';
+	 	        	var m = '<a class = "fa fa-edit modify" style="color:#278bdd;padding:0px 5px;" title="编辑" data-type="shareInfo" href="javascript:void(0)"></a>';
+	 	           if(isEdit==3){
+	 	            	return " ";
+	 	            }else if(isEdit==2){
+	 	            	
+	 	            
+	 	        	return m+' '+r;
+	 	            }   
+	 	        
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }
+	 	    ]
+	       });  
+ }
+ 
+// 添加附件信息
+function attachInfoTable(corpId){
+	 $('#attachInfoTable').bootstrapTable('destroy'); 
+		$("#attachInfoTable").bootstrapTable({  
+	         method: "post", 
+	         url: "../../uploadFile/list", 
+	         striped: false,  //表格显示条纹  
+	         search: false,  //是否启用查询  
+	         showColumns: false,  //显示下拉框勾选要显示的列  
+	         showRefresh: false,  //显示刷新按钮  
+	         sidePagination: "server", //表示服务端请求  
+	         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	         //设置为limit可以获取limit, offset, search, sort, order  
+	         queryParamsType : "undefined",   
+	         queryParams: function queryParams(params) {   //设置查询参数  
+//	             var data = CloudUtils.convertStringJson('searchForm');
+//	             var jsonData = eval("(" + data + ")");
+	             var param = {    
+	                 pageNumber: params.pageNumber,    
+	                 pageSize: params.pageSize
+	             }; 
+	             if(corpId){
+					 param.corpId = corpId            	 
+	             } 
+	             return JSON.stringify(param);                   
+	           }, 
+	         responseHandler:function responseHandler(res) {
+	        	 if (res.result==0) {
+		        	 return {
+		        		 "rows": res.dataList,
+		        		 "total": res.records
+		        	 };
+
+	        	 } else {
+	        		 bootbox.alert(res.resultNote);
+	        		 return {
+				        	 "rows": [],
+				        	 "total": 0
+				        	 };
+	        	 }
+	         },
+	         columns: [{
+	 	        field: 'fileUrl',
+	 	        title: '附件地址',
+	 	        align: 'center',
+	            valign: 'middle',
+	            visible: false
+		 	}, {
+	 	        field: 'fileName',
+	 	        title: '附件名称',
+	 	        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+					 var s = '<a href="/../..'+row.fileUrl+'" download="'+value+'">'+value+'</a>';
+			         return s;
+		           
+		        }
+	 	    }, {
+	 	        field: 'attachType',
+	 	        title: '附件格式',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'attachSize',
+	 	        title: '附件大小(MB)',
+	 	        align: 'center',
+	             valign: 'middle',
+	             formatter:function(value,row,index){
+	             	var fileSize = row.attachSize/1024/1024;
+		            return $.number(fileSize, 2);
+	             }
+	 	    }, {
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	        formatter:function(value,row,index){
+	 	        	var r = '<a class = "fa fa-trash-o remove" style="color:#278bdd;padding:0px 5px;" title="删除" data-type="attach" href="javascript:void(0)"></a>';
+	 	        	//var m = '<a class = "fa fa-edit modify" style="color:#d864fd;padding:0px 5px;" title="编辑" data-type="shareInfo" href="javascript:void(0)"></a>';
+	 	        	 if(isEdit==3){
+		 	            	return " ";
+		 	            }else if(isEdit==2) {
+		 	           
+		 	            return r;
+		 	            } 
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }
+	 	    ]
+	       });  
+}
+
+//文件上传部分
+var uploadAttachment = function() {
+	//document.getElementById("file").value = null;
+	document.getElementById("file").click();
+	$('#detailModal').modal({backdrop: 'static', keyboard: false});
+}
+
+function ajaxFileUpload(){
+	var fileUrl = $("#file").val();
+	var index = fileUrl.toLowerCase().lastIndexOf(".");
+	var fileType = fileUrl.substring(index);
+	var num = parseInt($("#num").val());
+	if ($("#file").val().length > 0) {
+		var fileSize = $("#file")[0].files[0].size;
+		if(fileType != ".docx"&&fileType != ".doc"&&fileType != ".pdf"&&fileType!=".png"&&fileType!=".jpg"&&fileType !=".xls"&&fileType!=".xlsx"){
+			bootbox.alert("支持文件格式：word、excel、pdf、png、jpg");
+		}else if(fileSize >= 52428800){
+			bootbox.alert("文件大小不得超过50M");
+		}else if(num > 9){
+			 bootbox.alert("上传文件不得超过10个");
+		}else{
+			$.ajaxFileUpload({  
+		        url : '../../file/binUpload?pathId=3',  
+		        secureuri : false,  
+		        fileElementId : 'file',  
+		        dataType : 'json',  
+		        success : function(data, status) {  
+		            if (data.result == 0) { 
+		            	num++;
+		            	$("#num").val(num);
+	//	            	1.先添加进页面中
+		            	var relData = {};
+		            	relData.fileName = data.fileName;
+		            	relData.attachSize = data.fileSize;
+		            	relData.fileUrl = data.fileUrl;
+		            	relData.attachType = data.fileType;
+		            	$("#attachInfoTable").bootstrapTable('append', relData);
+		                bootbox.alert("上传成功！");
+		                
+		            }else{
+		            	bootbox.alert("上传失败！"); 
+		            } 
+		        },  
+		        error : function(data, status, e) {  
+		        	bootbox.alert(e);  
+		        }  
+		    });
+		}
+    }
+    else {
+    	bootbox.alert("请选择文件");
+    }
+	
+}
+
+function changeSysType(){
+	var sysType = $("#sysType").val();
+	if(sysType == 4){
+		$("#agencyNumHidden").removeClass("hidden");
+	}else{
+		$("#agencyNumHidden").addClass("hidden");
+	}
+}
+
+function HiddenformValidator(){
+	$('#detailForm #agencyNumHidden').bootstrapValidator({
+		message: 'This value is not valid',
+ 	      excluded: ':disabled',
+ 	      feedbackIcons: {
+ 	          valid: 'glyphicon glyphicon-ok',
+ 	          invalid: 'glyphicon glyphicon-remove',
+ 	          validating: 'glyphicon glyphicon-refresh'
+ 	      },
+		fields: {
+			agencyNum: {
+				validators: {
+ 	    			notEmpty: {
+	                      message: '经销商代码不能为空'
+	                  }
+ 	    		}
+			},
+			maxCreditAmount: {
+				validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+	                       message: '金额在0~1000000000之间(>0)',  
+	                       callback: function(value, validator) { 
+	                        	return value =="" || (parseFloat(value)>0&&parseFloat(value)<=1000000000);
+	                         }  
+	                     },
+	                     notEmpty: {
+		                      message: '请输入最高授信额度'
+		                  }
+	              }
+			}
+		}
+	})
+	.on('success.form.bv', function (e) {
+			e.preventDefault();
+		});
+}
+
+function formValidator(){
+ 	$('#detailForm').bootstrapValidator({
+ 	      message: 'This value is not valid',
+ 	      excluded: ':disabled',
+ 	      feedbackIcons: {
+ 	          valid: 'glyphicon glyphicon-ok',
+ 	          invalid: 'glyphicon glyphicon-remove',
+ 	          validating: 'glyphicon glyphicon-refresh'
+ 	      },
+ 	      fields: {
+ 	    	 corpName:{
+ 	    		validators: {
+ 	    			notEmpty: {
+	                      message: '企业名称不能为空'
+	                  }
+ 	    		}
+ 	    	 },
+ 	    	legalPerson:{
+ 	    		validators: {
+ 	    			notEmpty: {
+	                      message: '法定代表人不能为空'
+	                  }
+ 	    		}
+ 	    	 },
+ 	    	 maxCreditAmount: {
+ 	    		validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+	                       message: '金额在-1000000000~1000000000之间',  
+	                       callback: function(value, validator) { 
+	                        	return value =="" || (parseFloat(value)>=-1000000000&&parseFloat(value)<=1000000000);
+	                         }  
+	                     } 
+	              }
+ 	    	 },
+ 	    	regCap: {
+ 	    		validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+	                       message: '金额在-1000000000~1000000000之间',  
+	                       callback: function(value, validator) { 
+	                        	return value =="" || (parseFloat(value)>=-1000000000&&parseFloat(value)<=1000000000);
+	                         }  
+	                     } 
+	              }
+ 	    	},
+	    	contactInfo: {
+	              validators: {
+	            	  notEmpty: {
+	                      message: '手机号不能为空'
+	                  },
+			          stringLength: {
+			              min: 11,
+			              max: 11,
+			              message: '手机号长度为11'
+			          },
+			          regexp: {
+	                      regexp: /^[0-9]*$/,
+	                      message: '手机号只能是数字'
+	                  }
+	              }
+	          },
+	          officeAddress:{
+	        	  validators: {
+	        		  notEmpty: {
+	                      message: '地址不能为空'
+	                  }
+	        	  }
+	          },
+	          fixedPhone:{
+	        	validators: {
+	        		stringLength: {
+			              max: 20,
+			              message: '固定电话长度不能超过20'
+			          }
+	        	}
+	          }
+ 	      }
+ 		})
+ 		.on('success.form.bv', function (e) {
+ 			e.preventDefault();
+ 		});	
+ }
+
+function shareFormValidator(){
+ 	$('#shareInfoForm').bootstrapValidator({
+ 	      message: 'This value is not valid',
+ 	      excluded:':disabled',
+ 	      feedbackIcons: {
+ 	          valid: 'glyphicon glyphicon-ok',
+ 	          invalid: 'glyphicon glyphicon-remove',
+ 	          validating: 'glyphicon glyphicon-refresh'
+ 	      },
+ 	      fields: {
+ 	    	 shareProportion: {
+ 	    		 validators: {
+	    			  numeric: {message: '只能输入数字'},
+		              callback: {  
+	                       message: '比例在0~100之间',  
+	                       callback: function(value, validator) { 
+	                        	return value =="" || (parseFloat(value)>=0&&parseFloat(value)<=100);
+	                         }  
+	                     } 
+ 	    		 }
+ 	    	 },
+ 	    	registeredCapital:{
+ 	    		validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+	                       message: '金额在-1000000000~1000000000之间',  
+	                       callback: function(value, validator) { 
+	                        	return value =="" || (parseFloat(value)>=-1000000000&&parseFloat(value)<=1000000000);
+	                         }  
+	                     } 
+	              }
+ 	    	},
+ 	    	registeredCapital:{
+ 	    		validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+		            	  message: '注册资本份额不得超过注册资本',  
+	                       callback: function(value, validator) {
+	                    	   var regCap = $("#regCap").val();
+	                    	   var regCapFloat = parseFloat(regCap);
+	                    	   return value =="" || (parseFloat(value) <=regCapFloat);
+	                         }  
+	                     } 
+	              }
+ 	    	},
+ 	    	registeredCapitalProportion:{
+ 	    		validators: {
+	            	  numeric: {message: '只能输入数字'},
+		              callback: {  
+		            	  message: '比例在0~100之间',  
+	                       callback: function(value, validator) { 
+	                    	   return value =="" || (parseFloat(value)>=0&&parseFloat(value)<=100);
+	                         }  
+	                     } 
+	              }
+ 	    	}
+ 	      }
+ 		})
+ 		.on('success.form.bv', function (e) {
+ 			e.preventDefault();
+ 		});	
+ }
+
+function numFormat(){
+ 	$("#maxCreditAmount").number(true, 2);
+ 	$("#regCap").number(true, 2);
+ 	$("#shareProportion").number(true, 2);
+ 	$("#registeredCapital").number(true, 2);
+ 	$("#registeredCapitalProportion").number(true, 2);
+ }
+
+function cancle(){
+//	取消
+//	清缓存
+	store.remove('custRow');
+	history.go(-1);
+}

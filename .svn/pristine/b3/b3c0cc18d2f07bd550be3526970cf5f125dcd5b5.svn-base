@@ -1,0 +1,33 @@
+package com.ut.scf.service.test;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.ut.scf.service.sys.ISequenceService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:spring-mybatis-test.xml" })
+public class SequenceServiceTest {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(SequenceServiceTest.class);
+	@Resource
+	ISequenceService sequenceUtil;
+
+	@Test
+	public void sequenceTest() {
+		log.info("=============================sequenceTest start=============================");
+		for (int i = 0; i < 101; i++) {
+			String result = sequenceUtil.getNextSequence("test", "yw");
+			System.out.println("sequence:" + result);
+		}
+
+		log.info("=============================sequenceTest end=============================");
+	}
+}

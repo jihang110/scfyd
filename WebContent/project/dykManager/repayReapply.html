@@ -1,0 +1,54 @@
+	   		<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+	   		  <input type="hidden" id="interestDate" name="interestDate">
+	 		  <div class="form-group">
+	            <label class="col-sm-2 control-label" for="repaymentDate"><span class="required"></span>还款日期</label>
+	            <div class="col-sm-3">
+	            	<input type="text" class="form-control" id="repaymentDate" name="repaymentDate" readonly/>
+	            </div>
+	            <label class="col-sm-2 control-label" for="repaySumAmt"><span class="required"></span>还款总金额</label>
+	            <div class="col-sm-3">
+		            <input type="text" class="form-control" id="repaySumAmt"  name="repaySumAmt"  readonly/>
+                </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="repayCapitalAmt">还本金金额</label>
+	            <div class="col-sm-3">
+	            	<input type="text" id="repayCapitalAmt" name="repayCapitalAmt" class="form-control" readonly>
+	         	</div>
+	         	<div id="divRepayInterestAmt">
+		         	<label class="col-sm-2 control-label"  for="repayInterestAmt">还利息金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" id="repayInterestAmt" name="repayInterestAmt" class="form-control" readonly>
+		         	</div>
+	         	</div>
+	          </div>
+	           <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="carStolenCertificate">赎车凭证</label>
+	            <div class="col-sm-3">
+	            	<input name="carStolenCertificate" class="form-control" id="carStolenCertificate" type="text" readonly>
+	         	</div>
+	         	<div class="col-sm-1">
+				    <input type='button' style="margin:auto;margin-left: -25px;" class="btn btn-default add" value='上传' onclick="upload(this)">
+				    <input type="file" name="file" id="certificateFile"  onchange="ajaxFileUpload(this.id);" style="display:none;">
+	          	</div>
+	            <label class="col-sm-1 control-label"  for="note">备注</label>
+	            <div class="col-sm-3">
+				    <textarea id="note"  rows="3" name="note" class="form-control" ></textarea>
+	          	</div>
+	          </div>
+	          <div id="divAdvice" class="form-group" style="display:none;">
+	            <label class="col-sm-2 control-label"  for="advice">审核结果</label>
+	            <div class="col-sm-3">
+				    <textarea id="advice"  rows="3" name="advice" class="form-control" readonly></textarea>
+	          	</div>
+	          </div>
+	          <div class="col-sm-2">
+				<a id="downloadTemp" href="#">
+					<button type="button" class="btn btn-default add">下载模板</button>
+				</a>
+				<button type="button" class="btn btn-default add" onclick="upload(this)">上传车辆明细</button>
+				<input type="file" name="file" id="carFile"  onchange="ajaxFileUpload(this.id);" style="display:none;">
+			  </div>
+	          <table id="carInfoListTable" class="table table-bordered" cellspacing="0" width="100%">
+	          </table>
+	         </form>

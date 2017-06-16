@@ -1,0 +1,32 @@
+package com.ut.scf.service.project;
+
+import java.io.File;
+import java.util.Map;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.reqbean.project.RepayProcessReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IRepayManagerService {
+
+	public BaseRespBean getRepayList(Map<String, Object> paramMap,
+			PageInfoBean page);
+
+	public BaseRespBean getCarInfoList(Map<String, Object> paramMap);
+
+	public BaseRespBean addRepayInfo(RepayProcessReqBean repaymentInfo);
+
+	public BaseRespBean importExcel(String fileName, File targetFile)
+			throws Exception;
+
+	public boolean doAgree(JSONObject jsonObject);
+
+	BaseRespBean findRepayPlanByStatus(Map<String, Object> paramMap,
+			PageInfoBean page);
+
+	BaseRespBean updateSSMRepayStatus(Map<String, Object> paramMap);
+
+	BaseRespBean selectSumAmt(Map<String, Object> paramMap);
+}

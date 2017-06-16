@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IRepayManagerDao" >
+
+  	<resultMap id="RepaymentInfoResultMap" type="com.ut.scf.pojo.auto.RepaymentInfo">
+   	<id column="repayment_id" jdbcType="VARCHAR" property="repaymentId" />
+    <result column="order_batch_id" jdbcType="VARCHAR" property="orderBatchId" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="contact" jdbcType="VARCHAR" property="contact" />
+    <result column="period" jdbcType="TINYINT" property="period" />
+    <result column="current_repay_date" jdbcType="DATE" property="currentRepayDate" />
+    <result column="current_payable_principal" jdbcType="DECIMAL" property="currentPayablePrincipal" />
+    <result column="current_payable_interest" jdbcType="DECIMAL" property="currentPayableInterest" />
+    <result column="capital_arrival_date" jdbcType="DATE" property="capitalArrivalDate" />
+    <result column="principal_arrival_amt" jdbcType="DECIMAL" property="principalArrivalAmt" />
+    <result column="interest_arrival_amt" jdbcType="DECIMAL" property="interestArrivalAmt" />
+  </resultMap>
+  <select id="getRepayList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+   	repayment_id repaymentId, order_batch_id orderBatchId, order_id orderId, name, id_card idCard, contact, period, current_repay_date currentRepayDate, 
+    current_payable_principal currentPayablePrincipal, current_payable_interest currentPayableInterest, capital_arrival_date capitalArrivalDate, principal_arrival_amt principalArrivalAmt, 
+    interest_arrival_amt interestArrivalAmt
+    from repayment_info
+	where    1 = 1
+	    <if test="repaymentId != null and repaymentId != ''">
+		  and repayment_id LIKE CONCAT(CONCAT('%', #{repaymentId}),'%')
+		</if> 
+	    <if test="currentRepayDate != null and currentRepayDate !='' ">  
+	        and current_repay_date LIKE CONCAT(CONCAT('%', #{currentRepayDate}),'%') 
+	    </if>
+	    <if test="principalArrivalAmt != null and principalArrivalAmt !='' ">  
+	        and principal_arrival_amt LIKE CONCAT(CONCAT('%', #{principalArrivalAmt}),'%') 
+	    </if>
+	
+  </select>
+
+</mapper>

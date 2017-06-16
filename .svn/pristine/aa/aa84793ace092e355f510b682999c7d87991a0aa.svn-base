@@ -1,0 +1,26 @@
+package com.ut.scf.respbean.sys;
+
+import com.ut.scf.respbean.BaseRespBean;
+
+public class FileRespBean extends BaseRespBean {
+	private String fileUrl;
+
+	private long fileSize;
+
+	public String getFileUrl() {
+		return fileUrl;
+	}
+
+	public void setFileUrl(String fileUrl) {
+		this.fileUrl = fileUrl;
+	}
+
+	public void setFileSize(long fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public long getFileSize() {
+		return fileSize;
+	}
+
+}

@@ -1,0 +1,11 @@
+package com.ut.scf.dao.project;
+
+import java.util.List;
+import java.util.Map;
+
+public interface IRepayPlanDao {
+
+	List<Map<String, Object>> selectRepayPlanInfo(Map<String, Object> paramMap);
+
+	String selectCrReqAmtByBatchId(Map<String, Object> paramMap);
+}

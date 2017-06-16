@@ -1,0 +1,205 @@
+$(document).ready(function() {
+	dateload();
+	initDate();
+	initTable();
+} );
+
+function dateload(){
+	 $('#selectDate,#sycDate').datetimepicker({
+      language: 'zh-CN',
+      autoclose: 1,
+      todayBtn: true,// 显示今天时间
+      pickerPosition: "bottom-left",
+      minuteStep: 5,
+      format: 'yyyy-m-dd',
+      minView: 'month',　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+      initialDate : new Date() //参考financeInfoManager.js
+     });
+	 $('#loanDate').datetimepicker('setEndDate', new Date());
+}
+
+function initDate(){
+	var today=new Date();
+	var submitTime=today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()+'';
+	$("#sycDate").val(submitTime);
+	$("#selectDate").attr("placeholder","点击此处选择日期");
+	
+}
+
+function initTable() {
+	$('#overdueManagerListTable').bootstrapTable('destroy');  
+	$("#overdueManagerListTable").bootstrapTable({  
+         method: "post", 
+         url: "../../product/list", 
+         striped: true,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+           var param = {    
+               pageNumber: params.pageNumber,    
+               pageSize: params.pageSize,
+               isPage : 1,
+               productName: jsonData.productName,
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'productId',
+ 	        title: '序号',
+ 	        align: 'center',
+            valign: 'middle',
+//          visible: false
+ 	    }, {
+ 	        field: 'productName',
+ 	        title: '订单号',
+ 	        align: 'center',
+            valign: 'middle'
+ 	    },/* {
+ 	        field: 'productDesc',
+ 	        title: '产品名称',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '产品金额',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '分期期数',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '分期总费用',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '商家ID',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '商家名称',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '超人所需费用',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '首付金额',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '每期还款金额',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '首期还款日期',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '姓名',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '性别',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '出身年月',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '年龄',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '身份证号',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '联系方式',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '学校',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '年级',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '毕业时间',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },*/{
+ 	        field: 'attachment',
+ 	        title: '相关图片',
+ 	        align: 'center',
+            valign: 'middle',
+            formatter:function(value,row,index){
+ 	        	var d = '<a class = "glyphicon glyphicon-eye-open graph" style="color:#278bdd;padding:0px 5px;" title="预览"  href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '订单状态',
+ 	        align: 'center',
+            valign: 'middle',
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	        align: 'center',
+ 	        valign: 'middle',
+ 	        formatter:function(value,row,index){
+	        	var d = '<span><input type="radio" name="result" value="0" checked/>同意';
+	        	var s = '<input type="radio" name="result" value="1"/>拒绝</span>';
+	            return d +' '+s;
+	        }
+ 	    }]
+       });  
+}

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.ICustomerTradeDao">
+	<select id="selectCustomerTradeList" resultType="hashmap" parameterType="hashmap">
+		select cd.rec_uid recUid, cd.corp_id corpId, cd.customer_name customerName,cd.products, cp.corp_name corpName,
+		 cd.oper_time operTime,cd.current_sales currentSales, cd.current_payment currentPayment,
+		 cd.current_agreement_payment currentAgreementPayment, cd.current_real_payment currentRealPayment, 
+		 cd.loan_amount loanAmount, cd.receivable_balance receivableBalance,cd.account_and_settlement accountAndSettlement,
+		  cd.first_half_transaction firstHalfTransaction, cd.total_annual_purchases totalAnnualPurchases,
+		  cd.financial_phone financialPhone,cd.payment_scale paymentScale
+		  from customer_sale_pay_detail cd join corp_info cp on cd.corp_id = cp.corp_id
+		  where 1=1 and cp.status = 1
+    <if test="corpId != null and corpId!=''">
+	  and cd.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and cd.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and cd.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and cd.create_user_id = #{createUserId}
+	</if>
+	</select>
+	
+	<insert id="insertCustomerTrade" parameterType="hashmap">
+		insert into customer_sale_pay_detail (rec_uid, corp_id, customer_name, 
+      products, oper_time, current_sales, 
+      current_payment, receivable_balance, current_agreement_payment, 
+      current_real_payment, loan_amount, payment_scale, 
+      account_and_settlement, first_half_transaction, 
+      total_annual_purchases, is_rela_corp, financial_phone, 
+      rela_corp_id, create_user_id, create_time
+      )
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{customerName,jdbcType=VARCHAR}, 
+      #{products,jdbcType=VARCHAR}, #{operTime,jdbcType=CHAR}, #{currentSales,jdbcType=DECIMAL}, 
+      #{currentPayment,jdbcType=DECIMAL}, #{receivableBalance,jdbcType=DECIMAL}, #{currentAgreementPayment,jdbcType=DECIMAL}, 
+      #{currentRealPayment,jdbcType=DECIMAL}, #{loanAmount,jdbcType=DECIMAL}, #{paymentScale,jdbcType=DECIMAL}, 
+      #{accountAndSettlement,jdbcType=VARCHAR}, #{firstHalfTransaction,jdbcType=DECIMAL}, 
+      #{totalAnnualPurchases,jdbcType=DECIMAL}, #{isRelaCorp,jdbcType=TINYINT}, #{financialPhone,jdbcType=VARCHAR}, 
+      #{relaCorpId,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, now()
+      )
+	</insert>
+	
+	<delete id="deleteCustomerTrade" parameterType="java.lang.String">
+		delete from customer_sale_pay_detail where rec_uid = #{recUid}
+	</delete>
+	
+	<update id="updateCustomerTrade" parameterType="hashmap">
+		update customer_sale_pay_detail
+		<set>
+		<if test="customerName != null">
+        customer_name = #{customerName,jdbcType=VARCHAR},
+      </if>
+      <if test="products != null">
+        products = #{products,jdbcType=VARCHAR},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime,jdbcType=CHAR},
+      </if>
+      <if test="currentSales != null">
+        current_sales = #{currentSales,jdbcType=DECIMAL},
+      </if>
+      <if test="currentPayment != null">
+        current_payment = #{currentPayment,jdbcType=DECIMAL},
+      </if>
+      <if test="receivableBalance != null">
+        receivable_balance = #{receivableBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="currentAgreementPayment != null">
+        current_agreement_payment = #{currentAgreementPayment,jdbcType=DECIMAL},
+      </if>
+      <if test="currentRealPayment != null">
+        current_real_payment = #{currentRealPayment,jdbcType=DECIMAL},
+      </if>
+      <if test="loanAmount != null">
+        loan_amount = #{loanAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="paymentScale != null">
+        payment_scale = #{paymentScale,jdbcType=DECIMAL},
+      </if>
+      <if test="accountAndSettlement != null">
+        account_and_settlement = #{accountAndSettlement,jdbcType=VARCHAR},
+      </if>
+      <if test="firstHalfTransaction != null">
+        first_half_transaction = #{firstHalfTransaction,jdbcType=DECIMAL},
+      </if>
+      <if test="totalAnnualPurchases != null">
+        total_annual_purchases = #{totalAnnualPurchases,jdbcType=DECIMAL},
+      </if>
+      <if test="financialPhone != null">
+        financial_phone = #{financialPhone,jdbcType=VARCHAR},
+      </if>
+        </set>
+        where rec_uid = #{recUid}
+	</update>
+	
+	<select id="selectSalesRiskAnalyList" resultType="hashmap" parameterType="hashmap">
+		select  s.rec_uid recUid, s.corp_id corpId,cp.corp_name corpName, s.sales_risk_point salesRiskPoint
+		 from
+		sales_risk_analy s
+    	join corp_info cp on s.corp_id = cp.corp_id
+    	where 1=1 and cp.status = 1
+    	<if test="corpId != null and corpId!=''">
+	 		and s.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  		and s.corp_id in ${userCorpList}
+		</if>
+		<if test="relaCorpId != null">
+	  		and s.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and s.create_user_id = #{createUserId}
+		</if>
+	</select>
+	
+	<insert id="insertSalesRiskAnaly" parameterType="hashmap">
+		 insert into sales_risk_analy (rec_uid, corp_id, sales_risk_point, 
+      rela_corp_id, create_user_id, create_time
+      )
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{salesRiskPoint,jdbcType=VARCHAR}, 
+      #{relaCorpId,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, now()
+      )
+	</insert>
+	
+	<delete id="deleteSalesRiskAnaly"  parameterType="java.lang.String">
+		delete from sales_risk_analy where rec_uid = #{recUid}
+	</delete>
+	
+	<update id="updateSalesRiskAnaly" parameterType="hashmap">
+		update sales_risk_analy
+    <set>
+      <if test="salesRiskPoint != null">
+        sales_risk_point = #{salesRiskPoint,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+	</update>
+</mapper>

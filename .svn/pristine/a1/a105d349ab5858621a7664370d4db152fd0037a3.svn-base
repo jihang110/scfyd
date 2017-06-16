@@ -1,0 +1,78 @@
+package com.ut.scf.reqbean.project;
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class OrderManagerReqBean extends PageReqBean {
+
+	/**
+	 * 订单管理
+	 * **/
+	private String orderId;// 订单id
+
+	private String orderBatchId;// 订单批次 id
+	/**
+	 * aciviti
+	 * **/
+	private String agree;
+	private String advice;
+	private String taskId;
+	private String userId; // 用户
+	private String activitiKey;
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+
+	public String getOrderBatchId() {
+		return orderBatchId;
+	}
+
+	public void setOrderBatchId(String orderBatchId) {
+		this.orderBatchId = orderBatchId;
+	}
+
+	public String getAgree() {
+		return agree;
+	}
+
+	public void setAgree(String agree) {
+		this.agree = agree;
+	}
+
+	public String getAdvice() {
+		return advice;
+	}
+
+	public void setAdvice(String advice) {
+		this.advice = advice;
+	}
+
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getActivitiKey() {
+		return activitiKey;
+	}
+
+	public void setActivitiKey(String activitiKey) {
+		this.activitiKey = activitiKey;
+	}
+
+}

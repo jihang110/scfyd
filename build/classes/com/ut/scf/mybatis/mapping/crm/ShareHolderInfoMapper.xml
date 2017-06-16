@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.IShareHolderInfoDao">
+  
+  <select id="selectShareHolderList"  resultType="hashmap" parameterType="hashmap">
+    select 
+    si.share_holder_id shareHolderId, si.share_name shareName, si.share_type shareType, si.subscribed_capital subscribedCapital,
+    si.paid_in_capital paidInCapital, si.share_proportion shareProportion, si.corp_id corpId,
+    si.rela_corp_id relaCorpId, si.note note, ci.corp_name corpName
+    from share_holder_info si
+    join corp_info ci on ci.corp_id=si.corp_id
+    <where>
+        1=1 and ci.status = 1
+        <if test="corpId!=null and corpId!='' ">  
+            and si.corp_id = #{corpId}  
+        </if>  
+    	<if test="shareName!=null and shareName!='' ">  
+            and si.share_name LIKE CONCAT(CONCAT('%', #{shareName}),'%')   
+        </if>  
+    	<if test="shareType!=null and shareType!='' ">  
+            and si.share_type LIKE CONCAT(CONCAT('%', #{shareType}),'%')   
+        </if>
+        <if test="userCorpList !=null">
+	  		and si.corp_id in ${userCorpList}
+		</if>
+        <if test="corpName!=null and corpName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')   
+        </if>
+        <if test="relaCorpId != null">
+		  and si.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+		  and si.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+  
+  <delete id="deleteShareHolder" parameterType="hashmap">
+    delete from share_holder_info
+    where share_holder_id = #{shareHolderId}
+  </delete>
+  
+  <insert id="insertShareHolder" parameterType="hashmap">
+    insert into share_holder_info (share_holder_id, share_name, share_type, 
+      subscribed_capital, paid_in_capital, share_proportion, 
+      corp_id , note , rela_corp_id, create_user_id, create_time)
+    values (#{shareHolderId}, #{shareName}, #{shareType}, 
+      #{subscribedCapital}, #{paidInCapital}, #{shareProportion}, 
+      #{corpId} ,#{note}, #{relaCorpId}, #{createUserId}, now())
+  </insert>
+  
+  <update id="updateShareHolder" parameterType="hashmap">
+    update share_holder_info
+    <set>
+      <if test="shareHolderId != null">
+        share_holder_id = #{shareHolderId},
+      </if>
+      <if test="shareName != null">
+        share_name = #{shareName},
+      </if>
+      <if test="shareType != null">
+        share_type = #{shareType},
+      </if>
+      <if test="subscribedCapital != null">
+        subscribed_capital = #{subscribedCapital},
+      </if>
+      <if test="paidInCapital != null">
+        paid_in_capital = #{paidInCapital},
+      </if>
+      <if test="shareProportion != null">
+        share_proportion = #{shareProportion},
+      </if>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+    </set>
+    where share_holder_id = #{shareHolderId}
+  </update>
+  
+</mapper>

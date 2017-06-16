@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.IBankStreamDao">
+    
+  <select id="selectCustomerBankStreamList" parameterType="map" resultType="map">
+    select s.rec_uid recUid, s.corp_id corpId, c.corp_name corpName, 
+    s.bank_name bankName, s.bank_account bankAccount, s.oper_time operTime, s.amount
+    from customer_bank_stream s join corp_info c on s.corp_id=c.corp_id
+    where 1=1 and s.oper_time LIKE CONCAT(#{operTime},'%') and c.status = 1
+	<if test="corpId != null">
+	  and s.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and s.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and s.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and s.create_user_id = #{createUserId}
+	</if>
+	order by s.oper_Time desc
+  </select>
+  
+  <insert id="insertCustomerBankStream" parameterType="map">
+    insert into customer_bank_stream (rec_uid, corp_id, bank_name, 
+      bank_account, oper_time, amount, 
+      rela_corp_id, create_user_id, create_time)
+    values (#{recUid}, #{corpId}, #{bankName}, 
+      #{bankAccount}, #{operTime}, #{amount}, 
+      #{relaCorpId}, #{createUserId}, now())
+  </insert>
+  
+  <delete id="deleteCustomerBankStream" parameterType="java.lang.String">
+    delete from customer_bank_stream
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateCustomerBankStream" parameterType="map">
+    update customer_bank_stream
+    <set>
+      <if test="bankName != null">
+        bank_name = #{bankName},
+      </if>
+      <if test="bankAccount != null">
+        bank_account = #{bankAccount},
+      </if>
+      <if test="operTime != null">
+        oper_time = #{operTime},
+      </if>
+      <if test="amount != null">
+        amount = #{amount},
+      </if>
+    </set>
+    where rec_uid = #{recUid}
+  </update>
+    
+  <select id="customerBankStreamStatistic" parameterType="map" resultType="map">
+    select s.bank_name bankName, s.bank_account bankAccount,s.oper_time, sum(s.amount) totalAmount
+    from customer_bank_stream s join corp_info c on s.corp_id=c.corp_id
+    where s.corp_id = #{corpId} and s.oper_time LIKE CONCAT(#{operTime},'%') and c.status = 1
+	<if test="relaCorpId != null">
+	  and s.rela_corp_id = #{relaCorpId}
+	</if>
+	group by s.bank_name, s.bank_account,s.oper_time
+	order by s.bank_name, s.bank_account,s.oper_time
+  </select>
+  
+</mapper>

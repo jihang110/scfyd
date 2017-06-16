@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.INegativeInfoUploadDao">
+  <select id="selectNegativeInfoUploadList"  parameterType="hashmap" resultType="hashmap">
+	select 
+	ni.neg_up_id negUpId, ni.corp_id corpId, ni.main_site_negative_info_pic mainSiteNegativeInfoPic, 
+    ni.negative_info_source negativeInfoSource,
+    ni.web_addr webAddr, 
+    ni.negative_info_summary negativeInfoSummary,
+    ci.corp_name corpName
+    from negative_info_upload ni
+    join corp_info ci on ci.corp_id=ni.corp_id
+    <where>
+        1=1  and ci.status = 1
+        <if test="corpName!=null and corpName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')   
+        </if>
+        <if test="corpId != null">
+		  and ni.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	 	 and ni.corp_id in ${userCorpList}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ni.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ni.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by ni.create_time desc
+  </select>
+  
+  <delete id="deleteNegativeInfoUpload" parameterType="hashmap">
+    delete from negative_info_upload
+    where neg_up_id = #{negUpId}
+  </delete>
+  
+  <insert id="insertNegativeInfoUpload" parameterType="hashmap">
+    insert into negative_info_upload (neg_up_id, corp_id, rela_corp_id, 
+      create_time, create_user_id, main_site_negative_info_pic, 
+      negative_info_source, web_addr, negative_info_summary
+      )
+    values (#{negUpId}, #{corpId}, #{relaCorpId}, 
+      now(), #{createUserId}, #{mainSiteNegativeInfoPic}, 
+      #{negativeInfoSource}, #{webAddr}, #{negativeInfoSummary}
+      )
+  </insert>
+
+  <update id="updateNegativeInfoUpload" parameterType="hashmap">
+    update negative_info_upload
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="mainSiteNegativeInfoPic != null">
+        main_site_negative_info_pic = #{mainSiteNegativeInfoPic},
+      </if>
+      <if test="negativeInfoSource != null">
+        negative_info_source = #{negativeInfoSource},
+      </if>
+      <if test="webAddr != null">
+        web_addr = #{webAddr},
+      </if>
+      <if test="negativeInfoSummary != null">
+        negative_info_summary = #{negativeInfoSummary},
+      </if>
+    </set>
+    where neg_up_id = #{negUpId}
+  </update>
+</mapper>

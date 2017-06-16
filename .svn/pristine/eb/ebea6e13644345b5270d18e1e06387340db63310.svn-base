@@ -1,0 +1,66 @@
+package com.ut.scf.service.pub.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.auto.StuInfoMapper;
+import com.ut.scf.dao.pub.IStuInfoDao;
+import com.ut.scf.pojo.auto.StuInfo;
+import com.ut.scf.pojo.auto.StuInfoExample;
+import com.ut.scf.pojo.auto.StuInfoExample.Criteria;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.office.impl.documentDownloadServiceImpl;
+import com.ut.scf.service.pub.IcustManagerService;
+
+@Service("custManagerService")
+public class CustManagerServiceImpl implements IcustManagerService{
+	
+	private static final Logger log = LoggerFactory
+			.getLogger(documentDownloadServiceImpl.class);
+	
+	@Resource
+	private StuInfoMapper stuInfoMapper;
+	
+	@Resource
+	private IStuInfoDao stuInfoDao;
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getStuInfoList(PageInfoBean page) {
+		List<Map<String, Object>> list = stuInfoDao.getStuIfnoPageList(page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getStuSearchList(Map<String, Object> paramMap) {
+		ListRespBean respBean = new ListRespBean();
+		StuInfoExample stuInfoExample = new StuInfoExample();
+		Criteria criteria = stuInfoExample.createCriteria();
+//		criteria.andStatusEqualTo((byte) 1);
+//		criteria.andCorpIdEqualTo((String) paramMap.get("corpId"));
+//		corpDeptExample.setOrderByClause("create_time asc");
+		criteria.andMobilePhoneEqualTo((String) paramMap.get("stuName"));
+		criteria.andIdNumEqualTo((String) paramMap.get("stuName"));
+		stuInfoExample.setOrderByClause("graduate_date asc");
+		List<StuInfo> list = stuInfoMapper.selectByExample(stuInfoExample);
+		
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+}

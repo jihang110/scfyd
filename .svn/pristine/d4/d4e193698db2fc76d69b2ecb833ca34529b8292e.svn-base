@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>融资管理</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!--external css-->
+    <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css"/> 
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-fileupload.min.js"></script>
+  <script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <script type="text/javascript" src="../../js/project/dykManager/financeInfoManager.js"></script>
+  <style type="text/css">
+  	#interest tr,#interest td{
+  		border: 1px solid #ddd !important;
+  	}
+  </style>
+</head>
+<body class="iframeBody">
+    <section>
+	    <div class="main-content-child"> 
+	    <div class="nav" id="nav"></div>
+	    <div class="whiteBgDiv row">
+			<div class="row	rowpad">
+				<div class="form-group">
+					<form class="form-horizontal" role="form" id="searchForm">
+						<div class="form-group col-sm-12">
+							<label class="col-sm-2 control-label" for="agencyName">经销商名称</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" id="agencyName"  name="agencyName"/>
+							</div>
+							<label class="col-sm-2 control-label" for="agencyNum">经销商代码</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" id="agencyNum"  name="agencyNum"/>
+							</div>
+						</div>
+						<div class="form-group col-sm-12">
+							<label class="col-sm-2 control-label" for="financeId">融资编号</label>
+							<div class="col-sm-3">
+								<input type="text" class="form-control" id="financeId"  name="financeId"/>
+							</div>
+							<label class="col-sm-2 control-label" for="financeStartDate">融资起始日</label>
+							<div class="col-sm-3">
+								<input name="financeStartDate" class="form-control" id="financeStartDate"
+									style="cursor: pointer;" type="text" readonly>
+							</div>
+						</div>
+						<div class="form-group col-sm-12">
+							<label class="col-sm-2 control-label" for="financeEndDate">融资到期日</label>
+							<div class="col-sm-3">
+								<input name="financeEndDate" class="form-control" id="financeEndDate"
+									style="cursor: pointer;" type="text" readonly>
+							</div>
+						</div>
+					</form>
+					<div class="col-sm-offset-10 col-sm-2">
+						<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-body">
+			<div class="nav">
+				<ol class="breadcrumb">
+					<li class="active">融资列表</li>
+				</ol>
+			</div>
+			<div class="col-sm-2">
+				<button id="btn_add" type="button" class="btn btn-default add"
+					data-toggle="modal" onclick="addFun()">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+				</button>
+			</div>
+			<table id="financeInfoList" class="table" cellspacing="0" width="100%">
+			</table>
+		</div>
+		<form class="form-horizontal" role="form" id="detailForm" data-toggle="validator">
+			<div class="modal fade" id="detailModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                  <h4 class="modal-title" id="addModalLabel">详情</h4>
+                </div>
+                <div class="modal-body">
+				  <div class="form-group">
+		            <label class="col-sm-4 control-label" for="financeId"><span class="required"></span>融资编号</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="financeId" class="form-control" id="financeId">
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="applyDate"><span class="required"></span>申请日期</label>
+		            <div class="col-sm-6">
+			            <input type="text" class="form-control" id="applyDate" name="applyDate"/>
+	                </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="agencyName">经销商名称</label>
+		            <div class="col-sm-6">
+		            	   <input id="agencyName" name="agencyName" class="form-control" >
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="agencyNum">经销商代码</label>
+		            <div class="col-sm-6">
+		            	<input id="agencyNum" name="agencyNum" class="form-control">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="maxCredit">最高授信额度</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="maxCredit" class="form-control" id="maxCredit">
+		            </div>
+		          </div>
+		           <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="availableCredit">可用授信额度</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="availableCredit" class="form-control" id="availableCredit">
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="financeRate">融资比例(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="financeRate" class="form-control" id="financeRate">
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cashRate">费率(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="cashRate" class="form-control" id="cashRate">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeStartDate">融资起始日</label>
+		            <div class="col-sm-6">
+		            	<input name="financeStartDate" class="form-control" id="financeStartDate" type="text">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeEndDate">融资到期日</label>
+		            <div class="col-sm-6">
+		            	<input name="financeEndDate" class="form-control" id="financeEndDate" type="text">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeAmount">融资金额</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="financeAmount" class="form-control" id="financeAmount">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="expense">费用</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="expense" class="form-control" id="expense">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="financeStatus">融资状态</label>
+		            <div class="col-sm-6">
+		            	<select id="financeStatus" name="financeStatus" class="form-control" >
+			            	<option value="0">未审核</option>
+			            	<option value="1">待放款</option>
+			            	<option value="2">已放款</option>
+			            	<option value="3">已部分还款</option>
+			            	<option value="4">已全额还款</option>
+			            	<option value="5">逾期</option>
+                		</select>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <table id="interestInfoList" class="table table-bordered" cellspacing="0" >
+		            </table>
+		          </div>
+		        </div>
+	            <div class="modal-footer">
+                  	<div class="form-group">
+                     <div class="col-sm-9"></div>
+                     <div class="col-sm-1">
+                       <button type="button" class="btn btn-default cancel" data-dismiss="modal">取消</button>
+                     </div>
+                   </div>
+			    </div>
+            </div>
+            </div>
+            </div>
+		</form>
+	   </div> 
+    </section>
+  </body>
+</html>

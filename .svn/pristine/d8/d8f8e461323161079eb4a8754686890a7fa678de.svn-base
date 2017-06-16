@@ -1,0 +1,55 @@
+package com.ut.scf.service.pub.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.dao.auto.StuInfoMapper;
+import com.ut.scf.dao.pub.IStuInfoDao;
+import com.ut.scf.reqbean.pub.StuInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.office.impl.documentDownloadServiceImpl;
+import com.ut.scf.service.pub.IcustManagerService;
+
+@Service("custManagerService")
+public class CustManagerServiceImpl implements IcustManagerService{
+	
+	private static final Logger log = LoggerFactory
+			.getLogger(documentDownloadServiceImpl.class);
+	
+	@Resource
+	private StuInfoMapper stuInfoMapper;
+	
+	@Resource
+	private IStuInfoDao stuInfoDao;
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getStuInfoList(StuInfoListReqBean stuInfoListReqBean) {
+		Map<String, Object> paramMap = BeanUtil.beanToMap(stuInfoListReqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(stuInfoListReqBean.getPageNumber());
+		page.setPageSize(stuInfoListReqBean.getPageSize());
+		List<Map<String, Object>> resultList = stuInfoDao.getStuIfnoPageList(paramMap, page);
+		paramMap.get("mobilePhone");
+		paramMap.get("stuName");
+		paramMap.get("idNum");
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(resultList);
+		log.debug("getStuInfoList: {}", resultList);
+		
+		return respBean;
+	}
+	
+}

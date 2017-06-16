@@ -1,0 +1,45 @@
+package com.ut.scf.reqbean.project;
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class AgencySearchPageReqBean extends PageReqBean {
+	private String agencyCode;
+	private String agencyName;
+	private byte sysType;
+	public byte getSysType() {
+		return sysType;
+	}
+
+	public void setSysType(byte sysType) {
+		this.sysType = sysType;
+	}
+
+	/**
+	 * 是否分页，0：否，1：是，默认为1.
+	 */
+	private Integer isPage = 1;
+	
+	public String getAgencyCode() {
+		return agencyCode;
+	}
+
+	public void setAgencyCode(String agencyCode) {
+		this.agencyCode = agencyCode;
+	}
+
+	public String getAgencyName() {
+		return agencyName;
+	}
+
+	public void setAgencyName(String agencyName) {
+		this.agencyName = agencyName;
+	}
+
+	public Integer getIsPage() {
+		return isPage;
+	}
+
+	public void setIsPage(Integer isPage) {
+		this.isPage = isPage;
+	}
+}

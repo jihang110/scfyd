@@ -1,0 +1,164 @@
+@CHARSET "UTF-8";
+.block {  
+	border:1px solid #ccc;
+	border-radius:2px;
+	background:#ffffff;
+	padding:0;
+	
+}
+/*标题，黑体：SimHei*/
+.title{
+	font-family:"SimHei";
+	color:#8e9197;
+	font-size:16px;
+}
+.panel-body{
+	padding:0;
+}
+.fa-th-large{
+	font-size:20px;
+}
+.fa-times{
+	font-size:16px;
+}
+/*图标颜色*/
+.fa-th-large:before{
+	color:#8e9197;
+}
+.fa-times:before{
+	color:#8e9197;
+}
+/*去掉背景色*/
+.tools a{
+	background:none;
+}
+.tools a:hover{
+	background-color: #2582e3;
+}
+.panel-heading {
+    border-bottom: 1px solid #cccccc;
+    padding: 6px 10px 6px 10px;
+}
+.row{
+	 margin: 30px 30px 0px 8px;
+}
+.panel{
+	margin:0;
+}
+.info{
+	/* margin:0px 0px 14px 0px; */
+	margin:0px 0px 0px 0px;
+}
+.category{
+	/* margin:0px; */
+	margin:14px 14px 0px 0px;
+}
+.categoryinfo{
+	/* margin:14px 0px 0px 10px; */
+	margin: 0px 0px 0px 10px;
+
+}
+.infocontent{
+	text-align:center;
+	border:1px solid #ccc;
+	border-radius:0px;
+	line-height:30px;
+	height:30px;
+	/* width:120px; */
+	padding:0;
+	padding-right: 20px;
+	font-size: 1em;
+}
+.glyphicon-minus:before{
+    background: #f7643b;
+    line-height:30px;
+    color:#ffffff;
+    padding:0px 5px;
+}
+.glyphicon-plus:before{
+     background: #2582e3;
+    
+    color:#ffffff;
+    padding:0px 5px; 
+    
+    line-height:30px;
+}
+.spanflow{
+	display:inline-block;
+	position:absolute;
+	right:15px;
+	line-height: 30px;
+	top:0px;
+	width:30px;
+	text-align: center;
+}
+a, a:hover {
+   text-decoration: none;
+}
+/*图标字体大小，颜色*/
+.icon{
+	font-size: 46px;
+	line-height:100px;
+}
+.fa-clock-o:before,.fa-plane:before,.fa-bell:before,.fa-chain:before{
+	color:#fff;
+}
+.number{
+	font-family:"Kartika";
+	color:#fff;
+	font-size:36px;
+	font-weight:bold;
+	text-align:center;
+	display:block
+}
+.character{
+	font-family:"SimHei";
+	color:#ffffff;
+	font-size:18px;
+	text-align:center;
+	vertical-align:middle; 	
+}
+a.character:hover {
+	color:#e5e5e5;
+	cursor:pointer;
+}
+.center {	
+margin:23px 0px 0px 0px;
+}
+
+.center1{
+margin:40px 0px 0px 0px;
+}
+
+.contentpad {
+	padding:0px 20px 0px 20px;  
+}
+
+.mag{
+	margin:0px 5px 0px -15px;
+}
+
+.notemag{
+	margin:0px 15px 0px -15px;
+}
+.rowmag{
+	margin-right: 10px;
+}
+.rownotemag{
+	margin-right: 1px;
+}
+.notecontent{
+	font-family:"华文细黑";
+	color:#aaadb5;
+	font-size:14px;
+}
+
+/*改变日历表格高度*/
+.fc-border-separate tbody tr{
+	height: 43px;
+}
+
+/*日历表格数字右上角*/
+.fc-border-separate>tbody>tr>td{
+	    vertical-align: top !important;
+}

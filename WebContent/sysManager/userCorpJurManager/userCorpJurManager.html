@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="ThemeBucket" />
+    <link rel="shortcut icon" href="#" type="image/png" />
+    <title>权限控制</title>
+    <link href="../../css/style.css" rel="stylesheet" />
+    <link href="../../css/style-responsive.css" rel="stylesheet" />
+    <link href="../../css/bootstrap-table.css" rel="stylesheet" />
+    <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet" />
+    <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+    <link href="../../js/iCheck/skins/square/blue.css" rel="stylesheet" />
+    <link href="../../css/sysfun.css" rel="stylesheet" />
+    <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/CloudUtils.js"></script>
+    <script src="../../js/password.js"></script>
+    <script src="../../js/store.js" type="text/javascript"></script>
+    <script src="../../js/jquery.nicescroll.js"></script>
+    <script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+    <script src="../../js/validation-init.js"></script>
+    <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+    <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+    <script type="text/javascript" src="../../js/iCheck/jquery.icheck.min.js"></script>
+    <!--dynamic table initialization -->
+    <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    
+    <script type="text/javascript" src="../../js/sysManager/userCorpJurManager/userCorpJurManager.js"></script>
+  </head>
+  
+  <body class="iframeBody">
+      <div class="main-content-child">
+        <header class="row">
+          <div class="title">
+            <span>权限控制</span></div>
+        </header>
+        <section>
+        <fieldset>
+          <div class="row rowpad">
+            <div class="form-group">
+              <form class="form-horizontal" role="form" id="searchForm">
+                <div class="col-sm-5">
+                  <input type="text" name="txt_userName" class="form-control" id="txt_userName" placeholder="人员名称" /></div>
+                <div class="col-sm-5">
+                  <input type="text" name="txt_corpName" class="form-control" id="txt_corpName" placeholder="公司名称" /></div>
+              </form>
+              <div class="col-sm-2">
+                <a onclick="searchFun()" class="btn btn-primary search">查找</a></div>
+            </div>
+          </div>
+         	<div class="checkbox">
+			<input type="checkbox" id="chkall"><label>全选</label>
+			</div>
+			<form id="editForm" class="form-horizontal" role="form">
+			<div class="row" style="margin: 15px 0px 0px 0px;">
+				<div class="col-sm-5" style="border:1px #ccc solid;height:200px;background-color:#ffffff;overflow: auto;">
+				<div class="checkbox" style="padding-left:15px;" id="createCheck">
+				</div>
+				</div>
+				<div class="col-sm-1">
+				<span class="fa fa-chevron-right" style="font-size:20px;width:100%;line-height:200px;height:200px;display:inline-block;text-align:center;color:#2582e3"></span>
+				</div>
+				<div class="col-sm-6" style="height:200px;padding:0px;">
+					<header style="height:10%;">企业客户名称</header>
+					<section style="border:1px #ccc solid;height:90%;">
+						<select id="corpId" name="corpId"  multiple="multiple" style="width:100%;height:100%;border: 0px;">
+						</select>
+					</section>
+				</div>
+			</div>
+			</form>
+			<div class="row" style="margin:15px 0px 0px -5px;">
+				<div class="col-sm-2">
+				<button id="btn_add" type="button" class="btn btn-default add" onclick="showDetail()">查看权限</button> 
+				</div>
+				<div class="col-sm-8">
+				</div>
+				<div class="col-sm-2">
+				<button id="btn_add" type="button" class="btn btn-default add" style="background:#52f99a;" onclick="saveUserCorp()">保存</button> 
+				</div>
+			</div>
+		 <form class="form-horizontal" role="form" id="showForm"  data-toggle="validator">	
+		<div class="modal fade" id="showDetail" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="addModalLabel">查看权限</h4>
+		        </div>
+		        <div class="modal-body">
+					<div class="form-group">
+		            <label class="col-sm-2 control-label" style="text-align: right;" for="username">现有公司</label>
+		            <div class="col-sm-10">
+		            	<div id="detailList" style="border: #ccc 1px solid;height:200px;overflow: auto;">
+		            	</div>
+		            </div>
+		          </div>
+		        </div>
+		       <div class="modal-footer">
+				  <div class="form-group">
+				  	<div class="col-sm-9"></div>
+					<div class="col-sm-3" style="padding: 0px 15px;">
+						<button type="button" class="btn btn-default add"
+							data-dismiss="modal">确定
+						</button>
+					</div>
+				</div>
+			</div>
+	      </div>
+	    </div>
+	  </div>
+		</form>
+        </fieldset>
+        
+        </section>
+      </div>
+  </body>
+</html>

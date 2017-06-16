@@ -1,0 +1,282 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricVariableInstance;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.dao.auto.CorpInfoMapper;
+import com.ut.scf.dao.auto.FinanceInfoMapper;
+import com.ut.scf.dao.project.IPayCommitmentDao;
+import com.ut.scf.pojo.auto.CorpInfo;
+import com.ut.scf.pojo.auto.CorpInfoExample;
+import com.ut.scf.pojo.auto.CorpInfoExample.Criteria;
+import com.ut.scf.pojo.auto.FinanceInfo;
+import com.ut.scf.pojo.auto.FinanceInfoExample;
+import com.ut.scf.reqbean.project.PayCommitProcessReqBean;
+import com.ut.scf.reqbean.project.PayCommitmentListReqBean;
+import com.ut.scf.reqbean.pub.TaskInfoReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.respbean.StringRespBean;
+import com.ut.scf.service.project.IPayCommitmentService;
+
+@Service("payCommitmentService")
+public class PayCommitmentServiceImpl implements IPayCommitmentService {
+	@Resource
+	private CorpInfoMapper corpInfoMapper;
+	@Resource
+	private FinanceInfoMapper financeInfoMapper;
+	@Resource
+	private IPayCommitmentDao iPayCommitmentDao;
+	@Resource
+	ProcessEngine processEngine;
+	@Resource
+	RuntimeService runtimeService;
+	@Resource
+	TaskService taskService;
+	@Resource
+	RepositoryService repositoryService;
+
+	// 获取经销商列表
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean dealerInfoList() {
+		CorpInfoExample corpInfoExample = new CorpInfoExample();
+		Criteria criteria = corpInfoExample.createCriteria();
+		criteria.andSysTypeEqualTo((short) 4);// 经销商
+		List<CorpInfo> corpInfos = corpInfoMapper
+				.selectByExample(corpInfoExample);
+		ListRespBean respBean = new ListRespBean();
+		respBean.setDataList(corpInfos);
+		return respBean;
+
+	}
+
+	// 查询经销商的融资信息
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean dealerFinanceInfoList(String no) {
+		FinanceInfoExample example = new FinanceInfoExample();
+		com.ut.scf.pojo.auto.FinanceInfoExample.Criteria criteria = example
+				.createCriteria();
+
+		criteria.andAgencyNumEqualTo(no);// 经销商
+
+		List<FinanceInfo> infos = financeInfoMapper.selectByExample(example);
+		ListRespBean respBean = new ListRespBean();
+		respBean.setDataList(infos);
+		return respBean;
+
+	}
+
+	// 付款承诺函列表信息
+
+	@Override
+	@Transactional
+	public BaseRespBean payCommitmentInfoList(PayCommitmentListReqBean reqBean) {
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+
+		List<Map<String, Object>> list = null;
+
+		PageRespBean respBean = new PageRespBean();
+		respBean.setDataList(list);
+		return respBean;
+
+	}
+
+	@Override
+	public BaseRespBean agencyFinanceList(PayCommitmentListReqBean reqBean) {
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+
+		List<Map<String, Object>> list = iPayCommitmentDao
+				.getAgencyFinanceList(paramMap, page);
+
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public void startProcess(JSONObject jsonObject) {
+		String userName = (String) jsonObject.get("userId");
+		String key = (String) jsonObject.get("activitiKey");
+		String payM = (String) jsonObject.get("payM"); // 付款金额
+		String financeAmount = (String) jsonObject.get("financeAmount"); // 融资金额
+
+		ProcessInstance pi = processEngine.getRuntimeService()// 管理流程实例和执行对象，也就是表示正在执行的操作
+				.startProcessInstanceByKey(key);
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId())
+				.singleResult();
+
+		// 拾取用户
+		taskService.claim(task.getId(), userName);
+		// 设置变量
+		taskService.setVariable(task.getId(), "payApplyJson",
+				jsonObject.toString());
+		taskService.setVariableLocal(task.getId(), "payApplyJsonTask",
+				jsonObject.toString());
+		taskService.setVariable(task.getId(), "payM", Double.parseDouble(payM));
+		taskService.setVariable(task.getId(), "financeAmount",
+				Double.parseDouble(financeAmount));
+		// 完成节点
+		taskService.complete(task.getId());
+	}
+
+	@Override
+	public BaseRespBean getDataByTaskId(TaskInfoReqBean reqBean) {
+		// 根据taskId获取流程数据
+		String values = (String) taskService.getVariable(reqBean.getTaskId(),
+				reqBean.getVarName());
+		StringRespBean respBean = new StringRespBean();
+		respBean.setStr(values);
+		return respBean;
+	}
+
+	@Override
+	public void fillGuarantee(PayCommitProcessReqBean reqBean) {
+		String taskId = reqBean.getTaskId();
+		String userName = reqBean.getUserId();
+		String values = (String) taskService
+				.getVariable(taskId, "payApplyJson");
+		JSONObject jsonObject = new JSONObject(values);
+		jsonObject.put("remark", reqBean.getRemark());
+		jsonObject.put("agree", "");
+
+		// 拾取用户
+		taskService.claim(taskId, userName);
+		// 设置变量
+		taskService.setVariable(taskId, "payApplyJson", jsonObject.toString());
+		taskService.setVariableLocal(taskId, "payApplyJsonTask",
+				jsonObject.toString());
+		// 完成节点
+		taskService.complete(taskId);
+	}
+
+	@Override
+	public boolean doAgree(PayCommitProcessReqBean reqBean) {
+		// 1.获取taskId和当前用户
+		String procInstId = reqBean.getProcInstId();
+		String taskId = reqBean.getTaskId();
+		String userId = reqBean.getUserId();
+		String agree = reqBean.getAgree();
+		String backTarget = reqBean.getBackTarget();
+		String advice = reqBean.getAdvice();
+
+		String values = (String) taskService
+				.getVariable(taskId, "payApplyJson");
+		JSONObject jsonObject = new JSONObject(values);
+		jsonObject.put("agree", agree);
+		jsonObject.put("backTarget", backTarget);
+		jsonObject.put("advice", advice);
+
+		// 2.拾取用户
+		taskService.claim(taskId, userId);
+		// 3.设置变量
+		taskService.setVariable(taskId, "payApplyJson", jsonObject.toString());
+		taskService.setVariableLocal(taskId, "payApplyJsonTask",
+				jsonObject.toString());
+		// 4.流程走向
+		if ("1".equals(agree)) {
+			if ("1".equals(backTarget)) {
+				agree = "1";
+			} else if ("0".equals(backTarget)) {
+				agree = "2";
+			}
+		}
+		taskService.setVariable(taskId, "agree", agree);
+		// 5.完成流程
+		taskService.complete(taskId);
+		// 6.查看流程状态
+		ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+				.processInstanceId(procInstId).singleResult();
+		if (pi == null) { // 流程已结束
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public void reApply(PayCommitProcessReqBean reqBean) {
+		String userName = reqBean.getUserId();
+		String taskId = reqBean.getTaskId();
+		String payM = reqBean.getPayM(); // 付款金额
+		String financeAmount = reqBean.getFinanceAmount(); // 融资金额
+		JSONObject jsonObject = new JSONObject(reqBean);
+
+		// 拾取用户
+		taskService.claim(taskId, userName);
+		// 设置变量
+		taskService.setVariable(taskId, "payApplyJson", jsonObject.toString());
+		taskService.setVariableLocal(taskId, "payApplyJsonTask",
+				jsonObject.toString());
+		taskService.setVariable(taskId, "payM", Double.parseDouble(payM));
+		taskService.setVariable(taskId, "financeAmount",
+				Double.parseDouble(financeAmount));
+		// 完成节点
+		taskService.complete(taskId);
+	}
+
+	@Override
+	public BaseRespBean getAllHistoryVariable(PayCommitProcessReqBean reqBean) {
+		ListRespBean respBean = new ListRespBean();
+		List<HistoricVariableInstance> historyList = processEngine
+				.getHistoryService().createHistoricVariableInstanceQuery()
+				.processInstanceId(reqBean.getProcInstId())
+				.variableName("payApplyJsonTask").list();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		
+		for (HistoricVariableInstance historicVariableInstance : historyList) {
+			Map<String, Object> historyMap = new HashMap<String, Object>();
+			Object value = historicVariableInstance.getValue();
+			JSONObject jsonObject = new JSONObject(value.toString());
+			if (jsonObject.has("agree")) {
+				String agree = jsonObject.getString("agree");
+				if (!StringUtils.isEmpty(agree) && !"null".equals(agree)) {
+					String taskId = historicVariableInstance.getTaskId();
+					HistoricTaskInstance task = processEngine
+							.getHistoryService()
+							.createHistoricTaskInstanceQuery().taskId(taskId)
+							.list().get(0);
+					historyMap.put("taskName", task.getName());
+					historyMap.put("assignee", task.getAssignee());
+					historyMap.put("createTime",
+							historicVariableInstance.getCreateTime());
+					historyMap.put("agree", agree);
+					historyMap.put("advice", jsonObject.get("advice"));
+					list.add(historyMap);
+				}
+			}
+		}
+		respBean.setDataList(list);
+		return respBean;
+	}
+}

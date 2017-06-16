@@ -1,0 +1,143 @@
+	   		<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+	 		  <input type="hidden" name="guaranteeRate" id="guaranteeRate">
+	 		  <input type="hidden" name="corpId" id="corpId">
+	 		  <div class="form-group">
+	            <label class="col-sm-2 control-label" for="agencyName"><span class="required"></span>经销商名称</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="agencyName" class="form-control" id="agencyName" readonly>
+	            </div>
+	            <label class="col-sm-2 control-label" for="agencyNum"><span class="required"></span>经销商代码</label>
+	            <div class="col-sm-3">
+		            <input type="text" class="form-control" id="agencyNum"  name="agencyNum"  readonly/>
+                </div>
+	            <input type='button' style="margin:auto;" class="btn btn-default add" data-toggle="modal" data-target="#agencyModal" value='获取经销商及融资信息' onclick="searchAgency();">
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="maxCredit">最高授信额度</label>
+	            <div class="col-sm-3">
+	            	<input id="maxCredit" name="maxCredit" class="form-control" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label"  for="availableCredit">可用授信额度</label>
+	            <div class="col-sm-3">
+	            	<input id="availableCredit" name="availableCredit" class="form-control" readonly>
+	         	</div>
+	          </div>
+	           <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="payDate">付款日期</label>
+	            <div class="col-sm-3">
+	            	<input name="payDate" class="form-control" id="payDate" type="text" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label" for="payM"><span class="required">*</span>付款金额</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="payM" class="form-control" id="payM" onblur="chgPayM();">
+	          	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="guaranteeAmt">保证金金额</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="guaranteeAmt" class="form-control" id="guaranteeAmt" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label"  for="payActGuarantee">实缴保证金金额</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="payActGuarantee" class="form-control" id="payActGuarantee" readonly>
+	         	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="guaranteeDiff">保证金金额差</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="guaranteeDiff" class="form-control" id="guaranteeDiff" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label"  for="financeId">融资编号</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="financeId" class="form-control" id="financeId" readonly>
+	         	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="financeStartDate">融资起始日</label>
+	            <div class="col-sm-3">
+	            	<input name="financeStartDate" class="form-control" id="financeStartDate" type="text" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label"  for="financeEndDate">融资到期日</label>
+	            <div class="col-sm-3">
+	            	<input name="financeEndDate" class="form-control" id="financeEndDate" type="text" readonly>
+	         	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-2 control-label"  for="financeAmount">融资金额</label>
+	            <div class="col-sm-3">
+	            	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+	         	</div>
+	            <label class="col-sm-2 control-label"  for="note">备注</label>
+	            <div class="col-sm-3">
+				    <textarea id="note"  rows="3" name="note" class="form-control" ></textarea>
+	          	</div>
+	          </div>
+	          <div class="col-sm-2">
+				<a id="downloadTemp" href="#">
+					<button type="button" class="btn btn-default add">下载模板</button>
+				</a>
+				<button type="button" class="btn btn-default add" onclick="upload()">上传车辆明细</button>
+				<input type="file" name="file" id="file"  onchange="ajaxFileUpload();" style="display:none;">
+			  </div>
+			  <table id="carInfoListTable" class="table table-bordered" cellspacing="0" width="100%">
+			  </table>
+	         </form>
+	    <!-- 获取经销商融资信息 -->
+	 	<div class="modal fade" id="agencyModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="agencyModalLabel">
+		 <div class="modal-dialog" role="document" style='width:800px'>
+			 <div class="modal-content">
+			 	<div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="agencyModalLabel">经销商融资信息</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<div class="main-content-child" >
+		        		<div class="row	rowpad">
+					     	<div class="form-group">
+					    		<form class="form-horizontal" role="form" id="searchForm">
+						    		<div class="form-group">
+							            <label class="col-sm-2 control-label"  for="agency_name">经销商名称</label>
+							            <div class="col-sm-3">
+							            	<input name="agency_name" class="form-control" id="agency_name" type="text">
+							         	</div>
+							            <label class="col-sm-2 control-label"  for="agency_num">经销商代码</label>
+							            <div class="col-sm-3">
+							            	<input name="agency_num" class="form-control" id="agency_num" type="text">
+							         	</div>
+							        </div>
+							        <div class="form-group">
+							            <label class="col-sm-2 control-label"  for="finance_id">融资编号</label>
+							            <div class="col-sm-3">
+							            	<input name="finance_id" class="form-control" id="finance_id" type="text">
+							         	</div>
+							        </div>
+					            </form>
+					            <div class="col-sm-offset-10 col-sm-2">
+									<a onclick="searchAgency()" class="btn btn-primary search">查找</a>
+								</div>
+					        </div>
+					    </div>
+		        	</div>
+		        <div class="panel-body">
+			        <table  id="agencyListTable" class="table" height="100%" cellspacing="0" width="100%">
+					</table>
+				 </div>
+		        </div>
+		        <div class="modal-footer">
+				  <div class="form-group">
+				  	<div class="col-sm-9"></div>
+					<div class="col-sm-1">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-2">
+						<button type="submit" id="btn_save" class="btn btn-default save"
+							 onclick="checkAgency()">保存
+						</button>
+					</div>
+				</div>
+			 </div>
+		 </div>
+	</div>
+	</div>

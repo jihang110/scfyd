@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.InterestManagementDao" >
+  
+  <resultMap id="InterestManagementResultMap" type="com.ut.scf.pojo.auto.InterestManagement">
+  
+   	<id column="rec_uid" jdbcType="VARCHAR" property="recUid" />
+   	<result column="product_id" jdbcType="VARCHAR" property="productId" />
+   	<result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="bett" jdbcType="TINYINT" property="bett" />
+    <result column="deduct" jdbcType="TINYINT" property="deduct" />
+    <result column="reception_date" jdbcType="VARCHAR" property="receptionDate" />
+    <result column="interest_rate" jdbcType="DECIMAL" property="interestRate" />
+    <result column="cost_rate" jdbcType="DECIMAL" property="costRate" />
+    <result column="interest_rate_standard" jdbcType="VARCHAR" property="interestRateStandard" />
+    <result column="dyk_interest_rate" jdbcType="DECIMAL" property="dykInterestRate" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user_id" jdbcType="VARCHAR" property="createUserId" />
+   
+  </resultMap>
+  
+  <select id="getInterestManagementPageList" resultType="hashmap"  parameterType="hashmap">
+     select im.rec_uid recUid, 
+     		im.product_id productId,
+     		im.bett bett,
+     		im.deduct deduct,
+     		im.reception_date receptionDate,
+    		im.interest_rate interestRate,
+    		im.cost_rate costRate,
+    		im.interest_rate_standard interestRateStandard,
+    		im.dyk_interest_rate dykInterestRate,
+    		pi.product_name productName
+    from  interest_management im inner join product_info pi on im.product_id = pi.product_id
+    where 1=1
+    <if test="productName != null and productName != ''">
+	  and pi.product_name LIKE CONCAT(CONCAT('%', #{productName}),'%')
+	</if>
+  </select>
+  
+</mapper>

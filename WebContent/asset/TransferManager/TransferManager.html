@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="" />
+    <meta name="author" content="ThemeBucket" />
+    <link rel="shortcut icon" href="#" type="image/png" />
+    <title>资产转让</title>
+    <link href="../../css/style.css" rel="stylesheet" />
+    <link href="../../css/style-responsive.css" rel="stylesheet" />
+    <link href="../../css/bootstrap-table.css" rel="stylesheet" />
+    <link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet" />
+    <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+    <link href="../../js/autocompleter/jquery.autocompleter.css" rel="stylesheet" />
+    <link href="../../css/sysfun.css" rel="stylesheet" />
+    <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+    <script src="../../js/bootstrap.min.js"></script>
+    <script src="../../js/CloudUtils.js"></script>
+    <script src="../../js/password.js"></script>
+    <script src="../../js/store.js" type="text/javascript"></script>
+    <script src="../../js/jquery.nicescroll.js"></script>
+    <script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+    <script src="../../js/validation-init.js"></script>
+    <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+    <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+    <!--dynamic table initialization -->
+    <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+    <script type="text/javascript" src="../../js/bootstrap-fileupload.min.js"></script>
+	<script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+	<script type="text/javascript" src="../../js/autocompleter/jquery.autocompleter.js"></script>
+	<script type="text/javascript" src="../../js/jquery.number.js"></script>
+    <script src="../../js/asset/TransferManager/TransferManager.js" type="text/javascript"></script>
+  </head>
+  
+  <body class="iframeBody">
+    <section>
+      <div class="main-content-child">
+        <div class="row">
+          <div class="title">
+            <span>资产转让</span></div>
+        </div>
+        <fieldset>
+          <div class="row rowpad">
+            <div class="form-group">
+              <div class="col-sm-2">
+                <button id="btn_add" type="button" class="btn btn-default add" data-toggle="modal" onclick="addFun()">
+                  <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加</button>
+              </div>
+              <form class="form-horizontal" role="form" id="searchForm">
+             <div class="col-sm-4">
+                  <input type="text" name="txt_projectName" class="form-control" id="txt_projectName" placeholder="项目名称" /></div>
+                <div class="col-sm-4">
+                  <input type="text" name="txt_contractNo" class="form-control" id="txt_contractNo" placeholder="合同编号" /></div>
+                <div class="col-sm-2" style="display:none;">
+                  <select id="txt_corpId" name="txt_corpId" class="form-control"></select>
+                </div>
+              </form>
+              <div class="col-sm-2">
+                <a onclick="searchFun()" class="btn btn-primary search">查找</a></div>
+            </div>
+          </div>
+        </fieldset>
+        <form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+          <div class="modal fade" id="addModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="addModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="addModalLabel">添加</h4></div>
+                <div class="modal-body">
+                  <fieldset id="field">
+                    <input type="hidden" id="recUid" name="recUid" />
+                    <input type="hidden" id="isEdit" name="isEdit" />
+                    <div class="form-group" style="display:none;">
+                      <label class="col-sm-4 control-label" for="corpId">企业</label>
+                      <div class="col-sm-6">
+                        <select id="corpId" name="corpId" class="form-control"></select>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="projectName"><span class="required">*</span>项目名称</label>
+                      <div class="col-sm-6">
+                        <input type="text" list="browsers" onkeyup="changeName()" name="projectName" class="form-control" id="projectName" placeholder="项目名称" /></div>
+                    </div>
+                    <datalist id="browsers"></datalist>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="relSaleCorpName">关联企业名称</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="relSaleCorpName" readonly class="form-control" id="relSaleCorpName" placeholder="关联企业名称" />
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="contractNo"><span class="required">*</span>合同编号</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="contractNo" class="form-control" id="contractNo" placeholder="合同编号" readonly/></div>
+                    </div>
+                    </fieldset>
+                    <fieldset>
+                    <legend class="little-title">产品类型</legend>
+                    <div class="form-group">
+          				<label class="col-sm-4 control-label" for="isRecourse"><span class="required">*</span>是否有追</label> 
+          				<div class="col-sm-6"> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="isRecourse" id="isRecourse"  value="1" disabled="disabled"/> 是 </label> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="isRecourse" id="isRecourse"  value="0" disabled="disabled"/> 否 </label> 
+          				</div> 
+         			</div>  
+                     <div class="form-group"> 
+          				<label class="col-sm-4 control-label" for="factorType"><span class="required">*</span>保理类型</label>
+          				 <div class="col-sm-6">
+          				<select id="factorType" name="factorType" class="form-control" disabled="disabled">
+          					<option value="1">明保</option>
+          					<option value="0">暗保</option>
+          				</select> 
+          				</div>
+         			</div> 
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="startDate"><span class="required">*</span>立项发起日期</label>
+                      <div class="col-sm-6 date form_datetime">
+                        <input name="startDate" disabled="disabled" class="form-control" style="cursor: pointer;" id="startDate" readonly="readonly" size="16" type="text" value="" /></div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="buyerId"><span class="required">*</span>关联买方名称</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="buyerId" class="form-control" id="buyerId" placeholder="关联买方名称" readonly/></div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="sellerId"><span class="required">*</span>关联卖方名称</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="sellerId" class="form-control" id="sellerId" placeholder="关联卖方名称" readonly/></div>
+                    </div>
+                    <div class="form-group"> 
+          				<label class="col-sm-4 control-label" for="transfer"><span class="required">*</span>是否转让</label> 
+          				<div class="col-sm-6"> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="transfer" id="transfer"  value="1" /> 是 </label> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="transfer" id="transfer"  value="0" /> 否 </label> 
+          				</div> 
+         			</div>
+         			 <div class="form-group"> 
+          				<label class="col-sm-4 control-label" for="allTransfer"><span class="required">*</span>是否全部转让</label> 
+          				<div class="col-sm-6"> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="allTransfer" id="allTransfer"  value="1" /> 是 </label> 
+           					<label class="col-sm-6 control-label textLeft"> <input type="radio" name="allTransfer" id="allTransfer"  value="0" /> 否 </label> 
+          				</div> 
+         			</div>
+                    <!--  <div class="form-group">
+                      <label class="col-sm-4 control-label" for="taskPerson">任务人</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="taskPerson" class="form-control" id="taskPerson" placeholder="任务人" /></div>
+                    </div> -->
+                     <div class="form-group">
+                      <label class="col-sm-4 control-label" for="projectUserId"><span class="required">*</span>立项创建人</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="projectUserId" class="form-control" id="projectUserId" placeholder="立项创建人" readonly/></div>
+                    </div>
+                     <div class="form-group">
+					            <label class="col-sm-4 control-label" for="overdueDocuments"><span class="required">*</span>逾期单据</label>
+					            <div class="col-sm-6">
+					            	<div class="input-group">
+					            	  <input type="text" class="form-control" id="overdueDocuments" name="overdueDocuments" placeholder="上传附件" readonly>
+								      <span class="input-group-addon">
+											<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="fileSelect();"></i>
+											 <input type="file" name="file" id="file" onchange="ajaxFileUpload();" style="display:none;">
+								      </span>
+								    </div>
+					            </div>
+					 </div>
+					 <div class="form-group">
+                      <label class="col-sm-4 control-label" for="documentOperatorId">单据操作人</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="documentOperatorId" class="form-control" id="documentOperatorId" placeholder="单据操作人" readonly/></div>
+                    </div>
+                    
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="transferUnit">转让单位</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="transferUnit" class="form-control" id="transferUnit" placeholder="转让单位" /></div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-4 control-label" for="transferAmount">转让金额</label>
+                      <div class="col-sm-6">
+                        <input type="text" name="transferAmount" class="form-control" id="transferAmount" placeholder="1000.00" /></div>
+                    </div>
+                  </fieldset>
+                </div>
+                <div class="modal-footer">
+                  <div class="form-group">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-3">
+                      <button type="button" class="btn btn-default cancel" data-dismiss="modal">取消</button></div>
+                    <div class="col-sm-3">
+                      <button type="submit" id="btn_save" class="btn btn-default add" onclick="saveUser()">保存</button></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div class="panel-body">
+          <table id="transferManagerList" class="table" cellspacing="0" width="100%"></table>
+        </div>
+      </div>
+    </section>
+  </body>
+
+</html>

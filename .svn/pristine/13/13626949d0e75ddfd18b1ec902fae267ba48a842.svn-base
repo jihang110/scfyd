@@ -1,0 +1,293 @@
+package com.ut.scf.web.controller.sys;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.ScfConsts;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.reqbean.BaseReqBean;
+import com.ut.scf.reqbean.sys.BizLogListReqBean;
+import com.ut.scf.reqbean.sys.MenuListReqBean;
+import com.ut.scf.reqbean.sys.SysConfigByKeyReqBean;
+import com.ut.scf.reqbean.sys.UserAddReqBean;
+import com.ut.scf.reqbean.sys.UserDeleteReqBean;
+import com.ut.scf.reqbean.sys.UserModPwdReqBean;
+import com.ut.scf.reqbean.sys.UserSearchPageReqBean;
+import com.ut.scf.reqbean.sys.UserUpdateReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.sys.UserLoginRespBean;
+import com.ut.scf.respbean.sys.inner.Menu;
+import com.ut.scf.service.sys.IUserOperService;
+import com.ut.scf.web.controller.BaseJsonController;
+
+@Controller
+@RequestMapping("/user")
+public class UserController extends BaseJsonController {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(UserController.class);
+
+	@Resource
+	private IUserOperService userOperService;
+
+	@RequestMapping(value = "/list", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean list(HttpSession httpSession,
+			@Valid @RequestBody UserSearchPageReqBean searchPage,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		String corpIdSession = (String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID);
+		log.debug("corpIdSession: {}", corpIdSession);
+
+		// 获取系统类型
+		int roleTypeSession = (int) httpSession.getAttribute("roleType");
+		log.debug("roleTypeSession: {}", roleTypeSession);
+		if (searchPage.getRoleType() < 0) {
+			log.debug("roleTypeSession: {}", roleTypeSession);
+			searchPage.setRoleType(roleTypeSession);
+		}
+
+		// 获取系统类型
+//		if (roleTypeSession == 2) {
+//			if (searchPage.getRoleType() == 5 || searchPage.getRoleType() == 4) {
+//				searchPage.setRelaCorpId(corpIdSession);
+//			}
+//		}
+
+		respBean = this.userOperService.userList(searchPage);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/selList", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean selList(HttpSession httpSession,
+			@Valid @RequestBody UserSearchPageReqBean searchPage,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		respBean = this.userOperService.userList(searchPage);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/hasMenuList", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean hasMenuList(HttpSession httpSession,
+			@Valid @RequestBody UserSearchPageReqBean searchPage,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		// 获取系统类型
+		int roleTypeSession = (int) httpSession.getAttribute("roleType");
+		log.debug("roleTypeSession: {}", roleTypeSession);
+		searchPage.setRoleType(roleTypeSession);
+		respBean = this.userOperService.hasMenuUserList(searchPage);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/add", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean addUser(HttpSession httpSession,
+			@Valid @RequestBody UserAddReqBean addUserBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		respBean = this.userOperService.insertUser(addUserBean);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/mod", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean modUser(HttpSession httpSession,
+			@Valid @RequestBody UserUpdateReqBean userUpdataBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		respBean = this.userOperService.updateUser(userUpdataBean);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean delUser(HttpSession httpSession,
+			@Valid @RequestBody UserDeleteReqBean delUserBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		respBean = this.userOperService.deleteUser(delUserBean.getUserId());
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/configKey", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean selectconfigByKey(
+			HttpSession httpSession,
+			@Valid @RequestBody SysConfigByKeyReqBean reqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		respBean = this.userOperService.getSysConfigByKey(paramMap);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/updatePassword", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean updatePassword(HttpSession httpSession,
+			@Valid @RequestBody UserModPwdReqBean usrModPwdBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String userId = httpSession.getAttribute(ScfConsts.SESSION_USER_ID)
+				.toString();
+		log.debug("userIdSession: {}", userId);
+		usrModPwdBean.setUserId(userId);
+		respBean = this.userOperService.updatePwd(usrModPwdBean);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/resetPassword", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean resetPassword(HttpSession httpSession,
+			@Valid @RequestBody UserModPwdReqBean usrModPwdBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		String userId = httpSession.getAttribute(ScfConsts.SESSION_USER_ID)
+				.toString();
+		log.debug("userIdSession: {}", userId);
+		respBean = this.userOperService.resetPwd(usrModPwdBean);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/bizLogList", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean bizLogList(
+			@Valid @RequestBody BizLogListReqBean reqBean,
+			BindingResult bindingResult) {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+
+		respBean = this.userOperService.getBizLogList(reqBean);
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/changeRole", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean changeRole(HttpSession httpSession,
+			@Valid @RequestBody MenuListReqBean menuListReqBean,
+			BindingResult bindingResult) throws IOException {
+		BaseRespBean respBean = new BaseRespBean();
+		if (bindingResult.hasErrors()) {
+			log.warn("bindingResult has error");
+			respBean.setResult(ErrorCodeEnum.PARAM_VALID_ERROR);
+			respBean.setResultErrorMap(bindingResult);
+			return respBean;
+		}
+		Map<String, Object> paramMap = BeanUtil.beanToMap(menuListReqBean);
+		respBean = this.userOperService.changeRole(paramMap);
+
+		return respBean;
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/getSession", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean getSession(HttpSession httpSession,
+			@RequestBody BaseReqBean reqBean) {
+		UserLoginRespBean respBean = new UserLoginRespBean();
+		respBean.setUserId((String) httpSession
+				.getAttribute(ScfConsts.SESSION_USER_ID));
+		respBean.setUsername((String) httpSession
+				.getAttribute(ScfConsts.SESSION_USERNAME));
+		respBean.setRoleId((String) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_ID));
+		respBean.setRoleName((String) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_NAME));
+		respBean.setRoleType((int) httpSession
+				.getAttribute(ScfConsts.SESSION_ROLE_TYPE));
+		respBean.setCorpId((String) httpSession
+				.getAttribute(ScfConsts.SESSION_CORP_ID));
+		respBean.setDeptId((String) httpSession
+				.getAttribute(ScfConsts.SESSION_DEPT_ID));
+		respBean.setMenuList((List<Menu>) httpSession
+				.getAttribute(ScfConsts.SESSION_MENU_LIST));
+
+		return respBean;
+	}
+
+	@RequestMapping(value = "/checkSession", method = RequestMethod.GET, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean checkSession(HttpSession httpSession) {
+		BaseRespBean respBean = new BaseRespBean();
+		return respBean;
+	}
+
+}

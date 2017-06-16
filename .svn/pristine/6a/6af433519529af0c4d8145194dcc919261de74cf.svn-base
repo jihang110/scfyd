@@ -1,0 +1,70 @@
+package com.ut.scf.reqbean.pub;
+
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class ProcessListReqBean  extends PageReqBean{
+	
+	/**
+	 * 角色类型
+	 */
+	private String taskName;
+	
+	/**
+	 * 流程名称
+	 */
+	private String procdefName;
+	/**
+	 * 创建时间
+	 */
+	private String createTime;
+	/**
+	 * 结束时间
+	 */
+	private String endTime;
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	/**
+	 * 是否分页，0：否，1：是，默认为1.
+	 */
+	private Integer isPage = 1;
+
+	public Integer getIsPage() {
+		return isPage;
+	}
+
+	public void setIsPage(Integer isPage) {
+		this.isPage = isPage;
+	}
+
+	public String getTaskName() {
+		return taskName;
+	}
+
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
+	}
+
+	public String getProcdefName() {
+		return procdefName;
+	}
+
+	public void setProcdefName(String procdefName) {
+		this.procdefName = procdefName;
+	}
+
+	public String getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(String createTime) {
+		this.createTime = createTime;
+	}
+	
+}

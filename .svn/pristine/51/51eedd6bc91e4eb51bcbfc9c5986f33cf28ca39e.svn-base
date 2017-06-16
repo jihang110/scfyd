@@ -1,0 +1,62 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+$(document).ready(function() {
+	setForm();
+});
+
+function reApply(){
+//	发起流程
+ var data = CloudUtils.convertStringJson('addForm');
+ var options = {
+			url : '../../refDeposit/startProcess',
+			data : data,
+			callBackFun : function(data) {
+				if (data.result == 0) {
+					bootbox.alert(data.resultNote);
+				} else {
+					return false;
+				}
+			},
+			errorCallback : function(data) {
+				return false;
+			}
+		};
+ CloudUtils.ajax(options);
+}
+
+function setForm(){
+	var data = {};
+	data.taskId = taskId;
+	 var options = {
+		url : '../../activiti/getTaskDataByTaskId',
+		data : JSON.stringify(data),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var jsonData =  eval("(" + data.str + ")");
+				CloudUtils.setForm(jsonData,"addForm");
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	 CloudUtils.ajax(options);
+}
+
+/**
+ * 获取融资信息
+ */
+function getFinanceInfo(){
+//	获取值
+//	进行计算
+	var depositPayableAmount = CloudUtils.Math(CloudUtils.Math(financeJson.paymentAmount,financeJson.cashDepositRate,"mul"),100,"div");
+	financeJson.depositPayableAmount = depositPayableAmount;
+//	设置值
+	 CloudUtils.setForm(financeJson,"addForm");
+}
+
+//假数据
+var financeJson = {"financeAmount": 1000,"paymentDate":"2017-5-1","paymentAmount":32809,"cashDepositRate":10};

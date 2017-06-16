@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.sys.IMenuDao" >
+ 
+  <select id="menuListByRoleId" resultType="hashmap" parameterType="java.lang.String" >
+    select m.menu_id menuId, m.menu_name menuName, m.menu_level menuLevel,
+    m.parent_id parentId, m.menu_path menuPath, m.menu_order menuOrder, m.note
+    from sys_role_menu rm join sys_menu m on rm.menu_id=m.menu_id
+    where rm.role_id = #{roleId} and m.status=1
+    order by m.menu_level,m.menu_order
+  </select>
+  
+  <select id="selectMenuList" resultType="hashmap">
+  	select menu_id menuId, menu_name menuName, menu_level menuLevel,
+  	parent_id parentId, menu_path menuPath, menu_order menuOrder, note
+  	from sys_menu where status = 1
+  	order by menu_level,menu_order
+  </select>
+  
+  <insert id="insertMenu" parameterType="hashmap">
+  	INSERT INTO sys_menu (menu_id,menu_name,menu_level,parent_id,menu_path,menu_order,note,create_time,status)
+  	VALUES(#{menuId},#{menuName},#{menuLevel},#{parentId},#{menuPath},#{menuOrder},#{note},now(),1)
+  </insert>
+  
+  <update id="updateMenu" parameterType="hashmap">
+    update sys_menu
+    <set>
+      <if test="menuName != null and menuName != ''">
+        menu_name = #{menuName},
+      </if>
+      <if test="menuLevel != null">
+        menu_level = #{menuLevel},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId},
+      </if>
+      <if test="menuPath != null">
+        menu_path = #{menuPath},
+      </if>
+      <if test="menuOrder != null">
+        menu_order = #{menuOrder},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where menu_id = #{menuId}
+  </update>
+  
+  <select id="countMenuByParentId" resultType="int" parameterType="string" >
+    select count(1)
+    from sys_menu m
+    where m.status=1 and m.parent_id = #{parentId}
+  </select>
+  
+  <select id="countMenuByName" resultType="int" parameterType="hashmap" >
+        select count(1)
+        from sys_menu m
+        where m.status=1 and m.menu_name = #{menuName}
+       <!--  <if test="corpId == null">
+          and r.corp_id is null 
+        </if> -->
+        <if test="menuId != null">
+          and (m.menu_id = #{corpId} or m.menu_id is null)
+        </if>
+    </select>
+    
+    <update id="updateMenuByMove" parameterType="list">
+  		UPDATE sys_menu
+  		SET menu_order = CASE menu_id
+  			<foreach collection="list" item="item" index="index">
+  				WHEN #{item.menuId} THEN #{item.order}
+  			</foreach>
+  		END WHERE menu_id IN 
+  		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+  			#{item.menuId}
+  		</foreach>
+  	</update>
+  
+</mapper>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.asset.ITransferDao">
+  <select id="selectTransferList" parameterType="hashmap" resultType="hashmap">
+  	select
+	t.rec_uid recUid, 
+	t.corp_id corpId, 
+	c.corp_name corpName,
+	t.project_name projectName, 
+	t.rel_sale_corp_name relSaleCorpName,
+	t.contract_no contractNo,
+	t.is_recourse isRecourse,
+	t.factor_type factorType,
+	DATE_FORMAT(t.start_date,'%Y-%m-%d') startDate, 
+	t.buyer_id buyerId,
+	t.seller_id sellerId,
+	t.project_user_id projectUserId,
+	t.overdue_documents overdueDocuments,
+	t.transfer transfer,
+	t.all_transfer allTransfer,
+	t.task_person taskPerson,
+	t.document_operator_id documentOperatorId,
+	t.transfer_unit transferUnit,
+	t.transfer_amount transferAmount
+    from asset_transfer t join corp_info c on t.corp_id=c.corp_id
+    <where>
+        1=1 and c.status = 1
+		<if test="projectName != null ">
+	  		and t.project_name LIKE CONCAT('%',#{projectName},'%')
+		</if>
+		<if test="corpId != null">
+	  		and t.corp_id = #{corpId}
+		</if>
+		<if test="contractNo != null ">
+	  		and t.contract_no LIKE CONCAT('%',#{contractNo},'%')
+		</if>
+		<!-- <if test="relaCorpId != null">
+	  		and t.rela_corp_id = #{relaCorpId}
+		</if> -->
+		<if test="createUserId != null">
+	  		and t.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by t.create_time desc
+  </select>
+  
+  <insert id="insertTransfer" parameterType="hashmap">
+   	 insert into asset_transfer (rec_uid, corp_id, project_name, 
+      contract_no, rel_sale_corp_name,is_recourse, 
+      factor_type, start_date, 
+      buyer_id, seller_id, project_user_id,
+      overdue_documents, transfer,all_transfer,task_person,
+      document_operator_id,transfer_unit,transfer_amount,
+      create_user_id, 
+      create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{contractNo,jdbcType=VARCHAR}, #{relSaleCorpName,jdbcType=TINYINT},
+      #{isRecourse,jdbcType=TINYINT}, #{factorType,jdbcType=TINYINT}, #{startDate,jdbcType=TIMESTAMP}, 
+      #{buyerId,jdbcType=VARCHAR}, #{sellerId,jdbcType=DECIMAL}, 
+      #{projectUserId,jdbcType=VARCHAR}, #{overdueDocuments,jdbcType=VARCHAR}, 
+      #{transfer,jdbcType=TINYINT}, #{allTransfer,jdbcType=TINYINT},
+      #{taskPerson,jdbcType=VARCHAR},#{documentOperatorId,jdbcType=VARCHAR},#{transferUnit,jdbcType=VARCHAR},
+      #{transferAmount,jdbcType=DECIMAL}, 
+      #{createUserId,jdbcType=VARCHAR}, 
+      now())
+  </insert>
+  
+  <delete id="deleteTransfer" parameterType="java.lang.String">
+    delete from asset_transfer
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateTransfer" parameterType="hashmap">
+    update asset_transfer
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      
+      <if test="isRecourse != null">
+        is_recourse = #{isRecourse,jdbcType=TINYINT},
+      </if>
+      <if test="factorType != null">
+        factor_type = #{factorType,jdbcType=TINYINT},
+      </if>
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+     
+      <if test="buyerId != null">
+        buyer_id = #{buyerId,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null">
+        seller_id = #{sellerId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectUserId != null">
+        project_user_id = #{projectUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="overdueDocuments != null">
+        overdue_documents = #{overdueDocuments,jdbcType=VARCHAR},
+      </if>
+      <if test="transfer != null">
+        transfer = #{transfer,jdbcType=TINYINT},
+      </if>
+       <if test="allTransfer != null">
+        all_transfer = #{allTransfer,jdbcType=TINYINT},
+      </if>
+      <if test="taskPerson != null">
+        task_person = #{taskPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="documentOperatorId != null">
+        document_operator_id = #{documentOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="transferUnit != null">
+        transfer_unit = #{transferUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="transferAmount != null">
+        transfer_amount = #{transferAmount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+   </update>
+</mapper>
+

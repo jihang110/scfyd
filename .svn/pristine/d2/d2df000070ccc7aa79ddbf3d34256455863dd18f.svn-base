@@ -1,0 +1,58 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var nodeId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).nodeId;
+alert(nodeId);
+$(function () {
+	"use strict";
+    setForm();
+ });
+function setForm(){
+	var data = {};
+	data.taskId = taskId;
+	 var options = {
+		url : '../../activiti/getTaskDataByTaskId',
+		data : JSON.stringify(data),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var jsonData =  eval("(" + data.str + ")");
+				CloudUtils.setForm(jsonData,"infoForm");
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	 CloudUtils.ajax(options);
+}
+
+function doAgree(type){
+	var data = CloudUtils.convertStringJson('infoForm');
+	data = eval("(" + data + ")");
+	data.agree = type;
+	data.taskId = taskId;
+	var jsonString = null;
+	var options = {
+				url : '../../refDeposit/doAgree',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					jsonString = data.str;
+					if(type !=0){
+						bootbox.alert(data.resultNote);
+					}
+				},
+				errorCallback : function(data) {
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+	 if(nodeId == "usertask3"){
+		if(type ==0){
+			alert("最终同意");
+		} 
+	 }
+}

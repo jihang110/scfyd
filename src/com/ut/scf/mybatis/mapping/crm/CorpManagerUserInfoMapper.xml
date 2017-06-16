@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.ICorpManagerUserInfoDao">
+  
+  <insert id="insertCorpManagerUserInfo" parameterType="hashmap">
+    insert into corp_manager_user_info (corp_manager_id, user_name, corp_id, 
+      user_type, sex, position, 
+      birthday, birth_addr, nationality, 
+      education, corp_service_start_time, corp_service_end_time, 
+      identity_card_no, residence_addr, telephone, 
+      home_addr, industry_age, has_bad_credit, bad_record,
+      is_escp_corp, note,rela_corp_id, create_user_id, create_time)
+    values (#{corpManagerId}, #{userName}, #{corpId}, 
+      #{userType}, #{sex}, #{position}, 
+      #{birthday}, #{birthAddr}, #{nationality}, 
+      #{education}, #{corpServiceStartTime}, #{corpServiceEndTime}, 
+      #{identityCardNo}, #{residenceAddr}, #{telephone}, 
+      #{homeAddr}, #{industryAge}, #{hasBadCredit}, #{badRecord},
+      #{isEscpCorp}, #{note},#{relaCorpId}, #{createUserId}, now())
+  </insert>
+  
+  <update id="updateCorpManagerUserInfo" parameterType="hashmap">
+    update corp_manager_user_info
+    <set>
+      <if test="userName != null">
+        user_name = #{userName},
+      </if>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="userType != null">
+        user_type = #{userType},
+      </if>
+      <if test="sex != null">
+        sex = #{sex},
+      </if>
+      <if test="position != null">
+        position = #{position},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday},
+      </if>
+      <if test="birthAddr != null">
+        birth_addr = #{birthAddr},
+      </if>
+      <if test="nationality != null">
+        nationality = #{nationality},
+      </if>
+      <if test="education != null">
+        education = #{education},
+      </if>
+      <if test="corpServiceStartTime != null">
+        corp_service_start_time = #{corpServiceStartTime},
+      </if>
+      <if test="corpServiceEndTime != null">
+        corp_service_end_time = #{corpServiceEndTime},
+      </if>
+      <if test="identityCardNo != null">
+        identity_card_no = #{identityCardNo},
+      </if>
+      <if test="residenceAddr != null">
+        residence_addr = #{residenceAddr},
+      </if>
+      <if test="telephone != null">
+        telephone = #{telephone},
+      </if>
+      <if test="homeAddr != null">
+        home_addr = #{homeAddr},
+      </if>
+      <if test="industryAge != null">
+        industry_age = #{industryAge},
+      </if>
+      <if test="hasBadCredit != null">
+        has_bad_credit = #{hasBadCredit},
+      </if>
+      <if test="badRecord != null">
+      	bad_record = #{badRecord},
+      </if>
+      <if test="isEscpCorp != null">
+        is_escp_corp = #{isEscpCorp},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+    </set>
+    where corp_manager_id = #{corpManagerId}
+  </update>
+  
+  <delete id="deleteCorpManagerUserInfo" parameterType="hashmap">
+    delete from corp_manager_user_info
+    where corp_manager_id = #{corpManagerId}
+  </delete>
+  
+  <select id="selectCorpManagerUserInfoList"  resultType="hashmap" parameterType="hashmap">
+    select 
+    ci.corp_manager_id corpManagerId, ci.user_name userName,ci.corp_id corpId, ci.rela_corp_id relaCorpId,cp.corp_name corpName, ci.user_type userType,
+    ci.sex sex, ci.position position, ci.birthday birthday, ci.birth_addr birthAddr, ci.nationality nationality,
+    ci.education education, ci.corp_service_start_time corpServiceStartTime, ci.corp_service_end_time corpServiceEndTime, 
+    ci.identity_card_no identityCardNo, ci.residence_addr residenceAddr, ci.telephone telephone, ci.bad_record badRecord,
+    ci.home_addr homeAddr, ci.industry_age industryAge, ci.has_bad_credit hasBadCredit, ci.is_escp_corp isEscpCorp, 
+    ci.note
+    from corp_manager_user_info ci
+    join corp_info cp on cp.corp_id=ci.corp_id
+    <where>
+        1=1 and cp.status = 1
+    	<if test="userName!=null and userName!='' ">  
+            and ci.user_name LIKE CONCAT(CONCAT('%', #{userName}),'%')   
+        </if>  
+    	<if test="education!=null and education!='' ">  
+            and ci.education LIKE CONCAT(CONCAT('%', #{education}),'%')   
+        </if>
+        <if test="userCorpList !=null">
+	        and ci.corp_id in ${userCorpList}
+	    </if>
+        <if test="userType!=null and userType!='' ">  
+            and ci.user_type = #{userType}
+        </if>
+        <if test="hasBadCredit != null">
+		  	and ci.has_bad_credit = #{hasBadCredit}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ci.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ci.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+  
+</mapper>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+
+  <title>内部公告</title>
+
+  <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet" type="text/css" />
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../FontAwesome-3.2/css/font-awesome.min.css" rel="stylesheet">
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js" type="text/javascript" ></script> 
+  <script src="../../js/CloudUtils.js" type="text/javascript" ></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js" type="text/javascript" ></script>
+  <script src="../../js/advanced-datatable/js/jquery.dataTables.js" type="text/javascript" ></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script src="../../js/bootstrap-table.js" type="text/javascript" ></script>
+  <script src="../../js/bootbox-4.4.0/bootbox.js" type="text/javascript" ></script>
+  <script src="../../js/bootstrap-wysiwyg/external/jquery.hotkeys.js" type="text/javascript" ></script>
+  <script src="../../js/bootstrap-wysiwyg/external/google-code-prettify/prettify.js" type="text/javascript" ></script>
+  <link href="../../js/bootstrap-wysiwyg/index.css" rel="stylesheet">
+  <script src="../../js/bootstrap-wysiwyg/bootstrap-wysiwyg.js" type="text/javascript" ></script>
+  <script type="text/javascript"
+	src="../../js/bootstrap-fileupload.min.js"></script>
+<script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+  <script src="../../js/office/officeManager/officeManager.js" type="text/javascript"></script>
+</head>
+
+<body class="iframeBody">
+<section>
+<div class="main-content-child">
+		<div class="row">
+			<div class="title">
+				<span>内部公告</span>
+			</div>
+		</div>
+		<fieldset>
+			<div class="row rowpad" id='btnGroup'>
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button id="btn_add" type="button" class="btn btn-default add"
+							data-toggle="modal" onclick="addFun()">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+						</button>
+					</div>
+					<form id="searchForm" class="form-horizontal" role="form">
+						<div class="col-sm-8">
+							<input class="form-control" id="s_title" name="s_title" type="text" placeholder="标题"/>
+						</div>
+						<div class="col-sm-2">
+							<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+						</div>
+					</form>
+				</div>
+			</div>
+		</fieldset>
+		<form class="form-horizontal" role="form" id="addForm"
+			data-toggle="validator">
+			<input type="hidden" id="isEdit" name="isEdit"> 
+			<input type="hidden" id="recUid" name="recUid">
+        	<input type="hidden" id="announcementContent" name="announcementContent">
+			<div class="modal fade" id="addModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog"
+				aria-labelledby="addModalLabel">
+				<div class="modal-dialog" role="document" style="width:1000px;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+							<h4 class="modal-title" id="addModalLabel">新增</h4>
+						</div>
+						<div class="modal-body">
+							<div class="form-group">
+			                	<label class="col-sm-1 control-label" for="title"><span class="required">*</span>标题</label>
+					            <div class="col-sm-4">
+					            	<input type="text" name="title" class="form-control" id="title" placeholder="标题长度为1-20" >
+					            </div>
+					        
+					            <label class="col-sm-1 control-label" for="username"><span class="required">*</span>发布人</label>
+					            <div class="col-sm-4">
+					            	<input type="text" name="username" class="form-control" id="username" placeholder="默认当前用户" readonly>
+					            </div>
+					     	 </div>
+					         <div class="form-group">
+					            <label class="col-sm-1 control-label" for="releaseDate"><span class="required">*</span>日期</label>
+								<div class="col-sm-4 date form_datetime">
+											<input name="releaseDate" class="form-control" id="releaseDate" 
+												readonly="readonly" style="cursor: pointer;" size="16" type="text" value="" >
+								</div>
+								<label class="col-sm-1 control-label" for="attachmentUrl">附件</label>
+					            <div class="col-sm-4">
+					            	<div class="input-group">
+					            	  <input type="text" class="form-control" id="attachmentUrl" name="attachmentUrl" readonly>
+								      <span class="input-group-addon">
+											<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="fileSelect();"></i>
+											 <input type="file" name="file" id="file" onchange="ajaxFileUpload();" style="display:none;">
+								      </span>
+								    </div>
+					            </div>
+				 			</div>
+				 			<div class="btn-toolbar" data-role="editor-toolbar" data-target="#editor">
+						      <div class="btn-group">
+						        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font"><i class="icon-font"></i><b class="caret"></b></a>
+						          <ul class="dropdown-menu">
+						          </ul>
+						        </div>
+						      <div class="btn-group">
+						        <a class="btn dropdown-toggle" data-toggle="dropdown" title="Font Size"><i class="icon-text-height"></i>&nbsp;<b class="caret"></b></a>
+						          <ul class="dropdown-menu">
+						          <li><a data-edit="fontSize 5"><font size="5">Huge</font></a></li>
+						          <li><a data-edit="fontSize 3"><font size="3">Normal</font></a></li>
+						          <li><a data-edit="fontSize 1"><font size="1">Small</font></a></li>
+						          </ul>
+						      </div>
+						      <div class="btn-group">
+						        <a class="btn" data-edit="bold" title="Bold (Ctrl/Cmd+B)"><i class="icon-bold"></i></a>
+						        <a class="btn" data-edit="italic" title="Italic (Ctrl/Cmd+I)"><i class="icon-italic"></i></a>
+						        <a class="btn" data-edit="strikethrough" title="Strikethrough"><i class="icon-strikethrough"></i></a>
+						        <a class="btn" data-edit="underline" title="Underline (Ctrl/Cmd+U)"><i class="icon-underline"></i></a>
+						      </div>
+						      <div class="btn-group">
+						        <a class="btn" data-edit="insertunorderedlist" title="Bullet list"><i class="icon-list-ul"></i></a>
+						        <a class="btn" data-edit="insertorderedlist" title="Number list"><i class="icon-list-ol"></i></a>
+						        <a class="btn" data-edit="outdent" title="Reduce indent (Shift+Tab)"><i class="icon-indent-left"></i></a>
+						        <a class="btn" data-edit="indent" title="Indent (Tab)"><i class="icon-indent-right"></i></a>
+						      </div>
+						      <div class="btn-group">
+						        <a class="btn" data-edit="justifyleft" title="Align Left (Ctrl/Cmd+L)"><i class="icon-align-left"></i></a>
+						        <a class="btn" data-edit="justifycenter" title="Center (Ctrl/Cmd+E)"><i class="icon-align-center"></i></a>
+						        <a class="btn" data-edit="justifyright" title="Align Right (Ctrl/Cmd+R)"><i class="icon-align-right"></i></a>
+						        <a class="btn" data-edit="justifyfull" title="Justify (Ctrl/Cmd+J)"><i class="icon-align-justify"></i></a>
+						      </div>
+						      <div class="btn-group">
+								  <a class="btn dropdown-toggle" data-toggle="dropdown" title="Hyperlink"><i class="icon-link"></i></a>
+								    <div class="dropdown-menu input-append">
+									    <input class="span2" placeholder="URL" type="text" data-edit="createLink"/>
+									    <button class="btn" type="button">Add</button>
+						        </div>
+						        <a class="btn" data-edit="unlink" title="Remove Hyperlink"><i class="icon-cut"></i></a>
+						
+						      </div>
+						      
+						      <div class="btn-group">
+						        <a class="btn" title="Insert picture (or just drag & drop)" id="pictureBtn"><i class="icon-picture"></i></a>
+						        <input type="file" data-role="magic-overlay" data-target="#pictureBtn" data-edit="insertImage" />
+						      </div>
+						      <div class="btn-group">
+						        <a class="btn" data-edit="undo" title="Undo (Ctrl/Cmd+Z)"><i class="icon-undo"></i></a>
+						        <a class="btn" data-edit="redo" title="Redo (Ctrl/Cmd+Y)"><i class="icon-repeat"></i></a>
+						      </div>
+						      <input type="text" data-edit="inserttext" id="voiceBtn" x-webkit-speech="">
+						    </div>
+						    <div id="editor">
+						     	
+						    </div>
+						</div>
+						<div class="modal-footer">
+						  <div class="form-group">
+						  	<div class="col-sm-4"></div>
+							<div class="col-sm-3">
+								<button type="button" class="btn btn-default cancel"
+									data-dismiss="modal">取消
+								</button>
+							</div>
+							<div class="col-sm-3">
+								<button type="submit" id="btn_save" class="btn btn-default add"
+									data-dismiss="modal" onclick="saveUser()">保存
+								</button>
+							</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+
+		<div class="panel-body">
+			<table id="userListTable" class="table table-bordered" cellspacing="0" width="100%">
+			</table>
+		</div>
+	</div>
+</section>
+
+</body>
+</html>

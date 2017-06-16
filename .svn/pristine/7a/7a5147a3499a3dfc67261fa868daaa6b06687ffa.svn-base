@@ -1,0 +1,298 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+$(function () {
+	"use strict";
+    setForm();
+    getAllHisVal();
+ });
+function setForm(){
+	var data = {};
+	data.taskId = taskId;
+	 var options = {
+		url : '../../activiti/getTaskDataByTaskId',
+		data : JSON.stringify(data),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var jsonData =  eval("(" + data.str + ")");
+				CloudUtils.setForm(jsonData,"detailForm");
+				initShareHolderTable(jsonData.shareInfoList);
+				attachInfoTable(jsonData.attachInfoList);
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	 CloudUtils.ajax(options);
+}
+
+
+function repapply(){
+	var data = CloudUtils.convertStringJson('detailForm');
+	data = eval("(" + data + ")");
+	data.taskId = taskId;
+	var allTableData = $('#shareHolderInfoTable').bootstrapTable('getData');
+    var attachData = $('#attachInfoTable').bootstrapTable('getData');
+    data.shareInfoList = allTableData;
+    data.attachInfoList = attachData;
+	var options = {
+				url : '../../custInfo/reApply',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					bootbox.alert(data.resultNote,function(){
+						window.location.href='../../project/agencyTask/agencyTask.html';
+					});
+				},
+				errorCallback : function(data) {
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+}
+
+function getAllHisVal(){
+		var options = {
+				url : '../../activiti/getAllHistoryVariable',
+				data : '{"procInstId":"'+procInstId+'"}',
+				callBackFun : function(data) {
+					for(var i=0;i<data.dataList.length;i++){
+						var s = '<li>'+data.dataList[i].assignee +" "+CloudUtils.FormatDate(data.dataList[i].createTime)+" "+data.dataList[i].taskName+" "+data.dataList[i].advice+'</li>';
+						$("#histroyAdvice").append(s);
+					}
+				},
+				errorCallback : function(data) {
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+}
+
+function initShareHolderTable(data){
+	$('#shareHolderInfoTable').bootstrapTable('destroy');  
+	$("#shareHolderInfoTable").bootstrapTable({  
+	     method: "post", 
+	     data : data, 
+	     striped: false,  //表格显示条纹  
+	     search: false,  //是否启用查询  
+	     showColumns: false,  //显示下拉框勾选要显示的列  
+	     showRefresh: false,  //显示刷新按钮  
+	     sidePagination: "server", //表示服务端请求  
+	     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	     //设置为limit可以获取limit, offset, search, sort, order  
+	     queryParamsType : "undefined", 
+	     responseHandler:function responseHandler(res) {
+	    	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+	    	 } else {
+	    		 alert(res.resultNote);
+	    		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+	    	 }
+	     },
+	     columns: [{
+	 	        field: 'shareName',
+	 	        title: '股东名称',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'shareProportion',
+	 	        title: '持股比例',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'registeredCapital',
+	 	        title: '注册资本份额',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'registeredCapitalProportion',
+	 	        title: '注册资本占比',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	        formatter:function(value,row,index){
+	 	        	var r = '<a class = "fa fa-trash-o remove" style="color:#fa8564;padding:0px 5px;" title="删除" data-type="shareInfo" href="javascript:void(0)"></a>';
+	 	        	var m = '<a class = "fa fa-edit modify" style="color:#d864fd;padding:0px 5px;" title="编辑" data-type="shareInfo" href="javascript:void(0)"></a>';
+	 	            return m +' '+ r;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }]
+	   });  
+}
+
+//添加附件信息
+function attachInfoTable(data){
+	 $('#attachInfoTable').bootstrapTable('destroy'); 
+		$("#attachInfoTable").bootstrapTable({  
+			 method: "post", 
+		     data : data, 
+		     striped: false,  //表格显示条纹  
+		     search: false,  //是否启用查询  
+		     showColumns: false,  //显示下拉框勾选要显示的列  
+		     showRefresh: false,  //显示刷新按钮  
+		     sidePagination: "server", //表示服务端请求  
+		     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+		     //设置为limit可以获取limit, offset, search, sort, order  
+		     queryParamsType : "undefined",    
+	         responseHandler:function responseHandler(res) {
+	        	 if (res.result==0) {
+		        	 return {
+		        		 "rows": res.dataList,
+		        		 "total": res.records
+		        	 };
+
+	        	 } else {
+	        		 bootbox.alert(res.resultNote);
+	        		 return {
+				        	 "rows": [],
+				        	 "total": 0
+				        	 };
+	        	 }
+	         },
+	         columns: [{
+	 	        field: 'fileUrl',
+	 	        title: '附件地址',
+	 	        align: 'center',
+	            valign: 'middle',
+	            visible: false
+		 	}, {
+	 	        field: 'fileName',
+	 	        title: '附件名称',
+	 	        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+					 var s = '<a href="/../..'+row.fileUrl+'" download="'+value+'">'+value+'</a>';
+			         return s;
+		           
+		        }
+	 	    }, {
+	 	        field: 'attachType',
+	 	        title: '附件格式',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'attachSize',
+	 	        title: '附件大小',
+	 	        align: 'center',
+	             valign: 'middle'
+	 	    }, {
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	            valign: 'middle',
+	 	        formatter:function(value,row,index){
+	 	        	var r = '<a class = "fa fa-trash-o remove" style="color:#fa8564;padding:0px 5px;" title="删除" data-type="attach" href="javascript:void(0)"></a>';
+	 	            return r;
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }
+	 	    ]
+	       });  
+}
+
+var shareIndex = 0;
+window.operateEvents = {
+		
+	    'click .modify': function (e, value, row, index) {
+	    	if($(e.target).data('type')==="shareInfo"){
+	    		//修改
+	    		modShareFun(row,2);
+	    		shareIndex = index;
+	    	}
+	    },
+	    'click .remove':function (e, value, row, index) {
+	    	//$('#shareHolderInfoTable').bootstrapTable('removeByUniqueId', index);
+	    	if($(e.target).data('type')==="shareInfo"){
+	    		var values = [];
+		    	values.push(row.shareName);
+		    	$('#shareHolderInfoTable').bootstrapTable('remove', {field: 'shareName', values: values});
+	    	}else if ($(e.target).data('type')==="attach"){
+	    		var values = [];
+		    	values.push(row.fileUrl);
+		    	$('#attachInfoTable').bootstrapTable('remove', {field: 'fileUrl', values: values});
+	    	}
+	    	
+		}
+};
+
+function modShareFun(row,isEdit){
+    $("#addshareInfoModalLabel").text("修改");
+	$('#shareInfoModal').modal();
+	CloudUtils.setForm(row,'shareInfoForm');
+	//
+	$('#isEdit2').val(isEdit); //新增1;修改2
+ }
+
+function addFun(){
+	 $("#shareInfoModal").modal();
+	 $('#isEdit2').val(1); //新增1;修改2 
+}
+
+function saveFun(){
+	 var isEdit2 = $('#isEdit2').val();
+	  if (isEdit2 == 1) {// 新增1；修改2
+		  var data = CloudUtils.convertStringJson('shareInfoForm');
+//			 先只在页面显示，不录入数据库
+		 $("#shareHolderInfoTable").bootstrapTable('append', JSON.parse(data));
+	     } else if(isEdit2 == 2){
+	    	 var data = CloudUtils.convertStringJson('shareInfoForm');
+	    	$('#shareHolderInfoTable').bootstrapTable('updateRow', {index: shareIndex, row: JSON.parse(data)});
+	     }
+		$("#shareInfoModal").modal("hide");
+}
+
+//文件上传部分
+var uploadAttachment = function() {
+	//document.getElementById("file").value = null;
+	document.getElementById("file").click();
+	$('#detailModal').modal({backdrop: 'static', keyboard: false});
+}
+
+function ajaxFileUpload(){
+	if ($("#file").val().length > 0) {
+		$.ajaxFileUpload({  
+	        url : '../../file/binUpload?pathId=3',  
+	        secureuri : false,  
+	        fileElementId : 'file',  
+	        dataType : 'json',  
+	        success : function(data, status) {  
+	            if (data.result == 0) { 
+//	            	1.先添加进页面中
+	            	var relData = {};
+	            	relData.fileName = data.fileName;
+	            	relData.attachSize = data.fileSize;
+	            	relData.fileUrl = data.fileUrl;
+	            	relData.attachType = data.fileType;
+	            	$("#attachInfoTable").bootstrapTable('append', relData);
+	                bootbox.alert("上传成功！");
+	                
+	            }else{
+	            	bootbox.alert("上传失败！"); 
+	            } 
+	        },  
+	        error : function(data, status, e) {  
+	        	bootbox.alert(e);  
+	        }  
+	    });  
+    }
+    else {
+    	bootbox.alert("请选择文件");
+    }
+	
+}

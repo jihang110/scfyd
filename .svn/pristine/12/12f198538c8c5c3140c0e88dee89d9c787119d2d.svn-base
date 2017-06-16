@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head> 
+  <meta charset="utf-8" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" /> 
+  <meta name="description" content="" /> 
+  <meta name="author" content="ThemeBucket" /> 
+  <link rel="shortcut icon" href="#" type="image/png" /> 
+  <title>还款再申请</title> 
+  <link href="../../css/style.css" rel="stylesheet" /> 
+  <link href="../../css/style-responsive.css" rel="stylesheet" /> 
+  <link href="../../css/bootstrap-table.css" rel="stylesheet" /> 
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet" /> 
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" /> 
+  <link href="../../css/sysfun.css" rel="stylesheet" /> 
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet" /> 
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script> 
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script> 
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script> 
+  <script src="../../js/password.js"></script> 
+  <script src="../../js/store.js" type="text/javascript"></script> 
+  <script src="../../js/jquery.nicescroll.js"></script> 
+  <script type="text/javascript" src="../../js/jquery.validate.min.js"></script> 
+  <script src="../../js/validation-init.js"></script> 
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-datepicker.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script> 
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script> 
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script> 
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <!--dynamic table initialization --> 
+  <script src="../../js/project/dykManager/repayReapply.js" type="text/javascript"></script> 
+ </head> 
+ <body class="iframeBody"> 
+    <section> 
+   <div class="main-content-child"> 
+    <div class="row"> 
+     <div class="title">
+      <span>还款再申请</span>
+     </div> 
+    </div> 
+    
+    <fieldset id='field'>
+		 <form class="form-horizontal" role="form" id="detailForm" data-toggle="validator">
+		 	<input type="hidden" id="repaymentId" name="repaymentId" /> 
+			<input type="hidden" id="isEdit" name="isEdit" /> 
+		 	<div class="form-group">
+	            <label class="col-sm-4 control-label" for="currentRepayDate"><span class="required"></span>还款日期</label>
+	            <div class="col-sm-6">
+		            <input type="text" class="form-control" style="cursor: pointer;" size="16" 
+	      					id="currentRepayDate"  name="currentRepayDate"  readonly/>
+	               </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="totalRepay">还款总金额</label>
+	            <div class="col-sm-6">
+	            	   <input id="totalRepay" name="totalRepay" class="form-control" >
+	         	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="currentPayablePrincipal">还本金金额</label>
+	            <div class="col-sm-6">
+	            	<input id="currentPayablePrincipal" name="currentPayablePrincipal" class="form-control">
+	         	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="currentPayableInterest">还利息金额</label>
+	            <div class="col-sm-6">
+	            	<input type="text" name="currentPayableInterest" class="form-control" id="currentPayableInterest">
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label" for="nation">赎车凭证</label>
+	            <div class="col-sm-6">
+	            	<input type="text" name="nation" class="form-control" id="nation">
+	          	</div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="attachment">备注</label>
+	            <div class="col-sm-6">
+				    <input id="attachment"  name="attachment" class="form-control" type="text">
+	          	</div>
+	          </div>
+			
+ 			<div class="form-group">
+				<label class="col-sm-2 control-label" for="advice">意见</label>
+				<div class="col-sm-8">
+					<textarea rows="3" name="advice" class="form-control" id="advice">
+					</textarea>
+				</div>
+			</div>	
+			<div class="form-group">
+				<label class="col-sm-2 control-label" for="histroyAdvice">历史意见</label>
+				<div class="col-sm-8">
+					<ul id="histroyAdvice" name="histroyAdvice">
+					</ul>
+				</div>
+			</div>	
+         </form>
+         <div class="col-sm-2 col-sm-offset-8">
+			<button type="submit" class="btn btn-default add"
+				 onclick="repapply()">再申请
+			</button>
+		</div>
+		</fieldset>
+   </div> 
+  </section>    
+ </body>
+</html>

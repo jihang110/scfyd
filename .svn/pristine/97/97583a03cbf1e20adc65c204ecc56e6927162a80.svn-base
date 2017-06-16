@@ -1,0 +1,107 @@
+package com.ut.scf.web.controller.project;
+
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.dict.ScfConsts;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.pojo.auto.GuaranteeInfo;
+import com.ut.scf.reqbean.project.RefGetFinanceReqbean;
+import com.ut.scf.reqbean.project.RefundDepositAgreeReqBean;
+import com.ut.scf.reqbean.project.RefundDepositReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.service.project.IActivitiService;
+import com.ut.scf.service.project.IRefundDepositService;
+import com.ut.scf.web.controller.BaseJsonController;
+
+/**
+ * @author jihang
+ *	退还保证金
+ */
+@Controller
+@RequestMapping("/refDeposit")
+public class refundDepositController  extends BaseJsonController{
+//	private static final Logger log = LoggerFactory
+//			.getLogger(refundDepositController.class);
+	@Resource private IActivitiService activitiService;
+	@Resource private IRefundDepositService refundDepositService;
+//	发起流程
+	@RequestMapping(value = "/startProcess", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean startProcess(HttpSession httpSession,
+			@RequestBody RefundDepositReqBean reqBean,BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+//			获取当前用户
+			String userName = (String) httpSession
+					.getAttribute(ScfConsts.SESSION_USERNAME);
+			reqBean.setUserId(userName);
+			reqBean.setActivitiKey("refundDeposit");
+			JSONObject reqBeanStr = new JSONObject(reqBean);
+			activitiService.startProcess(reqBeanStr);
+			return respBean;
+	}
+	
+//	审核是否同意
+	@RequestMapping(value = "/doAgree", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean doAgree(HttpSession httpSession,
+			@RequestBody RefundDepositAgreeReqBean reqBean,
+			BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+//			获取当前用户
+			String userName = (String) httpSession
+					.getAttribute(ScfConsts.SESSION_USERNAME);
+			reqBean.setUserId(userName);
+			JSONObject jsonObject = new JSONObject(reqBean);
+			respBean = activitiService.doAgree(jsonObject);
+			return respBean;
+	}
+
+	
+//	流程再申请
+	@RequestMapping(value = "/reApply", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean reApply(HttpSession httpSession,
+			@RequestBody RefundDepositReqBean reqBean,
+			BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+//			获取当前用户
+			String userName = (String) httpSession
+					.getAttribute(ScfConsts.SESSION_USERNAME);
+			reqBean.setUserId(userName);
+			JSONObject jsonObject = new JSONObject(reqBean);
+			respBean = activitiService.reApply(jsonObject);
+			return respBean;
+	}
+	@RequestMapping(value = "/getFinanceInfo", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean getFinanceInfo(HttpSession httpSession,
+			@RequestBody RefGetFinanceReqbean reqBean,
+			BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+//			获取当前用户
+			PageInfoBean page = new PageInfoBean();
+			page.setPageNumber(reqBean.getPageNumber());
+			page.setPageSize(reqBean.getPageSize());
+			Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+			respBean = refundDepositService.getRefundDepositInfo(paramMap, page);
+			return respBean;
+	}
+//	更新guaranteeInfo的实缴保证金金额和余额字段
+	@RequestMapping(value = "/modGuaranteeInfo", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean modGuaranteeInfo(HttpSession httpSession,
+			@RequestBody GuaranteeInfo reqBean,
+			BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+//			获取当前用户
+			respBean = refundDepositService.updateRefundDepositInfo(reqBean);
+			return respBean;
+	}
+}

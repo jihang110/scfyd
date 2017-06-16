@@ -1,0 +1,35 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IActivitiService {
+	
+	/**
+	 * 代办任务查询
+	 */
+	public BaseRespBean getAgencyTaskList(Map<String,Object> map,PageInfoBean page);
+	
+	/**
+	 * 获取代办数量
+	 * @param map 
+	 * @return
+	 */
+	public BaseRespBean getAgencyTaskNum(Map<String,Object> map);
+	
+	/**
+	 * 获取存储在流程中的数据
+	 * @param taskId 任务Id
+	 * @return
+	 */
+	public BaseRespBean getDataByTaskId(String taskId);
+	
+	/**
+	 * 获取所有的历史数据
+	 * @param map map 
+	 * @return
+	 */
+	public BaseRespBean getAllHistoryVariable(Map<String,Object> map);
+}

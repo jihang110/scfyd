@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.query.IOrderInfoDao" >
+
+
+  <select id="orderInfoInfoList" resultType="hashmap" parameterType="hashmap" >
+   	select  o.order_id orderId,o.product_id productId,o.product_name productName,o.product_amt productAmt,
+   	o.period,o.loan,o.seller_id sellerId,o.seller_name sellerName,o.cr_req_amt crReqAmt,o.start_pay_amt startPayAmt,
+   	o.pay_m payM,o.start_pay_day startPayDay,o.name,o.gender,o.birth_ym birthYm,o.age,o.id_card idCard,o.contact,o.school,o.grade,
+   	o.graduate_date graduateDate,o.file,o.order_status orderStatus,o.order_batch_id orderBatchId,
+   	ob.order_total_num orderTotalNum,ob.order_total_amt orderTotalAmt,ob.rec_order_num recOrderNum,
+   	ob.rec_order_amt recOrderAmt,ob.rej_order_num rejOrderNum,ob.rej_order_amt rejOrderAmt,l.loan_date loanDate,
+   	ob.cr_req_total_amt crReqTotalAmt,l.loan_amt loanAmt,l.finance_start_day financeStartDay,l.contract_no contractNo,
+   	l.finance_due_day financeDueDay,l.guarantee_money guaranteeMoney,l.guarantee_money_actual guaranteeMoneyActual
+   	from order_info o 
+   	inner join loan_info l 
+   	on o.order_batch_id = l.order_batch_id 
+   	inner join order_batch_info ob
+   	on o.order_batch_id= ob.order_batch_id
+   	where 1=1 
+   	<if test="orderBatchId != null and orderBatchId != ''">
+	    and o.order_batch_id LIKE CONCAT(CONCAT('%', #{orderBatchId}),'%')
+	</if>
+	<if test="contractNo != null and contractNo != ''">
+	    and l.contract_no LIKE CONCAT(CONCAT('%', #{contractNo}),'%')
+	</if> 
+	<if test="loanDate != null and loanDate != ''">
+	     and DATE_FORMAT(l.loan_date, '%Y-%m-%d') = #{loanDate}
+	</if> 
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(l.finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeDueDay != null and financeDueDay !='' ">  
+        and DATE_FORMAT(l.finance_due_day, '%Y-%m-%d') <![CDATA[<=]]> #{financeDueDay}
+    </if>
+  </select>
+  
+  <select id="repayPlanInfoList" resultType="hashmap" parameterType="hashmap" >
+   	select  o.order_id orderId,o.product_id productId,o.product_name productName,o.product_amt productAmt,
+   	o.period,o.loan,o.seller_id sellerId,o.seller_name sellerName,o.cr_req_amt crReqAmt,o.start_pay_amt startPayAmt,
+   	o.pay_m payM,o.start_pay_day startPayDay,o.name,o.gender,o.birth_ym birthYm,o.age,o.id_card idCard,o.contact,o.school,o.grade,
+   	o.graduate_date graduateDate,o.file,o.order_status orderStatus,o.order_batch_id orderBatchId,l.loan_date loanDate,
+   	l.loan_amt loanAmt,l.finance_start_day financeStartDay,l.contract_no contractNo,
+   	l.finance_due_day financeDueDay,l.guarantee_money guaranteeMoney,l.guarantee_money_actual guaranteeMoneyActual,
+   	r.period,r.current_repay_date currentRepayDate,r.current_payable_principal currentPayablePrincipal,r.current_payable_interest currentPayableInterest
+   	
+   	from order_info o 
+   	inner join loan_info l 
+   	on o.order_batch_id = l.order_batch_id 
+   	inner join repayment_plan_info r
+   	on o.order_id = r.order_id
+   	where 1=1 
+   	<if test="orderBatchId != null and orderBatchId != ''">
+	    and o.order_batch_id LIKE CONCAT(CONCAT('%', #{orderBatchId}),'%')
+	</if>
+	<if test="contractNo != null and contractNo != ''">
+	    and l.contract_no LIKE CONCAT(CONCAT('%', #{contractNo}),'%')
+	</if> 
+	<if test="loanDate != null and loanDate != ''">
+	     and DATE_FORMAT(l.loan_date, '%Y-%m-%d') = #{loanDate}
+	</if> 
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(l.finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeDueDay != null and financeDueDay !='' ">  
+        and DATE_FORMAT(l.finance_due_day, '%Y-%m-%d') <![CDATA[<=]]> #{financeDueDay}
+    </if>
+  </select>
+  
+  
+  
+</mapper>

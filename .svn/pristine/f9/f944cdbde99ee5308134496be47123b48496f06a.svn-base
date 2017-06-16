@@ -1,0 +1,91 @@
+<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+  <input type="hidden" name="guaranteeRate" id="guaranteeRate">
+  <input type="hidden" name="corpId" id="corpId">
+     <div class="form-group">
+       <label class="col-sm-2 control-label" for="applyDate">申请日期</label>
+       <div class="col-sm-3">
+        <input type="text" class="form-control" id="applyDate" name="applyDate" readonly/>
+       </div>
+       <label class="col-sm-2 control-label"  for="agencyName">经销商名称</label>
+       <div class="col-sm-3">
+       	   <input id="agencyName" name="agencyName" class="form-control" readonly>
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="agencyNum">经销商代码</label>
+       <div class="col-sm-3">
+       	<input id="agencyNum" name="agencyNum" class="form-control" readonly>
+    	</div>
+       <label class="col-sm-2 control-label"  for="maxCredit">最高授信额度</label>
+       <div class="col-sm-3">
+       	<input type="text" name="maxCredit" class="form-control" id="maxCredit" readonly>
+       </div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="availableCredit">可用授信额度</label>
+       <div class="col-sm-3">
+       	<input type="text" name="availableCredit" class="form-control" id="availableCredit" readonly>
+       </div>
+       <label class="col-sm-2 control-label" for="financeRate">融资比例(%)</label>
+       <div class="col-sm-3">
+       	<input type="text" name="financeRate" class="form-control" id="financeRate" readonly>
+     	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="cashRate">费率(%)</label>
+       <div class="col-sm-3">
+       	<input type="text" name="cashRate" class="form-control" id="cashRate" readonly>
+    	</div>
+       <label class="col-sm-2 control-label"  for="financeStartDate">融资起始日</label>
+       <div class="col-sm-3">
+       	<input name="financeStartDate" class="form-control" id="financeStartDate" type="text" readonly>
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="financeEndDate">融资到期日</label>
+       <div class="col-sm-3">
+       	<input name="financeEndDate" class="form-control" id="financeEndDate" type="text" readonly>
+    	</div>
+       <label class="col-sm-2 control-label"  for="financeAmount">融资金额</label>
+       <div class="col-sm-3">
+       	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="expense">费用</label>
+       <div class="col-sm-3">
+       	<input type="text" name="expense" class="form-control" id="expense" readonly>
+    	</div>
+       <label class="col-sm-2 control-label"  for="payAbleGuarantee">应缴保证金金额</label>
+       <div class="col-sm-3">
+       	<input type="text" name="payAbleGuarantee" class="form-control" id="payAbleGuarantee" readonly>
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="guaranteePayDate">保证金缴纳日期</label>
+       <div class="col-sm-3">
+       	<input name="guaranteePayDate" class="form-control" id="guaranteePayDate"
+			style="cursor: pointer;" type="text" readonly>
+      	</div>
+         <label class="col-sm-2 control-label"  for="payActGuarantee">实缴保证金金额</label>
+         <div class="col-sm-3">
+         	<input type="text" name="payActGuarantee" class="form-control" id="payActGuarantee" readonly>
+      	</div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-2 control-label"  for="guaranteeAccountAmt"><span class="required">*</span>保证金到账金额</label>
+         <div class="col-sm-3">
+         	<input type="text" name="guaranteeAccountAmt" class="form-control" id="guaranteeAccountAmt">
+      	</div>
+         <label class="col-sm-2 control-label"  for="remark">备注</label>
+         <div class="col-sm-3">
+    	<textarea id="remark"  name="remark" class="form-control" readonly></textarea>
+       	</div>
+       </div>
+       <div class="form-group">
+	     <div class="col-sm-9" style="margin-left:100px;margin-top: 20px;">
+			<table id="interestInfoList" class="table table-bordered" cellspacing="0" style="border: 1px #e5e5e5 solid">
+	        </table>
+	     </div>
+       </div>
+</form>

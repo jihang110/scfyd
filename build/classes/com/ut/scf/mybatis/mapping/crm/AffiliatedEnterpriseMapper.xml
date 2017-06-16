@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.IAffiliatedEnterpriseDao">
+
+  <select id="selectAffiliatedEnterpriseList" resultType="hashmap" parameterType="hashmap">
+    select e.rec_uid recUid, e.corp_id corpId, c.corp_name corpName,
+    e.enterprise_name enterpriseName, e.enterprise_type enterpriseType,
+    e.relation_type relationType, e.busi_scope busiScope, e.industry, 
+    e.ccy, e.reg_cap regCap, e.share_name shareName, 
+    e.share_type shareType, e.shareholding_pattern shareholdingPattern,
+    e.share_proportion shareProportion
+    from customer_affiliated_enterprise e join corp_info c on e.corp_id = c.corp_id 
+    where c.status=1
+    <if test="corpId != null">
+	  and e.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and e.corp_id in ${userCorpList}
+	</if>
+    <if test="enterpriseName != null">
+	  and e.enterprise_name LIKE CONCAT(CONCAT('%', #{enterpriseName}),'%')
+	</if>
+	<if test="relaCorpId != null">
+	  and e.rela_corp_id = #{relaCorpId}
+	</if>
+	order by e.enterprise_name
+  </select>
+  
+  <insert id="insertAffiliatedEnterprise" parameterType="map">
+    insert into customer_affiliated_enterprise (rec_uid, enterprise_name, enterprise_type, 
+      relation_type, corp_id, busi_scope, 
+      industry, ccy, reg_cap, 
+      share_name, share_type, shareholding_pattern, share_proportion, rela_corp_id, 
+      create_user_id, create_time)
+    values (#{recUid}, #{enterpriseName}, #{enterpriseType}, 
+      #{relationType}, #{corpId}, #{busiScope}, 
+      #{industry}, #{ccy}, #{regCap}, 
+      #{shareName}, #{shareType}, #{shareholdingPattern}, #{shareProportion}, #{relaCorpId}, 
+      #{createUserId}, now())
+  </insert>
+  
+  <update id="updateAffiliatedEnterprise" parameterType="map">
+    update customer_affiliated_enterprise
+    <set>
+      <if test="enterpriseName != null">
+        enterprise_name = #{enterpriseName},
+      </if>
+      <if test="enterpriseType != null">
+        enterprise_type = #{enterpriseType},
+      </if>
+      <if test="relationType != null">
+        relation_type = #{relationType},
+      </if>
+      <if test="busiScope != null">
+        busi_scope = #{busiScope},
+      </if>
+      <if test="industry != null">
+        industry = #{industry},
+      </if>
+      <if test="ccy != null">
+        ccy = #{ccy},
+      </if>
+      <if test="regCap != null">
+        reg_cap = #{regCap},
+      </if>
+      <if test="shareName != null">
+        share_name = #{shareName},
+      </if>
+      <if test="shareType != null">
+        share_type = #{shareType},
+      </if>
+      <if test="shareholdingPattern != null">
+        shareholding_pattern = #{shareholdingPattern},
+      </if>
+      <if test="shareProportion != null">
+        share_proportion = #{shareProportion},
+      </if>
+    </set>
+    where rec_uid = #{recUid}
+  </update>
+  
+  <delete id="deleteAffiliatedEnterprise" parameterType="java.lang.String">
+    delete from customer_affiliated_enterprise
+    where rec_uid = #{recUid}
+  </delete>
+
+</mapper>

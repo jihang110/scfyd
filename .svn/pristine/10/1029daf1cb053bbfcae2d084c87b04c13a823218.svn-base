@@ -1,0 +1,181 @@
+$(document).ready(function() {
+	 initTable();
+	 initFileTable();
+} );
+
+
+function initTable(){
+	 
+	$('#repayInfoListTable').bootstrapTable('destroy');  
+	$("#repayInfoListTable").bootstrapTable({  
+         method: "post", 
+//         url: "../..//", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+                             
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'signDate',
+ 	        title: '签约日期',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'contractValDate',
+ 	        title: '合同生效日期',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'contractDueDate',
+ 	        title: '合同到期日期',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'contractType',
+ 	        title: '合同类型',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fileNum',
+ 	        title: '附件数',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'file',
+ 	        title: '附件',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	       align: 'center',
+           valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+
+}
+
+
+function initFileTable(){
+	 
+	$('#fileListTable').bootstrapTable('destroy');  
+	$("#fileListTable").bootstrapTable({  
+         method: "post", 
+//         url: "../..//", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+                             
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'fileName',
+ 	        title: '文件名称',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fileType',
+ 	        title: '文件类型',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'fileSize',
+ 	        title: '文件大小',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	       align: 'center',
+           valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+
+}
+
+
+function ajaxFileUpload(obj) {
+	if ($(obj).val().length > 0) {
+		$.ajaxFileUpload({
+	        url : '../../../file/binUpload?pathId=2',
+	        secureuri : false,
+	        fileElementId : $(obj).attr("id"),
+	        dataType : 'json',
+	        success : function(data, status) {
+	        	debugger;
+	            if (data.result == 0) {
+	            	$('#fileListTable').bootstrapTable({
+//                        data:JSON.parse(data)
+	            	});
+	            }else{
+	            	bootbox.alert("上传失败！");
+	            } 
+	        },
+	        error : function(data, status, e) {
+	        	bootbox.alert(e);
+	        }
+	    });
+    } else {
+    	bootbox.alert("请选择附件");
+    }
+};
+

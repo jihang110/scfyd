@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IRevenueDao" >
+
+  <select id="getRevenueList" resultType="hashmap" parameterType="hashmap" >
+    select
+    	revenue_id revenueId,
+    	reception_date receptionDate,
+    	agency agency,
+    	agency_num agencyNum,
+    	saptta saptta,
+    	aptta aptta,
+    	note note
+    from revenue_management
+  <!--   <where>
+    	<if test="agencyCode!=null and agencyCode!='' ">  
+            and ci.agency_num LIKE CONCAT(CONCAT('%', #{agencyCode}),'%')   
+        </if>  
+    	<if test="agencyName!=null and agencyName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')   
+        </if>
+    </where> -->
+  </select>
+
+</mapper>

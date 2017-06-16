@@ -1,0 +1,557 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.INegativeInfoDao">
+  
+  <select id="selectNegativeInfoList" parameterType="hashmap" resultType="hashmap">
+    select 
+    ni.neg_id negId, ni.rela_corp_id relaCorpId, ni.corp_id corpId, ni.oper_year operYear, ni.money_funds moneyFunds,
+    ni.other_money_funds otherMoneyFunds, ni.transactional_financial_assets transactionalFinancialAssets, 
+    ni.bill_receivable  billReceivable, ni.accounts_receivable accountsReceivable, ni.prepayments prepayments,
+    ni.interest_receivable interestReceivable, ni.dividend_receivable dividendReceivable, 
+    ni.other_receivables otherReceivables, ni.stock stock, ni.non_current_assets_due_within_one_year nonCurrentAssetsDueWithinOneYear, 
+    ni.other_current_assets otherCurrentAssets, ni.total_current_assets totalCurrentAssets, 
+    ni.available_for_sale_financial_assets  availableForSaleFinancialAssets,
+    ni.held_to_maturity_investments heldToMaturityInvestments, ni.long_term_receivables longTermReceivables, 
+    ni.long_term_equity_investment longTermEquityInvestment,ni.investment_real_estate investmentRealEstate, 
+    ni.fixed_assets fixedAssets, ni.construction_in_progress constructionInProgress, ni.engineer_material engineerMaterial,
+    ni.clean_up_of_fixed_assets cleanUpOfFixedAssets, ni.productive_biological_assets  productiveBiologicalAssets, 
+    ni.oil_and_gas_properties oilAndGasProperties, ni.intangible_assets intangibleAssets, 
+    ni.development_expenditure developmentExpenditure,ni.goodwill goodwill, ni.long_term_prepaid_expenses longTermPrepaidExpenses, 
+    ni.deferred_tax_assets  deferredTaxAssets, ni.other_non_current_assets otherNonCurrentAssets,
+    ni.total_non_current_assets totalNonCurrentAssets, ni.total_assets totalAssets, ni.short_term_loan shortTermLoan, 
+    ni.transactional_financial_liabilities transactionalFinancialLiabilities, ni.notes_payable notesPayable,
+    ni.accounts_payable accountsPayable, ni.advance_payment advancePayment, ni.employee_benefits_payable employeeBenefitsPayable, 
+    ni.taxes_payable taxesPayable, ni.interest_payable interestPayable, ni.dividend_payable dividendPayable, 
+    ni.other_payables otherPayables, ni.non_current_liabilities_due_within_one_year nonCurrentLiabilitiesDueWithinOneYear,
+    ni.other_current_liabilities otherCurrentLiabilities, ni.total_current_liabilities totalCurrentLiabilities, 
+    ni.long_term_loan longTermLoan, ni.bonds_payable  bondsPayable, ni.long_term_payables longTermPayables, 
+    ni.special_payables specialPayables, ni.projected_liabilities projectedLiabilities, 
+    ni.deferred_income_tax_liabilities deferredIncomeTaxLiabilities, 
+    ni.other_non_current_liabilities otherNonCurrentLiabilities, 
+    ni.total_non_current_liabilities totalNonCurrentLiabilities, ni.total_liabilities totalLiabilities, 
+    ni.paid_up_capital paidUpCapital, ni.capital_reserve capitalReserve, 
+    ni.treasury_stocks treasuryStocks, ni.surplus_reserve surplusReserve, 
+    ni.undistributed_profit undistributedProfit, ni.total_owners_equity totalOwnersEquity, 
+    ni.total_liabilities_and_owners_equity totalLiabilitiesAndOwnersEquity, 
+    ni.average_current_assets averageCurrentAssets, ni.average_current_liabilities averageCurrentLiabilities, 
+    ni.average_total_assets averageTotalAssets, ni.average_total_liabilities averageTotalLiabilities, 
+    ni.average_net_assets averageNetAssets, ni.average_net_fixed_assets averageNetFixedAssets, 
+    ni.average_accounts_receivable averageAccountsReceivable, ni.average_accounts_payable  averageAccountsPayable, 
+    ni.average_inventory averageInventory, ni.average_prepayment averagePrepayment, 
+    ni.average_other_receivables averageOtherReceivables,ni.total_assets_growth totalAssetsGrowth, 
+    ni.total_assets_growth_rate totalAssetsGrowthRate,
+    ni.average_money_funds averageMoneyFunds,
+    ni.unallocated_profit_spreadsheet unallocatedProfitSpreadsheet,
+    ni.balance_of_undistributed_profit balanceOfUndistributedProfit,
+    ni.increase_in_surplus_funds increaseInSurplusFunds,
+    ni.increase_in_net_assets increaseInNetAssets,
+    ni.net_assets_growth_rate netAssetsGrowthRate,
+    
+    ci.corp_name corpName
+    from negative_info ni
+    join corp_info ci on ci.corp_id=ni.corp_id
+    <where>
+        1=1 and ci.status = 1
+        <if test="corpName!=null and corpName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')   
+        </if>
+        <if test="corpId != null">
+		  and ni.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  	  and ni.corp_id in ${userCorpList}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ni.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ni.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by ni.create_time desc
+  </select>
+  
+  <insert id="insertNegativeInfo" parameterType="hashmap">
+    insert into negative_info (neg_id, corp_id, oper_year, 
+      money_funds, other_money_funds, transactional_financial_assets, 
+      bill_receivable, accounts_receivable, prepayments, 
+      interest_receivable, dividend_receivable, 
+      other_receivables, stock, non_current_assets_due_within_one_year, 
+      other_current_assets, total_current_assets, 
+      available_for_sale_financial_assets, held_to_maturity_investments, 
+      long_term_receivables, long_term_equity_investment, 
+      investment_real_estate, fixed_assets, construction_in_progress, 
+      engineer_material, clean_up_of_fixed_assets, 
+      productive_biological_assets, oil_and_gas_properties, 
+      intangible_assets, development_expenditure, 
+      goodwill, long_term_prepaid_expenses, deferred_tax_assets, 
+      other_non_current_assets, total_non_current_assets, 
+      total_assets, short_term_loan, transactional_financial_liabilities, 
+      notes_payable, accounts_payable, advance_payment, 
+      employee_benefits_payable, taxes_payable, 
+      interest_payable, dividend_payable, other_payables, 
+      non_current_liabilities_due_within_one_year, other_current_liabilities, 
+      total_current_liabilities, long_term_loan, 
+      bonds_payable, long_term_payables, special_payables, 
+      projected_liabilities, deferred_income_tax_liabilities, 
+      other_non_current_liabilities, total_non_current_liabilities, 
+      total_liabilities, paid_up_capital, capital_reserve, 
+      treasury_stocks, surplus_reserve, undistributed_profit, 
+      total_owners_equity, total_liabilities_and_owners_equity, 
+      average_current_assets, average_current_liabilities, 
+      average_total_assets, average_total_liabilities, 
+      average_net_assets, average_net_fixed_assets, 
+      average_accounts_receivable, average_accounts_payable, 
+      average_inventory, average_prepayment, average_other_receivables, 
+      total_assets_growth, total_assets_growth_rate, 
+      average_money_funds, unallocated_profit_spreadsheet,balance_of_undistributed_profit,
+      increase_in_surplus_funds,increase_in_net_assets, net_assets_growth_rate,
+      rela_corp_id, create_user_id, create_time)
+    values (#{negId}, #{corpId}, #{operYear}, 
+      #{moneyFunds}, #{otherMoneyFunds}, #{transactionalFinancialAssets}, 
+      #{billReceivable}, #{accountsReceivable}, #{prepayments}, 
+      #{interestReceivable}, #{dividendReceivable}, 
+      #{otherReceivables}, #{stock}, #{nonCurrentAssetsDueWithinOneYear}, 
+      #{otherCurrentAssets}, #{totalCurrentAssets}, 
+      #{availableForSaleFinancialAssets}, #{heldToMaturityInvestments}, 
+      #{longTermReceivables}, #{longTermEquityInvestment}, 
+      #{investmentRealEstate}, #{fixedAssets}, #{constructionInProgress}, 
+      #{engineerMaterial}, #{cleanUpOfFixedAssets}, 
+      #{productiveBiologicalAssets}, #{oilAndGasProperties}, 
+      #{intangibleAssets}, #{developmentExpenditure}, 
+      #{goodwill}, #{longTermPrepaidExpenses}, #{deferredTaxAssets}, 
+      #{otherNonCurrentAssets}, #{totalNonCurrentAssets}, 
+      #{totalAssets}, #{shortTermLoan}, #{transactionalFinancialLiabilities}, 
+      #{notesPayable}, #{accountsPayable}, #{advancePayment}, 
+      #{employeeBenefitsPayable}, #{taxesPayable}, 
+      #{interestPayable}, #{dividendPayable}, #{otherPayables}, 
+      #{nonCurrentLiabilitiesDueWithinOneYear}, #{otherCurrentLiabilities}, 
+      #{totalCurrentLiabilities}, #{longTermLoan}, 
+      #{bondsPayable}, #{longTermPayables}, #{specialPayables}, 
+      #{projectedLiabilities}, #{deferredIncomeTaxLiabilities}, 
+      #{otherNonCurrentLiabilities}, #{totalNonCurrentLiabilities}, 
+      #{totalLiabilities}, #{paidUpCapital}, #{capitalReserve}, 
+      #{treasuryStocks}, #{surplusReserve}, #{undistributedProfit}, 
+      #{totalOwnersEquity}, #{totalLiabilitiesAndOwnersEquity}, 
+      #{averageCurrentAssets}, #{averageCurrentLiabilities}, 
+      #{averageTotalAssets}, #{averageTotalLiabilities}, 
+      #{averageNetAssets}, #{averageNetFixedAssets}, 
+      #{averageAccountsReceivable}, #{averageAccountsPayable}, 
+      #{averageInventory}, #{averagePrepayment}, #{averageOtherReceivables}, 
+      #{totalAssetsGrowth}, #{totalAssetsGrowthRate}, 
+      #{averageMoneyFunds}, #{unallocatedProfitSpreadsheet}, #{balanceOfUndistributedProfit},
+      #{increaseInSurplusFunds}, #{increaseInNetAssets}, #{netAssetsGrowthRate},
+      #{relaCorpId}, #{createUserId}, now())
+  </insert>
+  
+  
+  <update id="updateNegativeInfo" parameterType="hashmap">
+    update negative_info
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="operYear != null">
+        oper_year = #{operYear},
+      </if>
+      <if test="moneyFunds != null">
+        money_funds = #{moneyFunds},
+      </if>
+      <if test="otherMoneyFunds != null">
+        other_money_funds = #{otherMoneyFunds},
+      </if>
+      <if test="transactionalFinancialAssets != null">
+        transactional_financial_assets = #{transactionalFinancialAssets},
+      </if>
+      <if test="billReceivable != null">
+        bill_receivable = #{billReceivable},
+      </if>
+      <if test="accountsReceivable != null">
+        accounts_receivable = #{accountsReceivable},
+      </if>
+      <if test="prepayments != null">
+        prepayments = #{prepayments},
+      </if>
+      <if test="interestReceivable != null">
+        interest_receivable = #{interestReceivable},
+      </if>
+      <if test="dividendReceivable != null">
+        dividend_receivable = #{dividendReceivable},
+      </if>
+      <if test="otherReceivables != null">
+        other_receivables = #{otherReceivables},
+      </if>
+      <if test="stock != null">
+        stock = #{stock},
+      </if>
+      <if test="nonCurrentAssetsDueWithinOneYear != null">
+        non_current_assets_due_within_one_year = #{nonCurrentAssetsDueWithinOneYear},
+      </if>
+      <if test="otherCurrentAssets != null">
+        other_current_assets = #{otherCurrentAssets},
+      </if>
+      <if test="totalCurrentAssets != null">
+        total_current_assets = #{totalCurrentAssets},
+      </if>
+      <if test="availableForSaleFinancialAssets != null">
+        available_for_sale_financial_assets = #{availableForSaleFinancialAssets},
+      </if>
+      <if test="heldToMaturityInvestments != null">
+        held_to_maturity_investments = #{heldToMaturityInvestments},
+      </if>
+      <if test="longTermReceivables != null">
+        long_term_receivables = #{longTermReceivables},
+      </if>
+      <if test="longTermEquityInvestment != null">
+        long_term_equity_investment = #{longTermEquityInvestment},
+      </if>
+      <if test="investmentRealEstate != null">
+        investment_real_estate = #{investmentRealEstate},
+      </if>
+      <if test="fixedAssets != null">
+        fixed_assets = #{fixedAssets},
+      </if>
+      <if test="constructionInProgress != null">
+        construction_in_progress = #{constructionInProgress},
+      </if>
+      <if test="engineerMaterial != null">
+        engineer_material = #{engineerMaterial},
+      </if>
+      <if test="cleanUpOfFixedAssets != null">
+        clean_up_of_fixed_assets = #{cleanUpOfFixedAssets},
+      </if>
+      <if test="productiveBiologicalAssets != null">
+        productive_biological_assets = #{productiveBiologicalAssets},
+      </if>
+      <if test="oilAndGasProperties != null">
+        oil_and_gas_properties = #{oilAndGasProperties},
+      </if>
+      <if test="intangibleAssets != null">
+        intangible_assets = #{intangibleAssets},
+      </if>
+      <if test="developmentExpenditure != null">
+        development_expenditure = #{developmentExpenditure},
+      </if>
+      <if test="goodwill != null">
+        goodwill = #{goodwill},
+      </if>
+      <if test="longTermPrepaidExpenses != null">
+        long_term_prepaid_expenses = #{longTermPrepaidExpenses},
+      </if>
+      <if test="deferredTaxAssets != null">
+        deferred_tax_assets = #{deferredTaxAssets},
+      </if>
+      <if test="otherNonCurrentAssets != null">
+        other_non_current_assets = #{otherNonCurrentAssets},
+      </if>
+      <if test="totalNonCurrentAssets != null">
+        total_non_current_assets = #{totalNonCurrentAssets},
+      </if>
+      <if test="totalAssets != null">
+        total_assets = #{totalAssets},
+      </if>
+      <if test="shortTermLoan != null">
+        short_term_loan = #{shortTermLoan},
+      </if>
+      <if test="transactionalFinancialLiabilities != null">
+        transactional_financial_liabilities = #{transactionalFinancialLiabilities},
+      </if>
+      <if test="notesPayable != null">
+        notes_payable = #{notesPayable},
+      </if>
+      <if test="accountsPayable != null">
+        accounts_payable = #{accountsPayable},
+      </if>
+      <if test="advancePayment != null">
+        advance_payment = #{advancePayment},
+      </if>
+      <if test="employeeBenefitsPayable != null">
+        employee_benefits_payable = #{employeeBenefitsPayable},
+      </if>
+      <if test="taxesPayable != null">
+        taxes_payable = #{taxesPayable},
+      </if>
+      <if test="interestPayable != null">
+        interest_payable = #{interestPayable},
+      </if>
+      <if test="dividendPayable != null">
+        dividend_payable = #{dividendPayable},
+      </if>
+      <if test="otherPayables != null">
+        other_payables = #{otherPayables},
+      </if>
+      <if test="nonCurrentLiabilitiesDueWithinOneYear != null">
+        non_current_liabilities_due_within_one_year = #{nonCurrentLiabilitiesDueWithinOneYear},
+      </if>
+      <if test="otherCurrentLiabilities != null">
+        other_current_liabilities = #{otherCurrentLiabilities},
+      </if>
+      <if test="totalCurrentLiabilities != null">
+        total_current_liabilities = #{totalCurrentLiabilities},
+      </if>
+      <if test="longTermLoan != null">
+        long_term_loan = #{longTermLoan},
+      </if>
+      <if test="bondsPayable != null">
+        bonds_payable = #{bondsPayable},
+      </if>
+      <if test="longTermPayables != null">
+        long_term_payables = #{longTermPayables},
+      </if>
+      <if test="specialPayables != null">
+        special_payables = #{specialPayables},
+      </if>
+      <if test="projectedLiabilities != null">
+        projected_liabilities = #{projectedLiabilities},
+      </if>
+      <if test="deferredIncomeTaxLiabilities != null">
+        deferred_income_tax_liabilities = #{deferredIncomeTaxLiabilities},
+      </if>
+      <if test="otherNonCurrentLiabilities != null">
+        other_non_current_liabilities = #{otherNonCurrentLiabilities},
+      </if>
+      <if test="totalNonCurrentLiabilities != null">
+        total_non_current_liabilities = #{totalNonCurrentLiabilities},
+      </if>
+      <if test="totalLiabilities != null">
+        total_liabilities = #{totalLiabilities},
+      </if>
+      <if test="paidUpCapital != null">
+        paid_up_capital = #{paidUpCapital},
+      </if>
+      <if test="capitalReserve != null">
+        capital_reserve = #{capitalReserve},
+      </if>
+      <if test="treasuryStocks != null">
+        treasury_stocks = #{treasuryStocks},
+      </if>
+      <if test="surplusReserve != null">
+        surplus_reserve = #{surplusReserve},
+      </if>
+      <if test="undistributedProfit != null">
+        undistributed_profit = #{undistributedProfit},
+      </if>
+      <if test="totalOwnersEquity != null">
+        total_owners_equity = #{totalOwnersEquity},
+      </if>
+      <if test="totalLiabilitiesAndOwnersEquity != null">
+        total_liabilities_and_owners_equity = #{totalLiabilitiesAndOwnersEquity},
+      </if>
+      <if test="averageCurrentAssets != null">
+        average_current_assets = #{averageCurrentAssets},
+      </if>
+      <if test="averageCurrentLiabilities != null">
+        average_current_liabilities = #{averageCurrentLiabilities},
+      </if>
+      <if test="averageTotalAssets != null">
+        average_total_assets = #{averageTotalAssets},
+      </if>
+      <if test="averageTotalLiabilities != null">
+        average_total_liabilities = #{averageTotalLiabilities},
+      </if>
+      <if test="averageNetAssets != null">
+        average_net_assets = #{averageNetAssets},
+      </if>
+      <if test="averageNetFixedAssets != null">
+        average_net_fixed_assets = #{averageNetFixedAssets},
+      </if>
+      <if test="averageAccountsReceivable != null">
+        average_accounts_receivable = #{averageAccountsReceivable},
+      </if>
+      <if test="averageAccountsPayable != null">
+        average_accounts_payable = #{averageAccountsPayable},
+      </if>
+      <if test="averageInventory != null">
+        average_inventory = #{averageInventory},
+      </if>
+      <if test="averagePrepayment != null">
+        average_prepayment = #{averagePrepayment},
+      </if>
+      <if test="averageOtherReceivables != null">
+        average_other_receivables = #{averageOtherReceivables},
+      </if>
+      <if test="totalAssetsGrowth != null">
+        total_assets_growth = #{totalAssetsGrowth},
+      </if>
+      <if test="totalAssetsGrowthRate != null">
+        total_assets_growth_rate = #{totalAssetsGrowthRate},
+      </if>
+      
+      <if test="averageMoneyFunds != null">
+        average_money_funds = #{averageMoneyFunds},
+      </if>
+      <if test="unallocatedProfitSpreadsheet != null">
+        unallocated_profit_spreadsheet = #{unallocatedProfitSpreadsheet},
+      </if>
+      <if test="balanceOfUndistributedProfit != null">
+        balance_of_undistributed_profit = #{balanceOfUndistributedProfit},
+      </if>
+      <if test="increaseInSurplusFunds != null">
+        increase_in_surplus_funds = #{increaseInSurplusFunds},
+      </if>
+      <if test="increaseInNetAssets != null">
+        increase_in_net_assets = #{increaseInNetAssets},
+      </if>
+      <if test="netAssetsGrowthRate != null">
+        net_assets_growth_rate = #{netAssetsGrowthRate},
+      </if>
+    </set>
+    where neg_id = #{negId}
+  </update>
+  
+  <delete id="deleteNegativeInfo" parameterType="hashmap">
+    delete from negative_info
+     where neg_id = #{negId}
+  </delete>
+  
+  <select id="selectTotalLbEq" parameterType="hashmap" resultType="hashmap">
+  select
+    ni.total_liabilities_and_owners_equity totalLiabilitiesAndOwnersEquity,
+	ni.undistributed_profit undistributedProfit,
+	ni.surplus_reserve surplusReserve,
+	ni.total_owners_equity totalOwnersEquity
+    from negative_info ni
+	<where> 
+	1 =1
+	<if test="operYear!=null and operYear!='' "> 
+	   and ni.oper_year = #{operYear}
+	</if>
+	 <if test="corpId != null">
+		and ni.corp_id = #{corpId}
+	</if>
+	</where>
+	LIMIT 1
+	UNION
+	select
+	ni.total_liabilities_and_owners_equity totalLiabilitiesAndOwnersEquity,
+	ni.undistributed_profit undistributedProfit,
+	ni.surplus_reserve surplusReserve, 
+	ni.total_owners_equity totalOwnersEquity
+    from negative_info ni
+    <where>
+        1=1
+        <if test="operYear!=null and operYear!='' ">  
+            and ni.oper_year = (CAST(#{operYear} AS DECIMAL)+1)
+        </if>
+        <if test="corpId != null">
+		    and ni.corp_id = #{corpId}
+		</if>
+    </where>
+    	LIMIT 1
+  </select>
+  
+  <select id="selectEarningsPerShare" parameterType="hashmap" resultType="hashmap">
+  select
+   	p.earnings_per_share earningsPerShare
+    from profit p
+	<where> 
+	1 =1
+	<if test="operYear!=null and operYear!='' "> 
+	   and p.oper_year = (CAST(#{operYear} AS DECIMAL)+1)
+	</if>
+	 <if test="corpId != null">
+		and p.corp_id = #{corpId}
+	</if>
+	</where>
+    	LIMIT 1
+  </select>
+  
+  <select id="hasOneYear" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from negative_info ni
+    <where>
+        1=1
+        <if test="operYear!=null and operYear!='' ">  
+            and ni.oper_year = #{operYear}
+        </if>
+        <if test="corpId != null">
+		    and ni.corp_id = #{corpId}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ni.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ni.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+  <insert id="addNegativeInfoRecordBatch" parameterType="java.util.List">
+  	 insert into negative_info (neg_id, corp_id, oper_year, 
+      money_funds, other_money_funds, transactional_financial_assets, 
+      bill_receivable, accounts_receivable, prepayments, 
+      interest_receivable, dividend_receivable, 
+      other_receivables, stock, non_current_assets_due_within_one_year, 
+      other_current_assets, total_current_assets, 
+      available_for_sale_financial_assets, held_to_maturity_investments, 
+      long_term_receivables, long_term_equity_investment, 
+      investment_real_estate, fixed_assets, construction_in_progress, 
+      engineer_material, clean_up_of_fixed_assets, 
+      productive_biological_assets, oil_and_gas_properties, 
+      intangible_assets, development_expenditure, 
+      goodwill, long_term_prepaid_expenses, deferred_tax_assets, 
+      other_non_current_assets, total_non_current_assets, 
+      total_assets, short_term_loan, transactional_financial_liabilities, 
+      notes_payable, accounts_payable, advance_payment, 
+      employee_benefits_payable, taxes_payable, 
+      interest_payable, dividend_payable, other_payables, 
+      non_current_liabilities_due_within_one_year, other_current_liabilities, 
+      total_current_liabilities, long_term_loan, 
+      bonds_payable, long_term_payables, special_payables, 
+      projected_liabilities, deferred_income_tax_liabilities, 
+      other_non_current_liabilities, total_non_current_liabilities, 
+      total_liabilities, paid_up_capital, capital_reserve, 
+      treasury_stocks, surplus_reserve, undistributed_profit, 
+      total_owners_equity, total_liabilities_and_owners_equity, 
+      average_current_assets, average_current_liabilities, 
+      average_total_assets, average_total_liabilities, 
+      average_net_assets, average_net_fixed_assets, 
+      average_accounts_receivable, average_accounts_payable, 
+      average_inventory, average_prepayment, average_other_receivables, 
+      total_assets_growth, total_assets_growth_rate, 
+      average_money_funds, unallocated_profit_spreadsheet, 
+      balance_of_undistributed_profit, increase_in_surplus_funds, 
+      increase_in_net_assets, net_assets_growth_rate, 
+      rela_corp_id, create_time, create_user_id
+      )
+    values
+    <foreach collection="list" item="item" index="index" separator="," > 
+     (REPLACE(UUID(), '-', ''), #{item.corpId,jdbcType=VARCHAR}, #{item.operYear,jdbcType=CHAR}, 
+      #{item.moneyFunds,jdbcType=DECIMAL}, #{item.otherMoneyFunds,jdbcType=DECIMAL}, #{item.transactionalFinancialAssets,jdbcType=DECIMAL}, 
+      #{item.billReceivable,jdbcType=DECIMAL}, #{item.accountsReceivable,jdbcType=DECIMAL}, #{item.prepayments,jdbcType=DECIMAL}, 
+      #{item.interestReceivable,jdbcType=DECIMAL}, #{item.dividendReceivable,jdbcType=DECIMAL}, 
+      #{item.otherReceivables,jdbcType=DECIMAL}, #{item.stock,jdbcType=DECIMAL}, #{item.nonCurrentAssetsDueWithinOneYear,jdbcType=DECIMAL}, 
+      #{item.otherCurrentAssets,jdbcType=DECIMAL}, #{item.totalCurrentAssets,jdbcType=DECIMAL}, 
+      #{item.availableForSaleFinancialAssets,jdbcType=DECIMAL}, #{item.heldToMaturityInvestments,jdbcType=DECIMAL}, 
+      #{item.longTermReceivables,jdbcType=DECIMAL}, #{item.longTermEquityInvestment,jdbcType=DECIMAL}, 
+      #{item.investmentRealEstate,jdbcType=DECIMAL}, #{item.fixedAssets,jdbcType=DECIMAL}, #{item.constructionInProgress,jdbcType=DECIMAL}, 
+      #{item.engineerMaterial,jdbcType=DECIMAL}, #{item.cleanUpOfFixedAssets,jdbcType=DECIMAL}, 
+      #{item.productiveBiologicalAssets,jdbcType=DECIMAL}, #{item.oilAndGasProperties,jdbcType=DECIMAL}, 
+      #{item.intangibleAssets,jdbcType=DECIMAL}, #{item.developmentExpenditure,jdbcType=DECIMAL}, 
+      #{item.goodwill,jdbcType=DECIMAL}, #{item.longTermPrepaidExpenses,jdbcType=DECIMAL}, #{item.deferredTaxAssets,jdbcType=DECIMAL}, 
+      #{item.otherNonCurrentAssets,jdbcType=DECIMAL}, #{item.totalNonCurrentAssets,jdbcType=DECIMAL}, 
+      #{item.totalAssets,jdbcType=DECIMAL}, #{item.shortTermLoan,jdbcType=DECIMAL}, #{item.transactionalFinancialLiabilities,jdbcType=DECIMAL}, 
+      #{item.notesPayable,jdbcType=DECIMAL}, #{item.accountsPayable,jdbcType=DECIMAL}, #{item.advancePayment,jdbcType=DECIMAL}, 
+      #{item.employeeBenefitsPayable,jdbcType=DECIMAL}, #{item.taxesPayable,jdbcType=DECIMAL}, 
+      #{item.interestPayable,jdbcType=DECIMAL}, #{item.dividendPayable,jdbcType=DECIMAL}, #{item.otherPayables,jdbcType=DECIMAL}, 
+      #{item.nonCurrentLiabilitiesDueWithinOneYear,jdbcType=DECIMAL}, #{item.otherCurrentLiabilities,jdbcType=DECIMAL}, 
+      #{item.totalCurrentLiabilities,jdbcType=DECIMAL}, #{item.longTermLoan,jdbcType=DECIMAL}, 
+      #{item.bondsPayable,jdbcType=DECIMAL}, #{item.longTermPayables,jdbcType=DECIMAL}, #{item.specialPayables,jdbcType=DECIMAL}, 
+      #{item.projectedLiabilities,jdbcType=DECIMAL}, #{item.deferredIncomeTaxLiabilities,jdbcType=DECIMAL}, 
+      #{item.otherNonCurrentLiabilities,jdbcType=DECIMAL}, #{item.totalNonCurrentLiabilities,jdbcType=DECIMAL}, 
+      #{item.totalLiabilities,jdbcType=DECIMAL}, #{item.paidUpCapital,jdbcType=DECIMAL}, #{item.capitalReserve,jdbcType=DECIMAL}, 
+      #{item.treasuryStocks,jdbcType=DECIMAL}, #{item.surplusReserve,jdbcType=DECIMAL}, #{item.undistributedProfit,jdbcType=DECIMAL}, 
+      #{item.totalOwnersEquity,jdbcType=DECIMAL}, #{item.totalLiabilitiesAndOwnersEquity,jdbcType=DECIMAL}, 
+      #{item.averageCurrentAssets,jdbcType=DECIMAL}, #{item.averageCurrentLiabilities,jdbcType=DECIMAL}, 
+      #{item.averageTotalAssets,jdbcType=DECIMAL}, #{item.averageTotalLiabilities,jdbcType=DECIMAL}, 
+      #{item.averageNetAssets,jdbcType=DECIMAL}, #{item.averageNetFixedAssets,jdbcType=DECIMAL}, 
+      #{item.averageAccountsReceivable,jdbcType=DECIMAL}, #{item.averageAccountsPayable,jdbcType=DECIMAL}, 
+      #{item.averageInventory,jdbcType=DECIMAL}, #{item.averagePrepayment,jdbcType=DECIMAL}, #{item.averageOtherReceivables,jdbcType=DECIMAL}, 
+      #{item.totalAssetsGrowth,jdbcType=DECIMAL}, #{item.totalAssetsGrowthRate,jdbcType=DECIMAL}, 
+      #{item.averageMoneyFunds,jdbcType=DECIMAL}, #{item.unallocatedProfitSpreadsheet,jdbcType=DECIMAL}, 
+      #{item.balanceOfUndistributedProfit,jdbcType=DECIMAL}, #{item.increaseInSurplusFunds,jdbcType=DECIMAL}, 
+      #{item.increaseInNetAssets,jdbcType=DECIMAL}, #{item.netAssetsGrowthRate,jdbcType=DECIMAL}, 
+      #{item.relaCorpId,jdbcType=VARCHAR}, now(), #{item.createUserId,jdbcType=VARCHAR}
+      )
+      </foreach>
+  </insert>
+</mapper>

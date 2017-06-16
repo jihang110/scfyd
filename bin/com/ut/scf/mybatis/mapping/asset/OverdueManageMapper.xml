@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.asset.IOverdueManageDao">
+  
+   <select id="selectIOverdueManageList" parameterType="hashmap" resultType="hashmap">
+  	select
+	 d.rec_uid recUid, 
+	 d.corp_id corpId,
+	 c.corp_name corpName, 
+	 d.project_name projectName, 
+	 d.contract_no contractNo,
+	 d.rel_sale_corp_name relSaleCorpName,
+	 d.is_recourse isRecourse, 
+	 d.factor_type factorType, 
+	 d.create_user_name createUserName,
+	 DATE_FORMAT(d.start_date,'%Y-%m-%d') startDate, 
+     d.buyer_id buyerId, 
+     d.seller_id sellerId, 
+     d.overdue_documents overdueDocuments, 
+     d.is_bad_debt isBadDebt, 
+     d.task_person taskPerson, 
+     d.document_operator_id documentOperatorId, 
+     d.urged_collection_log urgedCollectionLog, 
+     d.urged_collection_daily urgedCollectionDaily, 
+     d.penalty_relief penaltyRelief, 
+     d.discount, 
+     d.status
+    from overdue_management d join corp_info c on d.corp_id=c.corp_id
+    <where>
+        1=1 and c.status = 1
+		<if test="corpId != null">
+	  		and d.corp_id = #{corpId}
+		</if>
+		<if test="projectName != null ">
+	  		and d.project_name LIKE CONCAT('%',#{projectName},'%')
+		</if>
+		<if test="contractNo != null ">
+	  		and d.contract_no LIKE CONCAT('%',#{contractNo},'%')
+		</if>
+<!-- 		<if test="relaCorpId != null">
+	  		and d.rela_corp_id = #{relaCorpId}
+		</if> -->
+		<if test="createUserId != null">
+	  		and d.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by d.create_time desc
+  </select>
+  
+  <insert id="insertOverdueManage" parameterType="hashmap">
+    insert into overdue_management (rec_uid, corp_id, project_name, 
+      contract_no,rel_sale_corp_name, is_recourse, factor_type,create_user_name, 
+      start_date, buyer_id, seller_id, 
+      overdue_documents, is_bad_debt, task_person, 
+      document_operator_id, urged_collection_log, 
+      urged_collection_daily, penalty_relief, discount, 
+      status, create_user_id, 
+      create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{projectName,jdbcType=VARCHAR}, 
+      #{contractNo,jdbcType=VARCHAR},#{relSaleCorpName,jdbcType=TINYINT},#{isRecourse,jdbcType=TINYINT}, #{factorType,jdbcType=TINYINT},#{createUserName,jdbcType=VARCHAR},
+      #{startDate,jdbcType=TIMESTAMP}, #{buyerId,jdbcType=VARCHAR}, #{sellerId,jdbcType=VARCHAR}, 
+      #{overdueDocuments,jdbcType=VARCHAR}, #{isBadDebt,jdbcType=TINYINT}, #{taskPerson,jdbcType=VARCHAR}, 
+      #{documentOperatorId,jdbcType=VARCHAR}, #{urgedCollectionLog,jdbcType=VARCHAR}, 
+      #{urgedCollectionDaily,jdbcType=VARCHAR}, #{penaltyRelief,jdbcType=DECIMAL}, #{discount,jdbcType=DECIMAL}, 
+      #{status,jdbcType=TINYINT}, #{createUserId,jdbcType=VARCHAR}, 
+      now())
+  </insert>
+  
+  <delete id="deleteOverdueManage" parameterType="java.lang.String">
+    delete from overdue_management
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateOverdueManage" parameterType="hashmap">
+     update overdue_management
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="projectName != null">
+        project_name = #{projectName,jdbcType=VARCHAR},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo,jdbcType=VARCHAR},
+      </if>
+      rel_sale_corp_name = #{relSaleCorpName,jdbcType=VARCHAR},
+      <if test="isRecourse != null">
+        is_recourse = #{isRecourse,jdbcType=TINYINT},
+      </if>
+      <if test="factorType != null">
+        factor_type = #{factorType,jdbcType=TINYINT},
+      </if>
+      	create_user_name = #{createUserName,jdbcType=VARCHAR},
+      <if test="startDate != null">
+        start_date = #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="buyerId != null">
+        buyer_id = #{buyerId,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null">
+        seller_id = #{sellerId,jdbcType=VARCHAR},
+      </if>
+      <if test="overdueDocuments != null">
+        overdue_documents = #{overdueDocuments,jdbcType=VARCHAR},
+      </if>
+      <if test="isBadDebt != null">
+        is_bad_debt = #{isBadDebt,jdbcType=TINYINT},
+      </if>
+      <if test="taskPerson != null">
+        task_person = #{taskPerson,jdbcType=VARCHAR},
+      </if>
+      <if test="documentOperatorId != null">
+        document_operator_id = #{documentOperatorId,jdbcType=VARCHAR},
+      </if>
+      <if test="urgedCollectionLog != null">
+        urged_collection_log = #{urgedCollectionLog,jdbcType=VARCHAR},
+      </if>
+      <if test="urgedCollectionDaily != null">
+        urged_collection_daily = #{urgedCollectionDaily,jdbcType=VARCHAR},
+      </if>
+        penalty_relief = #{penaltyRelief,jdbcType=DECIMAL},
+        discount = #{discount,jdbcType=DECIMAL},
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+   </update>
+   
+   
+    <select id="selectBadDebtList" parameterType="hashmap" resultType="hashmap">
+  	select 
+  	 om.corp_id corpId,
+  	 om.contract_no contractNo,
+  	 om.project_name  projectName,
+  	 om.is_bad_debt isBadDebt,
+  	 DATE_FORMAT(om.start_date,'%Y-%m-%d') startDate,
+	 om.create_user_name createUserName,
+	 ex.loan_amt loanAmt,
+	 rm.should_repay_amount shouldRepayAmount,
+	 rm.actual_amount actualAmount,
+	 DATE_FORMAT( ex.repay_time,'%Y-%m-%d') repayTime
+	 from overdue_management om JOIN expense ex ON om.project_name=ex.project_name
+	 INNER JOIN reconciliation_management rm
+	 ON om.project_name= rm.project_name
+    <where>
+       om.is_bad_debt = 1
+		<if test="projectName != null ">
+	  		and om.project_name LIKE CONCAT('%',#{projectName},'%')
+		</if>
+		<if test="contractNo != null ">
+	  		and om.contract_no LIKE CONCAT('%',#{contractNo},'%')
+		</if>
+		<if test="corpId != null">
+	  		and om.corp_id = #{corpId}
+		</if>
+    </where>
+    order by om.create_time desc
+  </select>
+   
+   
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IRepayPlanDao" >
+
+  	
+  <select id="selectRepayPlanInfo" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+		r.current_payable_interest currentPayableInterest,
+		r.current_payable_principal currentPayablePrincipal,
+		r.current_repay_date currentRepayDate,
+		r.period,
+		o.order_id orderId,
+		o.`name`,
+		o.id_card idCard,
+		o.contact,
+		o.product_amt productAmt,
+		o.cr_req_amt crReqAmt,
+		o.pay_m payM,
+		o.order_batch_id orderBatchId
+	from
+		order_info o
+	INNER JOIN repayment_plan_info r ON o.order_id = r.order_id 
+	WHERE o.order_batch_id = #{orderBatchId}
+	
+  </select>
+  
+  <select id="selectCrReqAmtByBatchId" resultType="java.lang.String" parameterType="hashmap">
+  	SELECT
+		SUM(o.cr_req_amt) sumAmt
+	from
+		order_info o
+	WHERE
+		o.order_batch_id = #{orderBatchId}
+  	
+  </select>
+  
+  <select id="selectRepayInfo" resultType="hashmap" parameterType="hashmap">
+  	SELECT
+		o.order_batch_id orderBatchId,
+		o.cr_req_amt crReqAmt,
+		r.current_payable_principal currentPayablePrincipal,
+		r.current_payable_interest currentPayableInterest,
+		r.order_id orderId,
+		r.period
+	from
+		order_info o
+	INNER JOIN repayment_plan_info r ON o.order_id = r.order_id
+	WHERE
+		r.current_repay_date <![CDATA[<]]> SUBDATE(STR_TO_DATE(#{repayDate},'%Y-%m-%d'), INTERVAL - 3 DAY) 
+	and r.super_repay_status = '0'
+  </select>
+  
+   <select id="selectSumAmt" resultType="hashmap" parameterType="hashmap">
+  	SELECT
+		SUM(r.current_payable_interest) sumInterest,
+		SUM(r.current_payable_principal) sumPrincipal
+	from
+		order_info o
+	INNER JOIN repayment_plan_info r ON o.order_id = r.order_id
+	WHERE
+		r.current_repay_date <![CDATA[<]]> SUBDATE(STR_TO_DATE(#{repayDate},'%Y-%m-%d'), INTERVAL - 3 DAY) 
+	and r.super_repay_status = '0'
+  </select>
+  
+  
+  <update id="updateSSMStatus" parameterType="hashmap">
+  	UPDATE repayment_plan_info r
+		SET r.super_repay_status='1'
+	WHERE
+		r.current_repay_date <![CDATA[<]]> SUBDATE(STR_TO_DATE(#{repayDate},'%Y-%m-%d'), INTERVAL - 3 DAY) 
+	and r.super_repay_status = '0' 
+  </update>
+
+</mapper>

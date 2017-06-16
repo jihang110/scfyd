@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.IHomeInfoUserDefineDao">
+  <select id="selectHomeInfoUserDefineList" parameterType="hashmap" resultType="hashmap">
+	select 
+	rec_uid recUid, 
+	info_type infoType, 
+	status
+    from home_info_user_define
+    where user_id = #{userId,jdbcType=VARCHAR}
+    order by create_time desc
+  </select>
+
+  <select id="homeInfoIsNull" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from home_info_user_define
+    <where>
+		user_id = #{userId,jdbcType=VARCHAR}      
+    </where>
+  </select>
+  
+  <select id="homeInfoTypeIsNull" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from home_info_user_define
+    <where>
+		user_id = #{userId,jdbcType=VARCHAR} and info_type = #{infoType,jdbcType=VARCHAR}      
+    </where>
+  </select>
+  
+  <delete id="deleteHomeInfoUserDefine" parameterType="hashmap">
+    delete from home_info_user_define
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <insert id="insertHomeInfoUserDefine" parameterType="hashmap">
+ 	 insert into home_info_user_define (rec_uid, user_id, info_type, 
+      status, create_time)
+    values (#{recUid,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{infoType,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, now())
+  </insert>
+  
+  <update id="updateHomeInfoUserDefine" parameterType="hashmap">
+    update home_info_user_define
+     <set>
+      <if test="status != null">
+      status = #{status,jdbcType=TINYINT}
+      </if>
+      </set>
+    where info_type = #{infoType,jdbcType=VARCHAR} and user_id = #{userId,jdbcType=VARCHAR}
+  </update>
+</mapper>

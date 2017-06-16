@@ -1,0 +1,33 @@
+package com.scf.service.test.pub;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.ProcessEngines;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.repository.Deployment;
+import org.activiti.engine.repository.DeploymentBuilder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:spring-mybatis-test.xml" })
+public class custService {
+	  /**获得流程引擎*/  
+	@Autowired
+    ProcessEngine processEngine; 
+	@Test
+	public void test() {
+		   Deployment deployment = processEngine.getRepositoryService()//获取流程定义和部署相关的Service  
+	                .createDeployment()//创建部署对象  
+	                .addClasspathResource("custManager.bpmn")  
+	                .deploy();//完成部署  
+	        System.out.println("部署ID：" + deployment.getId());//部署ID:1  
+	        System.out.println("部署时间：" + deployment.getDeploymentTime());//部署时间  
+	        
+	}
+
+}

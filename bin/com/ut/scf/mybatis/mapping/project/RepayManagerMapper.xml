@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IRepayManagerDao" >
+
+  <select id="getRepayList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      repayment_id repaymentId,
+      repayment_date repaymentDate,
+      repay_sum_amt repaySumAmt,
+      repay_capital_amt repayCapitalAmt,
+      repay_interest_amt repayInterestAmt
+    from dyk_repayment_info
+	where
+	  1 = 1
+      <if test="repaymentDate != null and repaymentDate != ''">
+	    and DATE_FORMAT(repayment_date, '%Y-%m-%d') = #{repaymentDate}
+	  </if>
+  </select>
+
+  <select id="getCarInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      ci.car_frame_num carFrameNum,
+      ci.car_actual_price carActualPrice,
+      fi.finance_id financeId,
+      fi.finance_start_date financeStartDate,
+      fi.finance_end_date financeEndDate
+    from repayment_finance_batch rfb
+    join finance_info fi on rfb.finance_id = fi.finance_id
+    join car_info ci on rfb.car_frame_num = ci.car_frame_num
+	where
+	  rfb.repayment_id = #{repaymentId}
+  </select>
+</mapper>

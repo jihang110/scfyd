@@ -1,0 +1,40 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.dao.project.IFinanceInfoDao;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.service.project.ICountAnalyseService;
+
+@Service("countAnalyseService")
+public class CountAnalyseServiceImpl implements ICountAnalyseService {
+	@Resource private IFinanceInfoDao financeInfoDao;
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getFinanceCountInfo(Map<String, Object> paramMap) {
+		ListRespBean listRespBean = new ListRespBean();
+		List<Map<String, Object>> financeInfoList = financeInfoDao.getFinanceInfoGroupByName(paramMap);
+//		循环获取总值
+//		BigDecimal financeTotalAmount = BigDecimal.ZERO;//融资总值
+//		BigDecimal payTotalAmt= BigDecimal.ZERO;//放款总值
+//		for (Map<String, Object> map : financeInfoList) {
+//			financeTotalAmount = financeTotalAmount.add((BigDecimal) map.get("financeAmount"));
+//			payTotalAmt = payTotalAmt.add((BigDecimal) map.get("payAmt"));
+//		}
+//		List<Map<String, Object>> financeCount = new ArrayList<>();
+//		Map<String, Object> countMap = new HashMap<>();
+//		countMap.put("financeTotalAmount", financeTotalAmount);
+//		countMap.put("payTotalAmt", payTotalAmt);
+//		financeCount.add(countMap);
+		listRespBean.setDataList(financeInfoList);
+		return listRespBean;
+	}
+
+}

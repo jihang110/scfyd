@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IPayCommitmentDao" >
+  <select id="getPayInfoList" resultType="hashmap" parameterType="hashmap" >
+    select
+	  ci.corp_name agencyName,
+	  ci.agency_num agencyNum,
+	  li.max_credit_amount maxCredit,
+	  li.use_able_credit_amt availableCredit,
+	  fi.pay_id payId,
+	  fi.pay_date payDate,
+	  fi.pay_amt payAmt,
+	  fi.finance_id financeId,
+	  fi.finance_start_date financeStartDate,
+	  fi.finance_end_date financeEndDate,
+	  fi.finance_amount financeAmount,
+	  gi.pay_able_guarantee guaranteeAmt,
+	  gi.pay_act_guarantee payActGuarantee
+	from finance_info fi
+	join guarantee_info gi on fi.finance_id = gi.finance_id
+	join corp_info ci on fi.corp_id = ci.corp_id
+    left join limit_info li on ci.corp_id = li.corp_id
+    <where>
+	    fi.finance_status = '2'
+	    <if test="agencyName != null and agencyName != ''">
+		    and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+		</if> 
+	    <if test="agencyNum != null and agencyNum !='' ">  
+	        and ci.agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%') 
+	    </if>
+	    <if test="payId != null and payId !='' ">  
+	        and fi.pay_id LIKE CONCAT(CONCAT('%', #{payId}),'%') 
+	    </if>
+	    <if test="payDate != null and payDate !='' ">  
+	        and DATE_FORMAT(fi.pay_date, '%Y-%m-%d') = #{payDate}
+	    </if>
+	    <if test="financeId != null and financeId !='' ">  
+	        and fi.finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+	    </if>
+    </where>
+  </select>
+  
+  <select id="getAgencyFinanceList" resultType="hashmap" parameterType="hashmap" >
+    select
+	  ci.corp_name agencyName,
+	  ci.agency_num agencyNum,
+	  li.max_credit_amount maxCredit,
+	  li.use_able_credit_amt availableCredit,
+	  gi.pay_act_guarantee payActGuarantee,
+	  fi.finance_id financeId,
+	  fi.finance_start_date financeStartDate,
+	  fi.finance_end_date financeEndDate,
+	  fi.finance_amount financeAmount
+	from finance_info fi
+	join guarantee_info gi on fi.finance_id = gi.finance_id
+	join corp_info ci on fi.corp_id = ci.corp_id
+    left join limit_info li on ci.corp_id = li.corp_id
+    <where>
+	     1 = 1
+	    <if test="agencyName != null and agencyName != ''">
+		    and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+		</if> 
+	    <if test="agencyNum != null and agencyNum !='' ">  
+	        and ci.agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%') 
+	    </if>
+	    <if test="financeId != null and financeId !='' ">  
+	        and fi.finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+	    </if>
+    </where>
+  </select>
+</mapper>

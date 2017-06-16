@@ -1,0 +1,103 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var nodeId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).nodeId;
+$(document).ready(function() {
+	setForm();
+});
+
+function setForm(){
+	var data = {};
+	data.taskId = taskId;
+	 var options = {
+		url : '../../activiti/getTaskDataByTaskId',
+		data : JSON.stringify(data),
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				var jsonData =  eval("(" + data.str + ")");
+				CloudUtils.setForm(jsonData,"addForm");
+				initTable(jsonData.tableData)
+			} else {
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	 CloudUtils.ajax(options);
+}
+
+function initTable(data){
+	 $('#carInfoTable').bootstrapTable('destroy'); 
+		$("#carInfoTable").bootstrapTable({  
+			 method: "post", 
+		     data : data, 
+		     striped: false,  //表格显示条纹  
+		     search: false,  //是否启用查询  
+		     showColumns: false,  //显示下拉框勾选要显示的列  
+		     showRefresh: false,  //显示刷新按钮  
+		     sidePagination: "server", //表示服务端请求  
+		     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+		     //设置为limit可以获取limit, offset, search, sort, order  
+		     queryParamsType : "undefined",    
+	         responseHandler:function responseHandler(res) {
+	        	 if (res.result==0) {
+		        	 return {
+		        		 "rows": res.dataList,
+		        		 "total": res.records
+		        	 };
+
+	        	 } else {
+	        		 bootbox.alert(res.resultNote);
+	        		 return {
+				        	 "rows": [],
+				        	 "total": 0
+				        	 };
+	        	 }
+	         },
+	         columns: [{
+	  	        field: 'frameNumber',
+	 	        title: '车架号',
+	 	        align: 'center',
+	            valign: 'middle'
+	 	    }, {
+	 	        field: 'actualCarPrice',
+	 	        title: '实际提车价(元)',
+	 	        align: 'center',
+	            valign: 'middle'
+	 	    }
+	 	    ]
+	       });  
+}
+
+function doAgree(type){
+	var data = CloudUtils.convertStringJson('addForm');
+	data = eval("(" + data + ")");
+	data.agree = type;
+	data.taskId = taskId;
+	var tableData = $('#carInfoTable').bootstrapTable('getData');
+	data.tableData = tableData;
+	var jsonString = null;
+	var options = {
+				url : '../../offsetDeposit/doAgree',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					jsonString = data.str;
+					if(type !=0){
+						window.location.href='../agencyTask/agencyTask.html';
+						bootbox.alert(data.resultNote);
+					}
+				},
+				errorCallback : function(data) {
+					bootbox.alert(data.resultNote);
+					return false;
+				}
+			};
+	 CloudUtils.ajax(options);
+	 if(nodeId == "usertask4"){
+		if(type ==0){
+			alert("最终同意");
+		} 
+	 }
+}

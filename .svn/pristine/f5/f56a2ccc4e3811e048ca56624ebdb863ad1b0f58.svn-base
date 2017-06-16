@@ -1,0 +1,120 @@
+<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+        <input type="hidden" name="guaranteeRate" id="guaranteeRate">
+        <input type="hidden" name="corpId" id="corpId">
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="applyDate"><span class="required"></span>申请日期</label>
+          <div class="col-sm-3">
+           <input type="text" class="form-control" id="applyDate" name="applyDate" readonly/>
+             </div>
+          <label class="col-sm-2 control-label"  for="agencyName">经销商名称</label>
+          <div class="col-sm-3">
+          	<input id="agencyName" name="agencyName" class="form-control" readonly>
+       	</div>
+       	<div class="col-sm-1">
+          	<input type='button' style="margin:auto;" class="btn btn-default add" value='获取经销商信息' onclick="serchAgency()">
+		</div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-2 control-label"  for="agencyNum">经销商代码</label>
+         <div class="col-sm-3">
+         	<input id="agencyNum" name="agencyNum" class="form-control" readonly>
+      	</div>
+         <label class="col-sm-2 control-label"  for="maxCredit">最高授信额度</label>
+         <div class="col-sm-3">
+         	<input type="text" name="maxCredit" class="form-control" id="maxCredit" readonly>
+         </div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-2 control-label"  for="availableCredit">可用授信额度</label>
+         <div class="col-sm-3">
+         	<input type="text" name="availableCredit" class="form-control" id="availableCredit" readonly>
+         </div>
+         <label class="col-sm-2 control-label" for="financeRate">融资比例(%)</label>
+         <div class="col-sm-3">
+         	<input type="text" name="financeRate" class="form-control" id="financeRate" readonly>
+       	</div>
+       </div>
+       <div class="form-group">
+         <label class="col-sm-2 control-label"  for="cashRate">费率(%)</label>
+         <div class="col-sm-3">
+         	<input type="text" name="cashRate" class="form-control" id="cashRate" readonly>
+      	</div>
+         <label class="col-sm-2 control-label"  for="financeStartDate"><span class="required">*</span>融资起始日</label>
+         <div class="col-sm-3">
+         	<input name="financeStartDate" class="form-control" id="financeStartDate"
+		style="cursor: pointer;" size="16" type="text" readonly onchange="calInterestList();">
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="financeEndDate"><span class="required">*</span>融资到期日</label>
+       <div class="col-sm-3">
+       	<input name="financeEndDate" class="form-control" id="financeEndDate"
+			style="cursor: pointer;" type="text" readonly onchange="calInterestList();">
+		</div>
+	  <label class="col-sm-2 control-label"  for="financeAmount"><span class="required">*</span>融资金额</label>
+	  <div class="col-sm-3">
+	  	<input type="text" name="financeAmount" class="form-control" id="financeAmount" onblur="changeFinanceAmount();">
+	  	</div>
+   </div>
+   <div class="form-group">
+     <label class="col-sm-2 control-label"  for="expense">费用</label>
+     <div class="col-sm-3">
+     	<input type="text" name="expense" class="form-control" id="expense" readonly>
+  	</div>
+     <label class="col-sm-2 control-label"  for="remark">备注</label>
+     <div class="col-sm-3">
+		<textarea id="remark"  name="remark" class="form-control"></textarea>
+   	</div>
+   </div>
+   <div class="form-group">
+      <div class="col-sm-9" style="margin-left:100px;margin-top: 20px;">
+		<table id="interestInfoList" class="table table-bordered" cellspacing="0" style="border: 1px #e5e5e5 solid">
+     	</table>
+     </div>
+   </div>
+</form>
+
+<div class="modal fade" id="agencyInfoModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="agencyInfoModalLabel">
+ <div class="modal-dialog" role="document" style='width:800px'>
+	 <div class="modal-content">
+	 	<div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+          <h4 class="modal-title" id="agencyInfoModalLabel">经销商信息</h4>
+        </div>
+        <div class="modal-body">
+        	<div class="main-content-child" >
+        		<div class="row	rowpad" style="background-color:white;">
+		     		<div class="form-group">
+			      		<form class="form-horizontal" role="form" id="agencySearchForm">
+				    		<div class="col-sm-3"></div>
+				    		<div class="col-sm-4 input-group">
+				               <input class="form-control" id="agency_name" name="agency_name" type="text" placeholder="经销商名称"/>
+				               <span class="input-group-btn">
+				                   <a onclick="searchAgencyFun()" class="btn btn-primary search">查找</a>
+					               </span>
+					            </div>
+				            </form>
+			            </div>
+           			</div>
+	        	</div>
+		        <div class="panel-body">
+			        <table  id="agencyListTable" class="table" height="100%" cellspacing="0" width="100%">
+					</table>
+				</div>
+	        </div>
+	        <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-9"></div>
+				<div class="col-sm-1">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+				<div class="col-sm-2">
+					<button type="button" id="btn_save" class="btn btn-default save" data-dismiss="modal">确定
+					</button>
+				</div>
+			  </div>
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,39 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.reqbean.project.FinanceFlowReqBean;
+import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+
+/**
+ * 融资
+ * @author Yuancy
+ *
+ */
+public interface IFinanceInfoService {
+
+	public BaseRespBean getFinanceInfoList(Map<String, Object> paramMap, PageInfoBean page);
+	
+	public BaseRespBean getProGuarantee(FinanceInfoListReqBean reqBean);
+	
+	public BaseRespBean getFinanceInfo(FinanceFlowReqBean flowReqBean);
+	
+	public BaseRespBean applyGuarantee(JSONObject jsonObject);
+	
+	public BaseRespBean getReviewInfo(FinanceFlowReqBean flowReqBean);
+	
+	public boolean doAgree(JSONObject jsonObject);
+	
+	public BaseRespBean getDataByTaskId(FinanceFlowReqBean reqBean);
+	
+	public BaseRespBean reApply(JSONObject jsonObject);
+	
+	public BaseRespBean getAllHistoryVariable(FinanceFlowReqBean reqBean);
+	
+	public BaseRespBean addFinance(FinanceFlowReqBean reqBean);
+}

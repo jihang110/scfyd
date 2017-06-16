@@ -1,0 +1,13 @@
+package com.ut.scf.service.project;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+public interface IAgencyService {
+
+	/**
+	 * @param jsonObject
+	 * 发起流程
+	 */
+	void startProcess(JSONObject jsonObject);
+	
+}

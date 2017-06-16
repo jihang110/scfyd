@@ -1,0 +1,20 @@
+package com.ut.scf.reqbean.pub;
+
+
+public class StuInfoListReqBean {
+	
+
+	/**
+	 * 学生Id
+	 */
+	private String stuId;
+
+
+	public String getStuId() {
+		return stuId;
+	}
+
+	public void setStuId(String stuId) {
+		this.stuId = stuId;
+	}
+}

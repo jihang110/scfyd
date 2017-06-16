@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IGaranteeMoneyDao" >
+  
+  <resultMap id="guaranteeMoneyInfoResultMap" type="com.ut.scf.pojo.auto.GuaranteeMoneyManagement">
+   	<id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="guarantee_money_rate" jdbcType="VARCHAR" property="guaranteeMoneyRate" />
+  </resultMap>
+  
+  <select id="getGaranteeMoneyPageList" resultType="hashmap"  parameterType="hashmap">
+    select product_id productId, product_name productName, guarantee_money_rate guaranteeMoneyRate
+    from  guarantee_money_management
+    where 1=1
+    <if test="productName != null and productName != ''">
+	  and product_name LIKE CONCAT(CONCAT('%', #{productName}),'%')
+	</if>
+  </select>
+  
+    <select id="getGaranteeMoneyByName" resultType="hashmap" parameterType="hashmap" >
+    select
+   		g.finance_id financeId,SUM(g.pay_able_guarantee) payAbleGuarantee,
+   		SUM(g.pay_act_guarantee) payActGuarantee,
+   		(SUM(g.pay_able_guarantee)-SUM(g.pay_act_guarantee)) notPayGuarantee,
+   		SUM(g.guarantee_balance) guaranteeBalance,
+		f.agency_name agencyName,f.agency_num agencyNum
+	from guarantee_info g join finance_info f
+    where g.finance_id = f.finance_id
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+   <!--  <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if> -->
+    GROUP BY agency_name
+  </select>
+  
+</mapper>

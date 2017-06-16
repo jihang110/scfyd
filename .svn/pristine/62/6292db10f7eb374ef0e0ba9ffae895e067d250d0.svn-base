@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.IProfitDao">
+<select id="selectProfitList" resultType="hashmap" parameterType="hashmap">
+	select p.rec_uid recUid, p.corp_id corpId, p.oper_year operYear, c.corp_name corpName,
+	 p.gross_profit_rate grossProfitRate, p.expense_rate expenseRate, p.total_profit totalProfit,
+	 p.net_profit netProfit, p.net_profit_growth_rate netProfitGrowthRate, p.main_cost_rate mainCostRate
+	 from profit p join corp_info c on p.corp_id = c.corp_id 
+	 where 1=1 and c.status = 1	
+    <if test="corpId != null">
+	  and p.corp_id = #{corpId}
+	</if>
+	<if test="userCorpList !=null">
+	  and p.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and p.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and p.create_user_id = #{createUserId}
+	</if>
+</select>
+	
+<insert id="addProfitRecordBatch"  parameterType="java.util.List">  
+    insert into profit ( rec_uid, corp_id, oper_year, operating_gain, operating_cost, gross_profit_rate,
+	 tax_and_surcharges, sales_expense, management_expense, financial_expense, expense_rate, impairment_losses,
+	 changes_in_fair_value_gain, investment_gain, associates_and_joint_ventures_gain, operating_profit,
+	 non_operating_gain, non_operating_expense, non_current_assets_loss, total_profit, income_tax_expense,
+	 net_profit, earnings_per_share, basic_earnings_per_share, diluted_earnings_per_share, net_profit_rate,
+	 total_cost, cost_expense_rate, tax_base, tax_rate, main_revenue_growth_amount, growth_rate,
+	 operating_profit_growth_amount, operating_profit_growth_rate, net_profit_growth_amount,
+	 net_profit_growth_rate, main_cost_rate, period_expense_rate, rela_corp_id, create_user_id, create_time )
+    values  
+    <foreach collection="list" item="item" index="index" separator="," >  
+       ( REPLACE(UUID(), '-', ''), #{item.corpId}, #{item.operYear}, #{item.operatingGain}, #{item.operatingCost}, #{item.grossProfitRate},
+	 #{item.taxAndSurcharges},#{item.salesExpense}, #{item.managementExpense}, #{item.financialExpense}, #{item.expenseRate},
+	 #{item.impairmentLosses},#{item.changesInFairValueGain}, #{item.investmentGain}, #{item.associatesAndJointVenturesGain},
+	 #{item.operatingProfit}, #{item.nonOperatingGain}, #{item.nonOperatingExpense}, #{item.nonCurrentAssetsLoss},
+	 #{item.totalProfit}, #{item.incomeTaxExpense}, #{item.netProfit}, #{item.earningsPerShare},
+	 #{item.basicEarningsPerShare}, #{item.dilutedEarningsPerShare}, #{item.netProfitRate}, #{item.totalCost},
+	 #{item.costExpenseRate}, #{item.taxBase}, #{item.taxRate}, #{item.mainRevenueGrowthAmount},
+	 #{item.growthRate}, #{item.operatingProfitGrowthAmount}, #{item.operatingProfitGrowthRate}, #{item.netProfitGrowthAmount},
+	 #{item.netProfitGrowthRate}, #{item.mainCostRate}, #{item.periodExpenseRate}, #{item.relaCorpId},
+	 #{item.createUserId}, now())
+    </foreach>  
+</insert>
+
+<insert id="insertProfit" parameterType="hashmap">
+	insert into profit ( rec_uid, corp_id, oper_year, operating_gain, operating_cost, gross_profit_rate,
+	 tax_and_surcharges, sales_expense, management_expense, financial_expense, expense_rate, impairment_losses,
+	 changes_in_fair_value_gain, investment_gain, associates_and_joint_ventures_gain, operating_profit,
+	 non_operating_gain, non_operating_expense, non_current_assets_loss, total_profit, income_tax_expense,
+	 net_profit, earnings_per_share, basic_earnings_per_share, diluted_earnings_per_share, net_profit_rate,
+	 total_cost, cost_expense_rate, tax_base, tax_rate, main_revenue_growth_amount, growth_rate,
+	 operating_profit_growth_amount, operating_profit_growth_rate, net_profit_growth_amount,
+	 net_profit_growth_rate, main_cost_rate, period_expense_rate, rela_corp_id, create_user_id, create_time )
+	 values ( #{recUid}, #{corpId}, #{operYear}, #{operatingGain}, #{operatingCost}, #{grossProfitRate},
+	 #{taxAndSurcharges},#{salesExpense}, #{managementExpense}, #{financialExpense}, #{expenseRate},
+	 #{impairmentLosses},#{changesInFairValueGain}, #{investmentGain}, #{associatesAndJointVenturesGain},
+	 #{operatingProfit}, #{nonOperatingGain}, #{nonOperatingExpense}, #{nonCurrentAssetsLoss},
+	 #{totalProfit}, #{incomeTaxExpense}, #{netProfit}, #{earningsPerShare},
+	 #{basicEarningsPerShare}, #{dilutedEarningsPerShare}, #{netProfitRate}, #{totalCost},
+	 #{costExpenseRate}, #{taxBase}, #{taxRate}, #{mainRevenueGrowthAmount},
+	 #{growthRate}, #{operatingProfitGrowthAmount}, #{operatingProfitGrowthRate}, #{netProfitGrowthAmount},
+	 #{netProfitGrowthRate}, #{mainCostRate}, #{periodExpenseRate}, #{relaCorpId},
+	 #{createUserId}, now())
+</insert>
+
+<delete id="deleteProfit" parameterType="java.lang.String">
+	delete from profit where rec_uid = #{recUid}
+</delete>
+
+<update id="updateProfit" parameterType="hashmap">
+	update profit
+	<set>
+	 <if test="corpId !=null">
+	 	corp_id = #{corpId,jdbcType=CHAR},
+	 </if>
+      <if test="operYear != null">
+        oper_year = #{operYear,jdbcType=CHAR},
+      </if>
+      <if test="operatingGain != null">
+        operating_gain = #{operatingGain,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingCost != null">
+        operating_cost = #{operatingCost,jdbcType=DECIMAL},
+      </if>
+      <if test="grossProfitRate != null">
+        gross_profit_rate = #{grossProfitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="taxAndSurcharges != null">
+        tax_and_surcharges = #{taxAndSurcharges,jdbcType=DECIMAL},
+      </if>
+      <if test="salesExpense != null">
+        sales_expense = #{salesExpense,jdbcType=DECIMAL},
+      </if>
+      <if test="managementExpense != null">
+        management_expense = #{managementExpense,jdbcType=DECIMAL},
+      </if>
+      <if test="financialExpense != null">
+        financial_expense = #{financialExpense,jdbcType=DECIMAL},
+      </if>
+      <if test="expenseRate != null">
+        expense_rate = #{expenseRate,jdbcType=DECIMAL},
+      </if>
+      <if test="impairmentLosses != null">
+        impairment_losses = #{impairmentLosses,jdbcType=DECIMAL},
+      </if>
+      <if test="changesInFairValueGain != null">
+        changes_in_fair_value_gain = #{changesInFairValueGain,jdbcType=DECIMAL},
+      </if>
+      <if test="investmentGain != null">
+        investment_gain = #{investmentGain,jdbcType=DECIMAL},
+      </if>
+      <if test="associatesAndJointVenturesGain != null">
+        associates_and_joint_ventures_gain = #{associatesAndJointVenturesGain,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingProfit != null">
+        operating_profit = #{operatingProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="nonOperatingGain != null">
+        non_operating_gain = #{nonOperatingGain,jdbcType=DECIMAL},
+      </if>
+      <if test="nonOperatingExpense != null">
+        non_operating_expense = #{nonOperatingExpense,jdbcType=DECIMAL},
+      </if>
+      <if test="nonCurrentAssetsLoss != null">
+        non_current_assets_loss = #{nonCurrentAssetsLoss,jdbcType=DECIMAL},
+      </if>
+      <if test="totalProfit != null">
+        total_profit = #{totalProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="incomeTaxExpense != null">
+        income_tax_expense = #{incomeTaxExpense,jdbcType=DECIMAL},
+      </if>
+      <if test="netProfit != null">
+        net_profit = #{netProfit,jdbcType=DECIMAL},
+      </if>
+      <if test="earningsPerShare != null">
+        earnings_per_share = #{earningsPerShare,jdbcType=DECIMAL},
+      </if>
+      <if test="basicEarningsPerShare != null">
+        basic_earnings_per_share = #{basicEarningsPerShare,jdbcType=DECIMAL},
+      </if>
+      <if test="dilutedEarningsPerShare != null">
+        diluted_earnings_per_share = #{dilutedEarningsPerShare,jdbcType=DECIMAL},
+      </if>
+      <if test="netProfitRate != null">
+        net_profit_rate = #{netProfitRate,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCost != null">
+        total_cost = #{totalCost,jdbcType=DECIMAL},
+      </if>
+      <if test="costExpenseRate != null">
+        cost_expense_rate = #{costExpenseRate,jdbcType=DECIMAL},
+      </if>
+      <if test="taxBase != null">
+        tax_base = #{taxBase,jdbcType=DECIMAL},
+      </if>
+      <if test="taxRate != null">
+        tax_rate = #{taxRate,jdbcType=DECIMAL},
+      </if>
+      <if test="mainRevenueGrowthAmount != null">
+        main_revenue_growth_amount = #{mainRevenueGrowthAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="growthRate != null">
+        growth_rate = #{growthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingProfitGrowthAmount != null">
+        operating_profit_growth_amount = #{operatingProfitGrowthAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="operatingProfitGrowthRate != null">
+        operating_profit_growth_rate = #{operatingProfitGrowthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="netProfitGrowthAmount != null">
+        net_profit_growth_amount = #{netProfitGrowthAmount,jdbcType=DECIMAL},
+      </if>
+      <if test="netProfitGrowthRate != null">
+        net_profit_growth_rate = #{netProfitGrowthRate,jdbcType=DECIMAL},
+      </if>
+      <if test="mainCostRate != null">
+        main_cost_rate = #{mainCostRate,jdbcType=DECIMAL},
+      </if>
+      <if test="periodExpenseRate != null">
+        period_expense_rate = #{periodExpenseRate,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+</update>
+
+<select id="selectProfitById" parameterType="java.lang.String" resultType="hashmap">
+	select p.rec_uid recUid, p.corp_id corpId, p.oper_year operYear, c.corp_name corpName, p.operating_gain operatingGain, p.operating_cost operatingCost, p.gross_profit_rate grossProfitRate, p.tax_and_surcharges taxAndSurcharges, 
+    p.sales_expense salesExpense, p.management_expense managementExpense, p.financial_expense financialExpense, p.expense_rate expenseRate, p.impairment_losses impairmentLosses, 
+    p.changes_in_fair_value_gain changesInFairValueGain, p.investment_gain investmentGain, p.associates_and_joint_ventures_gain associatesAndJointVenturesGain, 
+    p.operating_profit operatingProfit, p.non_operating_gain nonOperatingGain, p.non_operating_expense nonOperatingExpense, p.non_current_assets_loss nonCurrentAssetsLoss, 
+    p.total_profit totalProfit, p.income_tax_expense incomeTaxExpense, p.net_profit netProfit, p.earnings_per_share earningsPerShare, p.basic_earnings_per_share basicEarningsPerShare, 
+    p.diluted_earnings_per_share dilutedEarningsPerShare, p.net_profit_rate netProfitRate, p.total_cost totalCost, p.cost_expense_rate costExpenseRate, p.tax_base taxBase, 
+    p.tax_rate taxRate, p.main_revenue_growth_amount mainRevenueGrowthAmount, p.growth_rate growthRate, p.operating_profit_growth_amount operatingProfitGrowthAmount, 
+    p.operating_profit_growth_rate operatingProfitGrowthRate, p.net_profit_growth_amount netProfitGrowthAmount, p.net_profit_growth_rate netProfitGrowthRate, p.main_cost_rate mainCostRate, 
+    p.period_expense_rate periodExpenseRate
+	 from profit p JOIN corp_info c ON p.corp_id = c.corp_id 
+	 where p.rec_uid = #{recUid}
+</select>
+
+<select id="hasOneYear" parameterType="hashmap" resultType="java.lang.Integer">
+    select count(1)
+    from profit ni
+    <where>
+        1=1
+        <if test="operYear!=null and operYear!='' ">  
+            and ni.oper_year = #{operYear}
+        </if>
+        <if test="corpId != null">
+		    and ni.corp_id = #{corpId}
+		</if>
+		<if test="relaCorpId != null">
+	  		and ni.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and ni.create_user_id = #{createUserId}
+		</if>
+    </where>
+</select>
+
+</mapper>

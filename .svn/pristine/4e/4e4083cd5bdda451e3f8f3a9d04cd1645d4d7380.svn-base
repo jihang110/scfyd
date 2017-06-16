@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IActivitiDao">
+    
+ <select id="selectAgencyTask" parameterType="map" resultType="map">
+	  	SELECT DISTINCT
+		RES.ID_ taskId,P.NAME_ procdefName,P.KEY_ procdefKey,RES.PROC_INST_ID_ procInstId,RES.PROC_DEF_ID_ procDefId,RES.NAME_ taskName,
+		RES.TASK_DEF_KEY_ taskDefKey,DATE_FORMAT(RES.CREATE_TIME_,'%Y-%m-%d %T') createTime
+	from
+		activitiyd.ACT_RU_TASK RES
+	JOIN activitiyd.act_re_procdef P on P.ID_ = RES.PROC_DEF_ID_
+	INNER JOIN activitiyd.ACT_RU_IDENTITYLINK I ON I.TASK_ID_ = RES.ID_
+	
+	<where>
+		RES.ASSIGNEE_ IS NULL AND I.TYPE_ = 'candidate' 
+		<if test="userId !=null">
+			AND I.USER_ID_ = #{userId}
+		</if>
+		<if test="taskName !=null">
+			and RES.NAME_ LIKE CONCAT('%',#{taskName},'%')
+		</if>
+		<if test="procdefName !=null">
+			and P.NAME_ LIKE CONCAT('%',#{procdefName},'%')
+		</if>
+	</where>
+	ORDER BY RES.ID_ ASC
+ </select>
+ 
+  <select id="countAgencyTask" resultType="int" parameterType="hashmap">
+	  select DISTINCT count(1) 
+	  from 
+	  activitiyd.ACT_RU_TASK RES
+	JOIN activitiyd.act_re_procdef P on P.ID_ = RES.PROC_DEF_ID_
+	INNER JOIN activitiyd.ACT_RU_IDENTITYLINK I ON I.TASK_ID_ = RES.ID_
+   <where>
+		RES.ASSIGNEE_ IS NULL AND I.TYPE_ = 'candidate' 
+		<if test="userId !=null">
+			AND I.USER_ID_ = #{userId}
+		</if>
+	</where>
+ </select>
+ 
+  <select id="selectHandleTask" parameterType="map" resultType="map">
+	  	SELECT DISTINCT RP.NAME_ procdefName,RP.ID_ procdefId,RP.KEY_ procdefKey,RES.TASK_DEF_KEY_ taskDefKey,RES.PROC_INST_ID_ procInstId,RES.NAME_ taskName,
+	  	RES.ASSIGNEE_ assignee,DATE_FORMAT(HP.START_TIME_,'%Y-%m-%d %T') startTime,DATE_FORMAT(HP.END_TIME_,'%Y-%m-%d %T') endTime,
+	  	RES.DELETE_REASON_ deleteReason
+	from
+		activitiyd.ACT_HI_TASKINST RES
+		JOIN activitiyd.act_re_procdef RP on RP.ID_ = RES.PROC_DEF_ID_
+		JOIN activitiyd.act_hi_procinst HP on HP.ID_ = RES.PROC_INST_ID_
+	<where>
+		RES.ASSIGNEE_ = #{userId} 
+		<if test="taskName !=null">
+			and RES.NAME_ LIKE CONCAT('%',#{taskName},'%')
+		</if>
+		<if test="procdefName !=null">
+			and RP.NAME_ LIKE CONCAT('%',#{procdefName},'%')
+		</if>
+	</where>
+	ORDER BY RES.ID_ ASC
+ </select>
+ 
+  <select id="countHandleTask" resultType="int" parameterType="hashmap">
+	select count(DISTINCT RES.PROC_INST_ID_) 
+	  from activitiyd.ACT_HI_TASKINST RES
+		JOIN activitiyd.act_re_procdef RP on RP.ID_ = RES.PROC_DEF_ID_ 
+		JOIN activitiyd.act_hi_procinst HP on HP.ID_ = RES.PROC_INST_ID_
+		where RES.ASSIGNEE_ = #{userId}
+ </select>
+</mapper>

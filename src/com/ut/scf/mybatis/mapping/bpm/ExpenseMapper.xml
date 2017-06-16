@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.bpm.IExpenseDao">
+  
+  <select id="selectExpenseList" parameterType="hashmap" resultType="hashmap">
+  	select
+	  e.rec_uid recUid, 
+	  e.corp_id corpId,
+	  e.project_name projectName,
+	  s.username,
+	  e.contract_no contractNo, 
+	  e.commission commission,
+	  e.management_fee managementFee,  
+	  e.interest interest, 
+	  e.interest_rate interestRate, 
+	  e.management_fee_rate managementFeeRate, 
+	  e.penalty_int_rate penaltyIntRate, 
+      e.repayment_plan repaymentPlan, 
+      e.loan_amt loanAmt,
+      e.chase_flg chaseFlg,
+  	  e.factor_type factorType,
+  	  DATE_FORMAT(e.pro_make_date,'%Y-%m-%d') proMakeDate,
+	  e.rel_buy_id  relBuyId,
+	  c.corp_name relBuyName,
+	  e.rel_sale_id relSaleId,
+	  cc.corp_name relSaleName,
+	  e.rel_sale_corp_name relSaleCorpName,
+	  e.pro_memb_id proMembId,
+	  DATE_FORMAT(e.repay_time,'%Y-%m-%d') repayTime,
+	  DATE_FORMAT(e.create_time,'%Y-%m-%d') createTime
+    from expense e JOIN sys_user s on e.pro_memb_id = s.user_id 
+    inner join corp_info c on e.rel_buy_id = c.corp_id 
+    inner join corp_info cc on e.rel_sale_id = cc.corp_id
+    <where>
+        e.status = 1
+		<if test="projectName != null and projectName!=''">
+	  		and e.project_name = #{projectName}
+		</if>
+		<if test="corpId != null">
+	  		and e.corp_id = #{corpId}
+		</if>
+		<if test="contractNo != null and contractNo!=''">
+	  		and e.contract_no = #{contractNo}
+		</if>
+		<if test="relSaleCorpName != null">
+	  		and e.rel_sale_corp_name = #{relSaleCorpName}
+		</if>
+		<if test="proMembId != null">
+	  		and e.pro_memb_id = #{proMembId}
+		</if>
+    </where>
+    order by e.pro_make_date desc
+  </select>
+  
+  <delete id="deleteExpense" parameterType="hashmap">
+    delete from expense
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <insert id="insertExpense" parameterType="hashmap">
+    insert into expense (rec_uid, corp_id, project_name, 
+      contract_no, commission, management_fee, 
+      interest, interest_rate, management_fee_rate, 
+      penalty_int_rate, repayment_plan, loan_amt,
+      chase_flg ,
+  	  factor_type, pro_make_date, rel_buy_id,
+	  rel_sale_id, rel_sale_corp_name, pro_memb_id,
+	  repay_time, create_time      
+      )
+    values (#{recUid}, #{corpId}, #{projectName}, 
+      #{contractNo}, #{commission}, #{managementFee}, 
+      #{interest}, #{interestRate}, #{managementFeeRate}, 
+      #{penaltyIntRate}, #{repaymentPlan}, #{loanAmt},
+      #{chaseFlg},
+      #{factorType}, #{proMakeDate}, #{relBuyId},
+      #{relSaleId}, #{relSaleCorpName}, #{proMembId},
+      #{repayTime}, now()
+      )
+  </insert>
+  
+  <update id="updateExpense" parameterType="hashmap">
+    update expense
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="contractNo != null">
+        contract_no = #{contractNo},
+      </if>
+      <if test="commission != null and commission != ''">
+        commission = #{commission},
+      </if>
+      <if test="managementFee != null and managementFee != ''">
+        management_fee = #{managementFee},
+      </if>
+      <if test="interest != null and interest != ''">
+        interest = #{interest},
+      </if>
+      <if test="interestRate != null and interestRate != ''">
+        interest_rate = #{interestRate},
+      </if>
+      <if test="managementFeeRate != null and managementFeeRate != ''">
+        management_fee_rate = #{managementFeeRate},
+      </if>
+      <if test="penaltyIntRate != null and penaltyIntRate != ''">
+        penalty_int_rate = #{penaltyIntRate},
+      </if>
+      <if test="repaymentPlan != null">
+        repayment_plan = #{repaymentPlan},
+      </if>
+      <if test="loanAmt != null and loanAmt != ''">
+        loan_amt = #{loanAmt},
+      </if>
+      <if test="repayTime != null and repayTime != ''">
+        repay_time = #{repayTime},
+      </if>
+      <if test="proMembId != null">
+        pro_memb_id = #{proMembId},
+      </if>
+      <if test="relSaleCorpName != null">
+        rel_sale_corp_name = #{relSaleCorpName},
+      </if>
+      <if test="relSaleId != null">
+        rel_sale_id = #{relSaleId},
+      </if>
+      <if test="relBuyId != null">
+        rel_buy_id = #{relBuyId},
+      </if>
+      <if test="factorType != null">
+        factor_type = #{factorType},
+      </if>
+      <if test="chaseFlg != null">
+        chase_flg = #{chaseFlg},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+    </set>
+    where project_name = #{projectName} and corp_id = #{corpId}
+  </update>
+  
+  <select id="selectNotProcList" parameterType="hashmap" resultType="com.ut.scf.pojo.FlowListInfo">
+  	select TEMP.*
+  	from
+  	(select distinct
+  	  pp.pri_id procInsId,
+  	  pp.project_name proName,
+  	  p.PRI_PrdName procInsName,
+  	  DATE_FORMAT(p.PRI_StartTime, '%Y-%m-%d %H:%i:%s') createDate,
+  	  '运行中' status,
+  	  #{monitorUrl} monitorUrl
+    from scfbpm.workitem w
+      join scfbpm.procinstance p on p.PRI_ID = w.WKI_PriID
+      join scfcore.pri_project pp on p.PRI_ID = pp.pri_id
+      left join scfbpm.workitemapply wa on w.WKI_ID = wa.WKA_WkiID and wa.WKA_areaCode = #{areaCode}
+    where
+          p.PRI_STATE = 1
+      and (w.WKI_USER = #{username}
+      	or wa.WKA_APPLYMAN LIKE CONCAT(CONCAT('%,', #{username}), ',%'))
+      and w.WKI_areaCode = #{areaCode}
+      and p.PRI_areaCode = #{areaCode}
+      <if test="projectName != null and projectName != ''">
+        and pp.project_name LIKE CONCAT(CONCAT('%', #{projectName}), '%')
+      </if>
+      <if test="procInsName != null and procInsName != ''">
+        and p.PRI_Name LIKE CONCAT(CONCAT('%', #{procInsName}), '%')
+      </if>
+      <if test="startTime != null and startTime != ''">
+        and DATE_FORMAT(p.PRI_StartTime, '%Y-%m-%d') >= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        and DATE_FORMAT(p.PRI_StartTime, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+      </if>
+    order by p.PRI_StartTime DESC) TEMP
+  </select>
+  
+  <select id="selectOverProcList" parameterType="hashmap" resultType="com.ut.scf.pojo.FlowListInfo">
+  	select TEMP.*
+  	from
+  	(select distinct
+  	  pp.pri_id procInsId,
+  	  pp.project_name proName,
+  	  p.PRI_PrdName procInsName,
+  	  DATE_FORMAT(p.PRI_StartTime, '%Y-%m-%d %H:%i:%s') createDate,
+  	  DATE_FORMAT(p.PRI_EndTime, '%Y-%m-%d %H:%i:%s') endDate,
+  	  if (p.PRI_STATE = 4, '终止', '结束') status,
+  	  #{monitorUrl} monitorUrl
+    from scfbpm.workitem w
+      join scfbpm.procinstance p on p.PRI_ID = w.WKI_PriID
+      join scfcore.pri_project pp on p.PRI_ID = pp.pri_id
+      left join scfbpm.workitemapply wa on w.WKI_ID = wa.WKA_WkiID and wa.WKA_areaCode = #{areaCode}
+    where
+          p.PRI_STATE IN (4, 5)
+      and (w.WKI_USER = #{username}
+      	or wa.WKA_APPLYMAN LIKE CONCAT(CONCAT('%,', #{username}), ',%'))
+      and w.WKI_areaCode = #{areaCode}
+      and p.PRI_areaCode = #{areaCode}
+      <if test="projectName != null and projectName != ''">
+        and pp.project_name LIKE CONCAT(CONCAT('%', #{projectName}), '%')
+      </if>
+      <if test="procInsName != null and procInsName != ''">
+        and p.PRI_Name LIKE CONCAT(CONCAT('%', #{procInsName}), '%')
+      </if>
+      <if test="priState != null and priState != ''">
+        and p.PRI_STATE = #{priState}
+      </if>
+      <if test="startTime != null and startTime != ''">
+        and DATE_FORMAT(p.PRI_EndTime, '%Y-%m-%d') >= #{startTime}
+      </if>
+      <if test="endTime != null and endTime != ''">
+        and DATE_FORMAT(p.PRI_EndTime, '%Y-%m-%d') <![CDATA[<=]]> #{endTime}
+      </if>
+    order by p.PRI_EndTime DESC) TEMP
+  </select>
+  
+   <select id="countProjectName" resultType="int" parameterType="hashmap" >
+    select count(1)
+    from expense e
+    where 1=1 and e.project_name = #{projectName}
+		<if test="corpId != null and corpId!=''">
+		 	and e.corp_id = #{corpId}
+		</if>
+  </select>
+</mapper>

@@ -1,0 +1,48 @@
+package com.ut.scf.service.test;
+
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.pub.IStuInfoDao;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.pub.IcustManagerService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:spring-mybatis-test.xml" })
+public class PubManagerServiceTest {
+
+		private static final Logger log = LoggerFactory.getLogger(PubManagerServiceTest.class);
+		
+		@Autowired
+	    private IcustManagerService custManagerService ;
+	    
+	    @Autowired
+		private IStuInfoDao stuInfoDao;
+	    
+	    @Test
+		public void stuInfoListTest()
+		{
+			PageInfoBean page = new PageInfoBean();
+			List<Map<String, Object>> list = stuInfoDao.getStuIfnoPageList(page);
+			PageRespBean respBean = new PageRespBean();
+			log.info("-----------------stuInfoListTest start-----------");
+			custManagerService.getStuInfoList(page);
+			respBean.setPages(page.getTotalPage());
+			respBean.setRecords(page.getTotalRecord());
+			respBean.setDataList(list);
+			log.info("----------------stuInfoList : ------------" + respBean);
+			Assert.assertNotNull(respBean);
+			log.info("-----------------stuInfoListTest end------------------");
+		}
+}

@@ -1,0 +1,66 @@
+package com.ut.scf.reqbean.project;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class RevenueListReqBean extends PageReqBean{
+	/**
+	 * 融资Id
+	 */
+	@NotBlank(message = "{revenueId.notblank}")
+	private String revenueId;
+	private Date receptionDate;
+	private String agency;
+	private String agencyNum;
+	private BigDecimal saptta;
+	private BigDecimal aptta;
+	private String note;
+	public String getRevenueId() {
+		return revenueId;
+	}
+	public void setRevenueId(String revenueId) {
+		this.revenueId = revenueId;
+	}
+	public Date getReceptionDate() {
+		return receptionDate;
+	}
+	public void setReceptionDate(Date receptionDate) {
+		this.receptionDate = receptionDate;
+	}
+	public String getAgency() {
+		return agency;
+	}
+	public void setAgency(String agency) {
+		this.agency = agency;
+	}
+	public String getAgencyNum() {
+		return agencyNum;
+	}
+	public void setAgencyNum(String agencyNum) {
+		this.agencyNum = agencyNum;
+	}
+	public BigDecimal getSaptta() {
+		return saptta;
+	}
+	public void setSaptta(BigDecimal saptta) {
+		this.saptta = saptta;
+	}
+	public BigDecimal getAptta() {
+		return aptta;
+	}
+	public void setAptta(BigDecimal aptta) {
+		this.aptta = aptta;
+	}
+	public String getNote() {
+		return note;
+	}
+	public void setNote(String note) {
+		this.note = note;
+	}
+	
+	
+}

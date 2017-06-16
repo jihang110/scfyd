@@ -1,0 +1,315 @@
+package com.ut.scf.reqbean.pub;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+public class CorpInfoReqBean {
+
+	private String corpId;
+	private String corpName;
+	private String corpType;
+	private String agencyNum;
+	private String orgnNum;
+	private Short sysType;
+	private BigDecimal maxCreditAmount;
+	private Byte isCountry;
+	private String legalPerson;
+	private String controlPerson;
+	private Date regDate;
+	private String logoUrl;
+	private Integer realPayCap;
+	private String ccy;
+	private String loanCardNo;
+	private String industry;
+	private String nationalTaxRegistration;
+	private String localTaxRegistration;
+	private Integer regCap;
+	private String regAddress;
+	private String officeAddress;
+	private String specNatural;
+	private String busiScope;
+	private String historyEvc;
+	private String relaCorpId;
+	private Integer staffNum;
+	private String fixedPhone;
+	private String contactInfo;
+	private String note;
+	private Date createTime;
+	private String createUserId;
+	private Byte status;
+	private List<?> shareInfoList;
+	private List<?> attachInfoList;
+	public String getCorpId() {
+		return corpId;
+	}
+
+	public void setCorpId(String corpId) {
+		this.corpId = corpId;
+	}
+
+	public String getCorpName() {
+		return corpName;
+	}
+
+	public void setCorpName(String corpName) {
+		this.corpName = corpName;
+	}
+
+	public String getCorpType() {
+		return corpType;
+	}
+
+	public void setCorpType(String corpType) {
+		this.corpType = corpType;
+	}
+
+	public String getAgencyNum() {
+		return agencyNum;
+	}
+
+	public void setAgencyNum(String agencyNum) {
+		this.agencyNum = agencyNum;
+	}
+
+	public String getOrgnNum() {
+		return orgnNum;
+	}
+
+	public void setOrgnNum(String orgnNum) {
+		this.orgnNum = orgnNum;
+	}
+
+	public Short getSysType() {
+		return sysType;
+	}
+
+	public void setSysType(Short sysType) {
+		this.sysType = sysType;
+	}
+
+	public BigDecimal getMaxCreditAmount() {
+		return maxCreditAmount;
+	}
+
+	public void setMaxCreditAmount(BigDecimal maxCreditAmount) {
+		this.maxCreditAmount = maxCreditAmount;
+	}
+
+	public Byte getIsCountry() {
+		return isCountry;
+	}
+
+	public void setIsCountry(Byte isCountry) {
+		this.isCountry = isCountry;
+	}
+
+	public String getLegalPerson() {
+		return legalPerson;
+	}
+
+	public void setLegalPerson(String legalPerson) {
+		this.legalPerson = legalPerson;
+	}
+
+	public String getControlPerson() {
+		return controlPerson;
+	}
+
+	public void setControlPerson(String controlPerson) {
+		this.controlPerson = controlPerson;
+	}
+
+	public Date getRegDate() {
+		return regDate;
+	}
+
+	public void setRegDate(Date regDate) {
+		this.regDate = regDate;
+	}
+
+	public String getLogoUrl() {
+		return logoUrl;
+	}
+
+	public void setLogoUrl(String logoUrl) {
+		this.logoUrl = logoUrl;
+	}
+
+	public Integer getRealPayCap() {
+		return realPayCap;
+	}
+
+	public void setRealPayCap(Integer realPayCap) {
+		this.realPayCap = realPayCap;
+	}
+
+	public String getCcy() {
+		return ccy;
+	}
+
+	public void setCcy(String ccy) {
+		this.ccy = ccy;
+	}
+
+	public String getLoanCardNo() {
+		return loanCardNo;
+	}
+
+	public void setLoanCardNo(String loanCardNo) {
+		this.loanCardNo = loanCardNo;
+	}
+
+	public String getIndustry() {
+		return industry;
+	}
+
+	public void setIndustry(String industry) {
+		this.industry = industry;
+	}
+
+	public String getNationalTaxRegistration() {
+		return nationalTaxRegistration;
+	}
+
+	public void setNationalTaxRegistration(String nationalTaxRegistration) {
+		this.nationalTaxRegistration = nationalTaxRegistration;
+	}
+
+	public String getLocalTaxRegistration() {
+		return localTaxRegistration;
+	}
+
+	public void setLocalTaxRegistration(String localTaxRegistration) {
+		this.localTaxRegistration = localTaxRegistration;
+	}
+
+	public Integer getRegCap() {
+		return regCap;
+	}
+
+	public void setRegCap(Integer regCap) {
+		this.regCap = regCap;
+	}
+
+	public String getRegAddress() {
+		return regAddress;
+	}
+
+	public void setRegAddress(String regAddress) {
+		this.regAddress = regAddress;
+	}
+
+	public String getOfficeAddress() {
+		return officeAddress;
+	}
+
+	public void setOfficeAddress(String officeAddress) {
+		this.officeAddress = officeAddress;
+	}
+
+	public String getSpecNatural() {
+		return specNatural;
+	}
+
+	public void setSpecNatural(String specNatural) {
+		this.specNatural = specNatural;
+	}
+
+	public String getBusiScope() {
+		return busiScope;
+	}
+
+	public void setBusiScope(String busiScope) {
+		this.busiScope = busiScope;
+	}
+
+	public String getHistoryEvc() {
+		return historyEvc;
+	}
+
+	public void setHistoryEvc(String historyEvc) {
+		this.historyEvc = historyEvc;
+	}
+
+	public String getRelaCorpId() {
+		return relaCorpId;
+	}
+
+	public void setRelaCorpId(String relaCorpId) {
+		this.relaCorpId = relaCorpId;
+	}
+
+	public Integer getStaffNum() {
+		return staffNum;
+	}
+
+	public void setStaffNum(Integer staffNum) {
+		this.staffNum = staffNum;
+	}
+
+	public String getFixedPhone() {
+		return fixedPhone;
+	}
+
+	public void setFixedPhone(String fixedPhone) {
+		this.fixedPhone = fixedPhone;
+	}
+
+	public String getContactInfo() {
+		return contactInfo;
+	}
+
+	public void setContactInfo(String contactInfo) {
+		this.contactInfo = contactInfo;
+	}
+
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String note) {
+		this.note = note;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
+	public String getCreateUserId() {
+		return createUserId;
+	}
+
+	public void setCreateUserId(String createUserId) {
+		this.createUserId = createUserId;
+	}
+
+	public Byte getStatus() {
+		return status;
+	}
+
+	public void setStatus(Byte status) {
+		this.status = status;
+	}
+
+	public List<?> getShareInfoList() {
+		return shareInfoList;
+	}
+
+	public void setShareInfoList(List<?> shareInfoList) {
+		this.shareInfoList = shareInfoList;
+	}
+
+	public List<?> getAttachInfoList() {
+		return attachInfoList;
+	}
+
+	public void setAttachInfoList(List<?> attachInfoList) {
+		this.attachInfoList = attachInfoList;
+	}
+	
+}

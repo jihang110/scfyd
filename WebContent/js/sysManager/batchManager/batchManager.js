@@ -1,0 +1,119 @@
+
+$(function () {
+	CloudUtils.getMenuNames("nav");
+	InitTable();
+ });
+
+function InitTable(){
+	$('#batchInfoList').bootstrapTable('destroy');  
+	$("#batchInfoList").bootstrapTable({  
+	     method: "post", 
+	     url: "../../batch/list", 
+	     striped: true,  //表格显示条纹  
+	     pagination: true, //启动分页  
+	     pageSize: 5,  //每页显示的记录数  
+	     pageNumber:1, //当前第几页  
+	     pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+	     search: false,  //是否启用查询  
+	     showColumns: false,  //显示下拉框勾选要显示的列  
+	     showRefresh: false,  //显示刷新按钮  
+	     sidePagination: "server", //表示服务端请求  
+	     //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+	     //设置为limit可以获取limit, offset, search, sort, order  
+	     queryParamsType : "undefined",   
+	     queryParams: function queryParams(params) {   //设置查询参数  
+	       var param = {    
+	           pageNumber: params.pageNumber,    
+	           pageSize: params.pageSize
+	       };    
+	       return JSON.stringify(param);                   
+	     },  
+	     responseHandler:function responseHandler(res) {
+	    	 debugger
+	    	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+	    	 } else {
+	    		 alert(res.resultNote);
+	    		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+	    	 }
+	     },
+	     columns: [ {
+		        field: 'batchName',
+		        title: '批处理名称',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'batchType',
+		        title: '批处理类型',
+		        align: 'center',
+	            valign: 'middle'
+		    },{
+		        field: 'batchNo',
+		        title: '批次号',
+		        align: 'center',
+	            valign: 'middle'
+		    }, {
+		        field: 'executeTime',
+		        title: '执行时间',
+		        align: 'center',
+	            valign: 'middle'
+		    }, {
+		        field: 'dataNum',
+		        title: '批处理数据量',
+		        align: 'center',
+	            valign: 'middle'
+		    }, {
+		        field: 'result',
+		        title: '批处理结果',
+		        align: 'center',
+	            valign: 'middle',
+	            formatter:function(value,row,index){
+	 	        	if(row.result=='0'){
+	 	        		return "失败";
+	 	        	}else{
+	 	        		return "成功";
+	 	        	}
+		 	        
+	 	        }
+		    },{
+	 	        field: 'operation',
+	 	        title: '操作',
+	 	        align: 'center',
+	 	        formatter:function(value,row,index){
+	 	        	var m = '<a class = "execute" style="color:#278bdd;padding:0px 5px;" title="执行" href="javascript:void(0)">执行</a>';
+	 	        	if(row.result=='0'){
+	 	        		return m;
+	 	        	}
+		 	        
+	 	        },
+	 	        events: 'operateEvents'
+	 	    }]
+	   });  
+		window.operateEvents = {
+			'click .execute': function (e, value, row, index) {
+				var options = {
+    					url : '../../batch/doBatch',
+    					data : JSON.stringify(row),
+    					callBackFun : function(data) {
+    						if(data.result==0){
+    							bootbox.alert(data.resultNote);
+    						}else{
+    							bootbox.alert(data.resultNote);
+    							return false;
+    						}
+    					},
+    					errorCallback:function(data){
+    						bootbox.alert("error");
+    					}
+    			};
+    			CloudUtils.ajax(options);
+			}
+		};
+}

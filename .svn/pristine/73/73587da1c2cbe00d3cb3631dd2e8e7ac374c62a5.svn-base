@@ -1,0 +1,2641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="description" content="">
+  <meta name="author" content="ThemeBucket">
+  <link rel="shortcut icon" href="#" type="image/png">
+  <title>流程管理</title>
+  <link href="../../css/style.css" rel="stylesheet">
+  <link href="../../css/style-responsive.css" rel="stylesheet">
+  <link href="../../css/bootstrap-table.css" rel="stylesheet">
+  <link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+  <link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css" rel="stylesheet" />
+  <link href="../../js/autocompleter/jquery.autocompleter.css" rel="stylesheet" />
+  <link href="../../css/sysfun.css" rel="stylesheet">
+  <link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+  <script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+  <script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+  <script src="../../js/bootstrap.min.js"></script> 
+  <script src="../../js/CloudUtils.js"></script>
+  <script src="../../js/password.js"></script>
+  <script src="../../js/store.js" type="text/javascript"></script>
+  <script src="../../js/jquery.nicescroll.js"></script>
+  <script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+  <script src="../../js/validation-init.js"></script>
+  <script type="text/javascript" src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-validator/zh_CN.js"></script>
+  <script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+  <script type="text/javascript" src="../../js/jquery.number.js"></script>
+  <!--dynamic table initialization -->
+  <script type="text/javascript" src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+  <script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+  <script type="text/javascript" src="../../js/autocompleter/jquery.autocompleter.js"></script>
+  <script src="../../js/bpm/flowManager/launchFlowManager.js" type="text/javascript"></script>
+  <script src="../../js/bpm/flowManager/FlowMngCommon.js" type="text/javascript"></script>
+  
+  <style>
+  	.oneline {
+  		word-break: keep-all;
+		white-space: nowrap;
+  	}
+  </style>
+</head>
+
+<body class="iframeBody">
+<section>
+    <div class="main-content-child" >
+    	<div class="row">
+    	<div class="title"><span>流程模板</span></div>
+    	</div>
+    	<div class="row	rowpad">
+     	<div class="form-group">
+     		<div class="col-sm-2">
+     			<div style="width:154px; height:100px; text-align:center;">
+     				<img src="../../images/clipboard.png" style="width:60px; height:70px; margin-top:15px;" />
+     			</div>
+     			<div style="height:35px;"><label style="width:154px;text-align:center;font-size:18px;">标准流程</label></div>
+     			<button id="btn_launch_flow1" type="button" class="btn btn-primary search" style="width:70px; height:35px;" data-toggle="modal" onclick="start('normalModal', '标准流程')">发起 </button>
+     			<button id="btn_launch_pic1" type="button" class="btn btn-default cancel" style="width:70px; height:35px;" data-toggle="modal" onclick="launchPic('normal')">图形 </button> 
+    		</div>
+    		<div class="col-sm-2">
+     			<div style="width:154px; height:100px; text-align:center;">
+     				<img src="../../images/clipboard-2.png" style="width:60px; height:70px; margin-top:15px;" />
+     			</div>
+     			<div style="height:35px;"><label style="width:154px;text-align:center;font-size:18px;">特殊事项审批</label></div>
+     			<button id="btn_launch_flow2" type="button" class="btn btn-primary search" style="width:70px; height:35px;" data-toggle="modal" onclick="start('spMatterModal', '特殊事项审批')">发起 </button>
+     			<button id="btn_launch_pic2" type="button" class="btn btn-default cancel" style="width:70px; height:35px;" data-toggle="modal" onclick="launchPic('spMatter')">图形 </button> 
+    		</div>
+    		<div class="col-sm-2">
+     			<div style="width:154px; height:100px; text-align:center;">
+     				<img src="../../images/car.png" style="width:60px; height:70px; margin-top:15px;" />
+     			</div>
+     			<div style="height:35px;"><label style="width:154px;text-align:center;font-size:18px;">融资直通车</label></div>
+     			<button id="btn_launch_flow2" type="button" class="btn btn-primary search" style="width:70px; height:35px;" data-toggle="modal" onclick="start('financeModal', '融资直通车')">发起 </button>
+     			<button id="btn_launch_pic2" type="button" class="btn btn-default cancel" style="width:70px; height:35px;" data-toggle="modal" onclick="launchPic('finance')">图形 </button> 
+    		</div>
+    		<div class="col-sm-2">
+     			<div style="width:154px; height:100px; text-align:center;">
+     				<img src="../../images/quick.png" style="width:60px; height:70px; margin-top:15px;" />
+     			</div>
+     			<div style="height:35px;"><label style="width:154px;text-align:center;font-size:18px;">特殊事项快速审批</label></div>
+     			<button id="btn_launch_flow2" type="button" class="btn btn-primary search" style="width:70px; height:35px;" data-toggle="modal" onclick="start('spMatterModal', '特殊事项快速审批')">发起 </button>
+     			<button id="btn_launch_pic2" type="button" class="btn btn-default cancel" style="width:70px; height:35px;" data-toggle="modal" onclick="launchPic('spMatterFast')">图形 </button> 
+    		</div>
+    		    		<div class="col-sm-2" >
+     			<div style="width:144px; height:100px; text-align:center;">
+     				<img src="../../images/clipboard.png" style="width:60px; height:70px; margin-top:15px;" />
+     			</div>
+     			<div style="height:35px;"><label style="width:140px;text-align:center;font-size:18px;">在线签约流程</label></div>
+     			<button id="btn_launch_flow3" type="button" class="btn btn-primary search" style="width:70px; height:35px;" data-toggle="modal" onclick="start('onlineModal','在线签约')">发起 </button>
+     			<button id="btn_launch_pic3" type="button" class="btn btn-default cancel" style="width:70px; height:35px;" data-toggle="modal" onclick="launchPic('online')">图形 </button> 
+    		</div>
+        </div>
+        </div>
+        <!-- 图形 -->
+        <div class="modal fade" id="picModal" tabindex="-1" role="dialog" aria-labelledby="picModalLabel">
+		    <div class="modal-dialog" role="document" style="width:1000px;">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="picModalLabel">标准流程</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<img id="pic" src="?" style="width:100%;" />
+		        </div>
+	      	  </div>
+	    	</div>
+	 	</div>
+        <!-- 标准流程 -->
+        <form class="form-horizontal" role="form" id="normalForm" data-toggle="validator">
+	        <div class="modal fade" id="normalModal" tabindex="-1" role="dialog" aria-labelledby="normalModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="normalModalLabel">立项管理</h4>
+		        </div>
+		        <div class="modal-body">
+		        <input type="hidden" id="workflowNm" name="workflowNm" value="">
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="proName"><span class="required">*</span>项目名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="proName" class="form-control" id="proName" placeholder="项目名称" maxlength="30">
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="chaseFlg"><span class="required">*</span>是否有追</label>
+			        <div class="col-sm-6">
+				        <label class="col-sm-6 control-label textLeft">
+							<input type="radio" name="chaseFlg" value="1" checked> 是
+						</label>
+						<label class="col-sm-6 control-label textLeft">
+							<input type="radio" name="chaseFlg" value="0"> 否
+						</label>
+					</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="factorType"><span class="required">*</span>保理类型</label>
+		            <div class="col-sm-6">
+		            	<select id="factorType" name="factorType" class="form-control">
+		                	<option value="1">明保</option>
+		                	<option value="0">暗保</option>
+		                </select>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="proMakeDate"><span class="required">*</span>发起日期</label>
+		            <div id="divDate" class="col-sm-6 has-feedback">
+		            	<input type="text" name="proMakeDate" style="cursor: pointer;" class="form-control" id="proMakeDate" readonly="readonly">
+		            	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="relBuyName"><span class="required">*</span>关联买方名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="relBuyName" class="form-control" id="relBuyName" onkeyup="chgRelBuyAndSaleName(this.value, '4', 'normalForm', 'relBuyId')" placeholder="关联买方名称" maxlength="32">
+		            	<input type="hidden" name="relBuyId" id="relBuyId">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="relSaleName"><span class="required">*</span>关联卖方名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="relSaleName" class="form-control" id="relSaleName" onkeyup="chgRelBuyAndSaleName(this.value, '5', 'normalForm', 'relSaleId')" placeholder="关联卖方名称" maxlength="32">
+		            	<input type="hidden" name="relSaleId" id="relSaleId">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="relSaleCorpName"><span class="required">*</span>关联企业名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="relSaleCorpName" class="form-control" id="relSaleCorpName" placeholder="关联企业名称" maxlength="32">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="note"><span class="required">*</span>备注</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="note" class="form-control" id="note" placeholder="备注" maxlength="500">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="contract">合同</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group">
+		            		<input type="text" class="form-control" id="contract" name="contract" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="contractFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="order"><span class="required">*</span>订单</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="order" name="order" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="orderFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="delivery"><span class="required">*</span>发货单</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="delivery" name="delivery" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="deliveryFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="receipt"><span class="required">*</span>收货单</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="receipt" name="receipt" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="receiptFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="godownEntry"><span class="required">*</span>入库单</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="godownEntry" name="godownEntry" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="godownEntryFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="list"><span class="required">*</span>榜单(保险)</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="list" name="list" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="listFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="storage"><span class="required">*</span>仓储单</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="storage" name="storage" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="storageFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="billNo"><span class="required">*</span>合同/订单编号</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="billNo" class="form-control" id="billNo" placeholder="合同/订单编号" maxlength="30">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="billName"><span class="required">*</span>合同名称/订单</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="billName" class="form-control" id="billName" placeholder="合同名称/订单" maxlength="30">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="billAmount"><span class="required">*</span>合同/订单金额</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="billAmount" class="form-control" id="billAmount" placeholder="合同/订单金额">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="payType"><span class="required">*</span>付款方式</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="payType" class="form-control" id="payType" placeholder="付款方式" maxlength="20">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="accountPeriod"><span class="required">*</span>合同/订单约定账期</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="accountPeriod" class="form-control" id="accountPeriod" placeholder="合同/订单约定账期" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="hasInv"><span class="required">*</span>是否开立发票</label>
+			        <div class="col-sm-6">
+				        <label class="radio-inline" style="margin-top:10px; margin-bottom:10px;">
+							<input type="radio" name="hasInv" value="1" class="rad" checked> 是
+						</label>
+						<label class="radio-inline" style="margin-left:110px;">
+							<input type="radio" name="hasInv" value="0" class="rad"> 否
+						</label>
+					</div>
+		          </div>
+		          <div id="otherInv" class="collapse">
+			          
+		          </div>
+		          <div id="otherInvHtml" style="display:none">
+		          	<div class="form-group">
+			            <label class="col-sm-4 control-label"></label>
+			            <div class="col-sm-6">
+			            	<div style="float:left; height:40px;">
+			            		<input type="button" value="+"
+			            		style="width:40px; height:40px; background-color:#75f25c; font-size:30px; border: none; color: #fff;" onclick="addInv('normalForm')">
+			            	</div>
+			            	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">添加发票</div>
+			            	<div style="float:left; height:40px; margin-left:20px;">
+			            		<input type="button" value="-"
+			            		style="width:40px; height:40px; background-color:#75f25c; font-size:40px; border: none; color: #fff;" onclick="delInv('normalForm')">
+			            	</div>
+			            	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">删除发票</div>
+			         	</div>
+			          </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arBal"><span class="required">*</span>应收账款余额</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arBal" class="form-control" id="arBal" placeholder="应收账款余额">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="aplFacAmt"><span class="required">*</span>拟申请保理金额</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="aplFacAmt" class="form-control" id="aplFacAmt" placeholder="拟申请保理金额">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="aplPeriod"><span class="required">*</span>申请账期</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="aplPeriod" class="form-control" id="aplPeriod" placeholder="申请账期" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arPct"><span class="required">*</span>应收账款受让比例</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arPct" class="form-control" id="arPct" placeholder="应收账款受让比例" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="srchPrtSc"><span class="required">*</span>中登网查询截屏</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="srchPrtSc" name="srchPrtSc" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="srchPrtScFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		       </div>
+		       <div class="modal-footer">
+				  <div class="form-group">
+				  	<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="submit" class="btn btn-default add"
+							onclick="create('normalForm', 'normalModal')">创建
+						</button>
+					</div>
+				</div>
+			</div>
+	      </div>
+	    </div>
+	  	</div>
+  		</form>
+        <!-- 特殊事项审批 -->
+        <form class="form-horizontal" role="form" id="spMatterForm" data-toggle="validator">
+	        <div class="modal fade" id="spMatterModal" tabindex="-1" role="dialog" aria-labelledby="spMatterModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="spMatterModalLabel">特殊事项审批</h4>
+		        </div>
+		        <div class="modal-body">
+		        <input type="hidden" id="workflowNm" name="workflowNm" value=""> 
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="proName"><span class="required">*</span>项目名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="proName" onkeyup="changeProName()" class="form-control" id="proName" placeholder="项目名称" maxlength="30">
+		            </div>
+		          </div>
+		          <fieldset>
+		              <legend class="little-title">产品类型</legend>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="chaseFlg"><span class="required">*</span>是否有追</label>
+				        <div class="col-sm-6">
+					        <label class="col-sm-6 control-label textLeft">
+								<input type="radio" name="chaseFlg" value="1" disabled checked> 是
+							</label>
+							<label class="col-sm-6 control-label textLeft">
+								<input type="radio" name="chaseFlg" value="0" disabled> 否
+							</label>
+						</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="factorType"><span class="required">*</span>保理类型</label>
+			            <div class="col-sm-6">
+			            	<select id="factorType" name="factorType" class="form-control" disabled>
+			                	<option value="1">明保</option>
+			                	<option value="0">暗保</option>
+			                </select>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="proMembName"><span class="required">*</span>立项人员名称</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="proMembName" class="form-control" id="proMembName" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="proMakeDate"><span class="required">*</span>立项发起日期</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="proMakeDate" class="form-control" id="proMakeDate" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="relBuyName"><span class="required">*</span>关联买方名称</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="relBuyName" class="form-control" id="relBuyName" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="relSaleName"><span class="required">*</span>关联卖方名称</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="relSaleName" class="form-control" id="relSaleName" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="relSaleCorpName"><span class="required">*</span>关联企业名称</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="relSaleCorpName" class="form-control" id="relSaleCorpName" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="note"><span class="required">*</span>备注</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="note" class="form-control" id="note" placeholder="备注" maxlength="500">
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label" for="applyItem"><span class="required">*</span>申请事项</label>
+			            <div class="col-sm-6">
+				            <select id="applyItem" name="applyItem" class="form-control" onchange="FlowMngCommon.changeApplyItem(this.value)">
+			                	<option value="1">展期</option>
+			                	<option value="2">费用减免</option>
+			                	<option value="3">转法务</option>
+			                	<option value="4">其他</option>
+			                </select>
+		                </div>
+			          </div>
+		          </fieldset>
+		          <fieldset id="applyItem1">
+		              <legend class="little-title">展期</legend>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayCorp">还款企业</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="repayCorp" class="form-control" id="repayCorp" readonly>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayDate">还款时间</label>
+			            <div class="col-sm-6 has-feedback">
+			            	<input type="text" name="repayDate" class="form-control" style="cursor: pointer;" id="repayDate" readonly="readonly">
+			            	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayUser">还款人</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="repayUser" class="form-control" id="repayUser" placeholder="还款人" maxlength="16">
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayCorpAccount"><span class="required">*</span>还款企业账户</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="repayCorpAccount" class="form-control" id="repayCorpAccount" placeholder="还款企业账户" maxlength="16">
+			          	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayPlan"><span class="required">*</span>还款计划</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="repayPlan" class="form-control" id="repayPlan" placeholder="还款计划" maxlength="20">
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="repayAmount"><span class="required">*</span>还款金额</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="repayAmount" class="form-control" id="repayAmount" placeholder="还款金额">
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label" for="repayType"><span class="required">*</span>还款类型</label>
+			            <div class="col-sm-6">
+				            <select id="repayType" name="repayType" class="form-control" onchange="FlowMngCommon.setRepaymentCorp(this, 'spMatterForm');">
+			                	<option value="1">买方</option>
+			                	<option value="2">卖方</option>
+			                </select>
+		                </div>
+			          </div>
+		          </fieldset>
+		          <fieldset id="applyItem2">
+		              <legend class="little-title">费用减免</legend>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="feeType">费用类型</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="feeType" class="form-control" id="feeType" placeholder="费用类型" maxlength="16">
+			         	</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="reduceAmount">减免金额</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="reduceAmount" class="form-control" id="reduceAmount" placeholder="减免金额">
+			         	</div>
+			          </div>
+		          </fieldset>
+		          <fieldset id="applyItem3">
+		              <legend class="little-title">转法务</legend>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="chgForensicFlg">是否转法务</label>
+			            <div class="col-sm-6">
+					        <label class="col-sm-6 control-label textLeft">
+								<input type="radio" name="chgForensicFlg" value="1" checked> 是
+							</label>
+							<label class="col-sm-6 control-label textLeft">
+								<input type="radio" name="chgForensicFlg" value="0"> 否
+							</label>
+						</div>
+			          </div>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="applyReason">申请事由</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="applyReason" class="form-control" id="applyReason" placeholder="申请事由" maxlength="30">
+			         	</div>
+			          </div>
+		          </fieldset>
+		          <fieldset id="applyItem4">
+		              <legend class="little-title">其它</legend>
+			          <div class="form-group">
+			            <label class="col-sm-4 control-label"  for="otherNote">备注</label>
+			            <div class="col-sm-6">
+			            	<input type="text" name="otherNote" class="form-control" id="otherNote" placeholder="备注" maxlength="30">
+			         	</div>
+			          </div>
+		          </fieldset>
+		        </div>
+		       <div class="modal-footer">
+				  <div class="form-group">
+				  	<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="submit" class="btn btn-default add"
+							onclick="create('spMatterForm', 'spMatterModal')">创建
+						</button>
+					</div>
+				</div>
+			</div>
+	      </div>
+	    </div>
+	  	</div>
+  		</form>
+  		<!-- 在线申请签约流程 -->
+        <form class="form-horizontal" role="form" id="onlineForm" data-toggle="validator">
+	        <div class="modal fade" id="onlineModal" tabindex="-1" role="dialog" aria-labelledby="onlineModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="onlineModalLabel">在线签约</h4>
+		        </div>
+		        <div class="modal-body">
+		        <input type="hidden" id="workflowNm" name="workflowNm" value="在线签约">
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="proName"><span class="required">*</span>项目名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="proName" class="form-control" id="proName" placeholder="项目名称" maxlength="30">
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="contractNo"><span class="required">*</span>合同编号</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="contractNo" class="form-control" id="contractNo" placeholder="合同编号" maxlength="16">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="selCorpId"><span class="required">*</span>公司名称</label>
+		            <div class="col-sm-6">
+		            	<select id="selCorpId" name="selCorpId" class="form-control" onchange="changeCorp(this)">
+					                </select>
+					    <input type="hidden" id="corpNm" name="corpNm" value=""> 
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="busiLicenceNo"><span class="required">*</span>营业执照号码</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="busiLicenceNo" class="form-control" id="busiLicenceNo" placeholder="营业执照号码" maxlength="16">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label" for="busiRela">买卖关系</label>
+		            <div class="col-sm-6">
+			            <select id="busiRela" name="busiRela" class="form-control">
+		                	<option value="1">一对一</option>
+		                	<option value="2">多对多</option>
+		                </select>
+	                </div>
+		          </div>
+		          <div id="cntInvcDiv">
+							          
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arAmt"><span class="required">*</span>应收账款</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arAmt" class="form-control" id="arAmt" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arNote">应收账款说明</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arNote" class="form-control" id="arNote" placeholder="应收账款说明" maxlength="50">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arTransfAmt"><span class="required">*</span>应收账款受让款</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arTransfAmt" class="form-control" id="arTransfAmt" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arTransfNote">应收账款受让款说明</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arTransfNote" class="form-control" id="arTransfNote" placeholder="应收账款受让款说明" maxlength="4000">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="earnestMoney"><span class="required">*</span>保证金</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="earnestMoney" class="form-control" id="earnestMoney" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="serviceAmt"><span class="required">*</span>服务费</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="serviceAmt" class="form-control" id="serviceAmt" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="arTransfNotice"><span class="required">*</span>应收账款转让通知</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="arTransfNotice" class="form-control" id="arTransfNotice" placeholder="应收账款转让通知" maxlength="50">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="guarantorName">担保人名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="guarantorName" class="form-control" id="guarantorName" placeholder="担保人名称" maxlength="50">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="guaranteeName">担保品名称</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="guaranteeName" class="form-control" id="guaranteeName" placeholder="担保品名称" maxlength="50">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="guaranteeMethod">担保方式</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="guaranteeMethod" class="form-control" id="guaranteeMethod" placeholder="担保方式" maxlength="50">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+	           		<label class="col-sm-4 control-label"  for="ccy">币种</label>
+		           	<div class="col-sm-6">
+		           	<select id="ccy" name="ccy" class="form-control">
+		           		<option value="0">人民币</option>
+		           		<option value="1">美元</option>
+		           	</select>
+		        	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="guaranteeValue">担保价值</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="guaranteeValue" class="form-control" id="guaranteeValue" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="guaranteeFile">担保附件上传</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group">
+		            		<input type="text" class="form-control" id="guaranteeFile" name="guaranteeFile" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="guaranteeFileFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="inComeMakeUp">收益补偿</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="inComeMakeUp" class="form-control" id="inComeMakeUp" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cntEffectiveTerms">合同生效条款</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="cntEffectiveTerms" class="form-control" id="cntEffectiveTerms" placeholder="合同生效条款" maxlength="4000">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="specTermsNotice">特别条款说明</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="specTermsNotice" class="form-control" id="specTermsNotice" placeholder="特别条款说明" maxlength="4000">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cntVersion"><span class="required">*</span>合同版本</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="cntVersion" class="form-control" id="cntVersion" placeholder="1.0" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cntEffectDate"><span class="required">*</span>合同生效日期</label>
+		            <div id="divDate" class="col-sm-6 has-feedback">
+		            	<input type="text" name="cntEffectDate" class="form-control" style="cursor: pointer;" id="cntEffectDate" readonly>
+		            	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cntEndDate"><span class="required">*</span>合同结束日期</label>
+		            <div id="divDate" class="col-sm-6 has-feedback">
+		            	<input type="text" name="cntEndDate" class="form-control" style="cursor: pointer;" id="cntEndDate" readonly>
+		            	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="cntFiles"><span class="required">*</span>合同附件上传</label>
+		            <div class="col-sm-6">
+		            	<div class="input-group" id="divFileUpload">
+		            		<input type="text" class="form-control" id="cntFiles" name="cntFiles" placeholder="上传附件" readonly>
+		            		<span class="input-group-addon">
+								<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+								<input type="file" name="file" id="cntFilesFile" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+					      	</span>
+		            	</div>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="loanLimit"><span class="required">*</span>融资期限(月)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="loanLimit" class="form-control" id="loanLimit" placeholder="10" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="loanPct"><span class="required">*</span>融资比例(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="loanPct" class="form-control" id="loanPct" placeholder="10.00" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="loanAmt"><span class="required">*</span>融资金额(元)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="loanAmt" class="form-control" id="loanAmt" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="standardRate"><span class="required">*</span>基准利率(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="standardRate" class="form-control" id="standardRate" placeholder="10.00" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="rateFloatPct"><span class="required">*</span>利率上浮比例(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="rateFloatPct" class="form-control" id="rateFloatPct" placeholder="10.00" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="commission">手续费</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="commission" class="form-control" id="commission" placeholder="10.00">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="otherCost">其它费用</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="otherCost" class="form-control" id="otherCost" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="penaltyIntRate">罚息率(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="penaltyIntRate" class="form-control" id="penaltyIntRate" placeholder="10.00" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="managementFee">管理费</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="managementFee" class="form-control" id="managementFee" placeholder="10.00" readonly>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="managementFeeRate">管理费率(%)</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="managementFeeRate" class="form-control" id="managementFeeRate" placeholder="10.00" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="penalty">违约金</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="penalty" class="form-control" id="penalty" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="loanPeriod">融资期数</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="loanPeriod" class="form-control" id="loanPeriod" placeholder="10" maxlength="8">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentCorp"><span class="required">*</span>还款企业</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="repaymentCorp" class="form-control" id="repaymentCorp" maxlength="32">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentDate">还款时间</label>
+	            	<div class="col-sm-6 has-feedback">
+		            	<input type="text" name="repaymentDate" class="form-control" style="cursor: pointer;" id="repaymentDate" readonly>
+		            	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentPerson">还款人</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="repaymentPerson" class="form-control" id="repaymentPerson" placeholder="还款人" maxlength="16">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentCorpAcount"><span class="required">*</span>还款企业账户</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="repaymentCorpAcount" class="form-control" id="repaymentCorpAcount" placeholder="还款企业账户" maxlength="16">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentPlan"><span class="required">*</span>还款计划</label>
+		            <div class="col-sm-6">
+		            	<select id="repaymentPlan" name="repaymentPlan" class="form-control" onchange="changeRepaymentPlan()">
+		                	<option value="1">年</option>
+		                	<option value="2">季度</option>
+		                	<option value="3">月</option>
+		                	<option value="4">天</option>
+		                </select>
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentTimes"><span class="required">*</span>还款时长</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="repaymentTimes" class="form-control" id="repaymentTimes" placeholder="10" maxlength="11">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentAmt"><span class="required">*</span>还款金额</label>
+		            <div class="col-sm-6">
+		            	<input type="text" name="repaymentAmt" class="form-control" id="repaymentAmt" placeholder="10.00" maxlength="18">
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label"  for="repaymentType"><span class="required">*</span>还款类型</label>
+		            <div class="col-sm-6">
+		            	<select id="repaymentType" name="repaymentType" class="form-control" onchange="setRepaymentCorp(this, 'contractForm');">
+		                	<option value="1">买方</option>
+		                	<option value="2">卖方</option>
+		                </select>
+		         	</div>
+		          </div>
+		       </div>
+		       <div class="modal-footer">
+				  <div class="form-group">
+				  	<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="submit" class="btn btn-default add"
+							onclick="create('onlineForm', 'onlineModal')">创建
+						</button>
+					</div>
+				</div>
+			</div>
+	      </div>
+	    </div>
+	  	</div>
+  		</form>
+  		<!-- 融资直通车 -->
+  		<form class="form-horizontal" role="form" id="financeForm" data-toggle="validator">
+  			<div class="modal fade" id="financeModal" tabindex="-1" role="dialog" aria-labelledby="financeModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="financeModalLabel">融资直通车</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<input type="hidden" id="workflowNm" name="workflowNm" value="">
+		        	<ul id="myTab" class="nav nav-tabs">
+						<li class="active"><a href="#tab1" data-toggle="tab">立项管理</a></li>
+						<li><a href="#tab2" data-toggle="tab">授信申请</a></li>
+						<li><a href="#tab3" data-toggle="tab">风控报告</a></li>
+						<li><a href="#tab4" data-toggle="tab">合同申请</a></li>
+						<li><a href="#tab5" data-toggle="tab">放款申请</a></li>
+					</ul>
+					<div id="myTabContent" class="tab-content">
+						<div class="tab-pane fade in active" id="tab1">
+							<!-- 立项管理 -->
+						 	<div id="tab1Div" style="margin-top:5px;">
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label" for="proName"><span class="required">*</span>项目名称</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="proName" class="form-control" id="proName" placeholder="项目名称" maxlength="30">
+						          </div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="chaseFlg"><span class="required">*</span>是否有追</label>
+							      <div class="col-sm-6">
+							        <label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="chaseFlg" value="1" checked> 是
+									</label>
+									<label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="chaseFlg" value="0"> 否
+									</label>
+								  </div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="factorType"><span class="required">*</span>保理类型</label>
+						          <div class="col-sm-6">
+						          	<select id="factorType" name="factorType" class="form-control">
+						              <option value="1">明保</option>
+						              <option value="0">暗保</option>
+						            </select>
+						          </div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="proMembName"><span class="required">*</span>立项人员名称</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="proMembName" class="form-control" id="proMembName" readonly>
+						          </div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="proMakeDate"><span class="required">*</span>立项发起日期</label>
+						          <div id="divDate" class="col-sm-6 has-feedback">
+						          	<input type="text" name="proMakeDate" style="cursor: pointer;" class="form-control" id="proMakeDate" readonly="readonly">
+						          	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="relBuyName"><span class="required">*</span>关联买方名称</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="relBuyName" class="form-control" id="relBuyName" onkeyup="chgRelBuyAndSaleName(this.value, '4', 'tab1Div', 'relBuyId')" placeholder="关联买方名称" maxlength="32">
+						          	<input type="hidden" name="relBuyId" id="relBuyId">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="relSaleName"><span class="required">*</span>关联卖方名称</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="relSaleName" class="form-control" id="relSaleName" onkeyup="chgRelBuyAndSaleName(this.value, '5', 'tab1Div', 'relSaleId')" placeholder="关联卖方名称" maxlength="32">
+						          	<input type="hidden" name="relSaleId" id="relSaleId">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="relSaleCorpName"><span class="required">*</span>关联企业名称</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="relSaleCorpName" class="form-control" id="relSaleCorpName" placeholder="关联企业名称" maxlength="32">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="note"><span class="required">*</span>备注</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="note" class="form-control" id="note" placeholder="备注" maxlength="500">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="contract">合同</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group">
+						          		<input type="text" class="form-control" id="contract" name="contract" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="contractFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="order"><span class="required">*</span>订单</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="order" name="order" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="orderFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="delivery"><span class="required">*</span>发货单</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="delivery" name="delivery" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="deliveryFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="receipt"><span class="required">*</span>收货单</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="receipt" name="receipt" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="receiptFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="godownEntry"><span class="required">*</span>入库单</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="godownEntry" name="godownEntry" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="godownEntryFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="list"><span class="required">*</span>榜单(保险)</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="list" name="list" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="listFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="storage"><span class="required">*</span>仓储单</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="storage" name="storage" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="storageFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="billNo"><span class="required">*</span>合同/订单编号</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="billNo" class="form-control" id="billNo" placeholder="合同/订单编号" maxlength="30">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="billName"><span class="required">*</span>合同名称/订单</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="billName" class="form-control" id="billName" placeholder="合同名称/订单" maxlength="30">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="billAmount"><span class="required">*</span>合同/订单金额</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="billAmount" class="form-control" id="billAmount" placeholder="合同/订单金额">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="payType"><span class="required">*</span>付款方式</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="payType" class="form-control" id="payType" placeholder="付款方式" maxlength="20">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="accountPeriod"><span class="required">*</span>合同/订单约定账期</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="accountPeriod" class="form-control" id="accountPeriod" placeholder="合同/订单约定账期" maxlength="8">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="hasInv"><span class="required">*</span>是否开立发票</label>
+						          <div class="col-sm-6">
+							        <label class="radio-inline" style="margin-top:10px; margin-bottom:10px;">
+										<input type="radio" name="hasInv" value="1" class="rad" checked> 是
+									</label>
+									<label class="radio-inline" style="margin-left:110px;">
+										<input type="radio" name="hasInv" value="0" class="rad" > 否
+									</label>
+								  </div>
+						        </div>
+						        <div id="otherInv" class="collapse">
+						        </div>
+						        <div id="otherInvHtml" style="display:none">
+						        	<div class="form-group">
+						           <label class="col-sm-4 control-label"></label>
+						           <div class="col-sm-6">
+						           	<div style="float:left; height:40px;">
+						           		<input type="button" value="+"
+						           		style="width:40px; height:40px; background-color:#75f25c; font-size:30px; border: none; color: #fff;" onclick="addInv('financeForm')">
+						           	</div>
+						           	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">添加发票</div>
+						           	<div style="float:left; height:40px; margin-left:20px;">
+						           		<input type="button" value="-"
+						           		style="width:40px; height:40px; background-color:#75f25c; font-size:40px; border: none; color: #fff;" onclick="delInv('financeForm')">
+						           	</div>
+						           	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">删除发票</div>
+						        	</div>
+						         </div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="arBal"><span class="required">*</span>应收账款余额</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="arBal" class="form-control" id="arBal" placeholder="应收账款余额">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="aplFacAmt"><span class="required">*</span>拟申请保理金额</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="aplFacAmt" class="form-control" id="aplFacAmt" placeholder="拟申请保理金额">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="aplPeriod"><span class="required">*</span>申请账期</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="aplPeriod" class="form-control" id="aplPeriod" placeholder="申请账期" maxlength="8">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="arPct"><span class="required">*</span>应收账款受让比例</label>
+						          <div class="col-sm-6">
+						          	<input type="text" name="arPct" class="form-control" id="arPct" placeholder="应收账款受让比例" maxlength="8">
+						       	</div>
+						        </div>
+						        <div class="form-group">
+						          <label class="col-sm-4 control-label"  for="srchPrtSc"><span class="required">*</span>中登网查询截屏</label>
+						          <div class="col-sm-6">
+						          	<div class="input-group" id="divFileUpload">
+						          		<input type="text" class="form-control" id="srchPrtSc" name="srchPrtSc" placeholder="上传附件" readonly>
+						          		<span class="input-group-addon">
+										<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+										<input type="file" name="file" id="srchPrtScFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+							      	</span>
+						          	</div>
+						       	</div>
+						        </div>
+						 	</div>
+						</div>
+						<div class="tab-pane fade" id="tab2">
+							<!-- 授信申请 -->
+							<div id="tab2Div" style="margin-top:5px;">
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="licenseRegAddr"><span class="required">*</span>营业执照注册地址</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="licenseRegAddr" class="form-control" id="licenseRegAddr" placeholder="营业执照注册地址" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="relPrdBusiAddr"><span class="required">*</span>实际生产经营地址</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="relPrdBusiAddr" class="form-control" id="relPrdBusiAddr" placeholder="实际生产经营地址" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="visiAddr"><span class="required">*</span>访厂地址</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="visiAddr" class="form-control" id="visiAddr" placeholder="访厂地址" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="isAddrSame"><span class="required">*</span>三个地址是否一致</label>
+						        <div class="col-sm-6">
+							        <label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="isAddrSame" value="1" checked> 是
+									</label>
+									<label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="isAddrSame" value="0"> 否
+									</label>
+								</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="unSameReason">地址不一样的原因</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="unSameReason" class="form-control" id="unSameReason" placeholder="地址不一样的原因" maxlength="500">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="mainVisiPerson1"><span class="required">*</span>主要访谈对象1</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="mainVisiPerson1" class="form-control" id="mainVisiPerson1" placeholder="主要访谈对象1" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="position1"><span class="required">*</span>职务</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="position1" class="form-control" id="position1" placeholder="职务" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="phone1"><span class="required">*</span>电话</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="phone1" class="form-control" id="phone1" placeholder="电话" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="mainVisiPerson2">主要访谈对象2</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="mainVisiPerson2" class="form-control" id="mainVisiPerson2" placeholder="主要访谈对象2" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="position2">职务</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="position2" class="form-control" id="position2" placeholder="职务" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="phone2">电话</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="phone2" class="form-control" id="phone2" placeholder="电话" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="mainVisiPerson3">主要访谈对象3</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="mainVisiPerson3" class="form-control" id="mainVisiPerson3" placeholder="主要访谈对象3" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="position3">职务</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="position3" class="form-control" id="position3" placeholder="职务" maxlength="12">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="phone3">电话</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="phone3" class="form-control" id="phone3" placeholder="电话" maxlength="12">
+						        	</div>
+						         </div>
+						         <fieldset>
+						             <legend class="little-title">经营场所相关情况</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="facAddrArea"><span class="required">*</span>厂区（经营场所）处于</label>
+						            <div class="col-sm-6">
+							            <select id="facAddrArea" name="facAddrArea" class="form-control">
+						                	<option value="1">城镇中心</option>
+						                	<option value="2">工业区</option>
+						                	<option value="3">主干道</option>
+						                	<option value="4">支路</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="facAddrType"><span class="required">*</span>厂房/经营场所</label>
+						            <div class="col-sm-6">
+							            <select id="facAddrType" name="facAddrType" class="form-control">
+						                	<option value="1">独立厂区/经营场所</option>
+						                	<option value="2">共同使用</option>
+						                	<option value="3">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="facAddrTypeDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="facAddrTypeOther" class="form-control" id="facAddrTypeOther" placeholder="请备注" maxlength="16">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="busiPlaceType"><span class="required">*</span>经营场所为</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="busiPlaceType" value="1" checked> 自有
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="busiPlaceType" value="0"> 租赁
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="isFacGuarantee" title="经营场所是否为本次授信担保品"><span class="required">*</span>经营场所是否为本次授信担保品</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="isFacGuarantee" value="1" checked> 是
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="isFacGuarantee" value="0"> 否
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="mainFacBuildTime"><span class="required">*</span>主要经营场所建造时间</label>
+						            <div class="col-sm-6">
+							            <select id="mainFacBuildTime" name="mainFacBuildTime" class="form-control">
+						                	<option value="1">3年内</option>
+						                	<option value="2">3-6年</option>
+						                	<option value="3">6年以上</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="mainWorkShopBuildTime" title="主要车间建造时间(适用制造业及自有)">主要车间建造时间(适用制造业及自有)</label>
+						            <div class="col-sm-6">
+							            <select id="mainWorkShopBuildTime" name="mainWorkShopBuildTime" class="form-control">
+						                	<option value="1">3年内</option>
+						                	<option value="2">3-6年</option>
+						                	<option value="3">6年以上</option>
+						                	<option value="4">不适用</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="mainWorkShopBuildTimeDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="mainWorkShopBuildTimeOther" class="form-control" id="mainWorkShopBuildTimeOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="workShopSafeConfig"><span class="required">*</span>车间/仓库安全生产配置</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="workShopSafeConfig" value="0" checked> 无
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="workShopSafeConfig" value="1"> 有
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="workShopSafeConfigDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="workShopSafeConfigOther" class="form-control" id="workShopSafeConfigOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">仓库情况</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="inventoryStorage"><span class="required">*</span>存货存放</label>
+						            <div class="col-sm-6">
+							            <select id="inventoryStorage" name="inventoryStorage" class="form-control">
+						                	<option value="1">自有仓库</option>
+						                	<option value="2">租用仓库</option>
+						                	<option value="3">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="inventoryStorageDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="inventoryStorageOther" class="form-control" id="inventoryStorageOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasLongTimeStoredGoods" title="仓库是否有存放较久的原材料或产品"><span class="required">*</span>仓库是否有存放较久的原材料或产品</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasLongTimeStoredGoods" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasLongTimeStoredGoods" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasLongTimeStoredGoodsDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasLongTimeStoredGoodsOther" class="form-control" id="hasLongTimeStoredGoodsOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasOutStorageManagementSystem" title="仓库进出库管理是出入库管理系统"><span class="required">*</span>仓库进出库管理是出入库管理系统</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasOutStorageManagementSystem" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasOutStorageManagementSystem" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasOutStorageManagementSystemDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasOutStorageManagementSystemOther" class="form-control" id="hasOutStorageManagementSystemOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="deliverMethod"><span class="required">*</span>公司货物运输方式及比率</label>
+						            <div class="col-sm-6">
+							            <select id="deliverMethod" name="deliverMethod" class="form-control">
+						                	<option value="1">货运公司</option>
+						                	<option value="2">公司送货</option>
+						                	<option value="3">客户自提</option>
+						                	<option value="4">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="deliverMethodDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="deliverMethodOther" class="form-control" id="deliverMethodOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">设备使用情况</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="mainEquipment"><span class="required">*</span>公司主要生产设备</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="mainEquipment" class="form-control" id="mainEquipment" placeholder="公司主要生产设备" maxlength="60">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="equNum"><span class="required">*</span>数量</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="equNum" class="form-control" id="equNum" placeholder="数量" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="prdCapUtil"><span class="required">*</span>公司产能利用</label>
+						            <div class="col-sm-6">
+							            <select id="prdCapUtil" name="prdCapUtil" class="form-control">
+						                	<option value="1">100%</option>
+						                	<option value="2">80%-100%</option>
+						                	<option value="3">80%以内</option>
+						                	<option value="4">60%以内</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="hasAnyMachineIdle"><span class="required">*</span>是否有任何机器闲置</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasAnyMachineIdle" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasAnyMachineIdle" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasAnyMachineIdleDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasAnyMachineIdleOther" class="form-control" id="hasAnyMachineIdleOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasSupportingFacilities" title="企业是否有配套设施（如排污设施、净化设施等）"><span class="required">*</span>企业是否有配套设施（如排污设施、净化设施等）</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasSupportingFacilities" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasSupportingFacilities" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasSupportingFacilitiesDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasSupportingFacilitiesOther" class="form-control" id="hasSupportingFacilitiesOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">生产情况</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label" for="mainEnergyConsumption"><span class="required">*</span>企业主要能耗</label>
+						            <div class="col-sm-6">
+							            <select id="mainEnergyConsumption" name="mainEnergyConsumption" class="form-control">
+						                	<option value="1">电</option>
+						                	<option value="2">水</option>
+						                	<option value="3">蒸气</option>
+						                	<option value="4">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="mainEnergyConsumptionDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="mainEnergyConsumptionOther" class="form-control" id="mainEnergyConsumptionOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="postsStaffOnSite"><span class="required">*</span>现场员工上岗人数</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="postsStaffOnSite" class="form-control" id="postsStaffOnSite" placeholder="现场员工上岗人数" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="isBusy"><span class="required">*</span>工人忙碌程度</label>
+						            <div class="col-sm-6">
+							            <select id="isBusy" name="isBusy" class="form-control">
+						                	<option value="1">忙碌</option>
+						                	<option value="2">一般</option>
+						                	<option value="3">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="isBusyDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="isBusyOther" class="form-control" id="isBusyOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="orderOfClasses"><span class="required">*</span>每天开工班次</label>
+						            <div class="col-sm-6">
+							            <select id="orderOfClasses" name="orderOfClasses" class="form-control">
+						                	<option value="1">1*8小时</option>
+						                	<option value="2">2*8小时</option>
+						                	<option value="3">3*8小时</option>
+						                	<option value="4">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="orderOfClassesDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="orderOfClassesOther" class="form-control" id="orderOfClassesOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="productionStatus"
+						            title="生产情况（如日产量、开工程度、产品单价等）&#10;与报告中营业额的80%"><span class="required">*</span>生产情况（如日产量、开工程度、产品单价等）与报告中营业额的80%</label>
+						            <div class="col-sm-6">
+							            <select id="productionStatus" name="productionStatus" class="form-control">
+						                	<option value="1">相匹配</option>
+						                	<option value="2">不匹配</option>
+						                	<option value="3">不确定</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="productionStatusDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="productionStatusOther" class="form-control" id="productionStatusOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasQC" title="企业是否有专门的质检人员（适用制造业）"><span class="required">*</span>企业是否有专门的质检人员（适用制造业）</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasQC" value="1" checked> 是
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasQC" value="0"> 否
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="hasOwnRD"><span class="required">*</span>公司是否有自有研发人员</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasOwnRD" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasOwnRD" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasOwnRDDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasOwnRDOther" class="form-control" id="hasOwnRDOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="hasQAS"><span class="required">*</span>是否有严格的质量保证体系</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasQAS" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasQAS" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasQASDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasQASOther" class="form-control" id="hasQASOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="machineAvgUseLife"><span class="required">*</span>机器的平均使用年限</label>
+						            <div class="col-sm-6">
+							            <select id="machineAvgUseLife" name="machineAvgUseLife" class="form-control">
+						                	<option value="1">三年以内</option>
+						                	<option value="2">三至七年</option>
+						                	<option value="3">七年以上</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="mainPrdServCont"><span class="required">*</span>公司主要产品或服务内容</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="mainPrdServCont" class="form-control" id="mainPrdServCont" placeholder="公司主要产品或服务内容" maxlength="500">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">非财务因素</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label" for="busiSource"><span class="required">*</span>业务来源</label>
+						            <div class="col-sm-6">
+							            <select id="busiSource" name="busiSource" class="form-control">
+						                	<option value="1">法定代表人</option>
+						                	<option value="2">股东</option>
+						                	<option value="3">业务员</option>
+						                	<option value="4">实际控制人</option>
+						                	<option value="5">其他</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group" id="busiSourceDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="busiSourceOther" class="form-control" id="busiSourceOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="ratio"><span class="required">*</span>比率</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="ratio" class="form-control" id="ratio" placeholder="比率" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasShareHolderChangeInSixMonth"
+						            title="股东在过去或未来6个月是否有变动"><span class="required">*</span>股东在过去或未来6个月是否有变动</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasShareHolderChangeInSixMonth" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasShareHolderChangeInSixMonth" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasShareHolderChangeInSixMonthDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasShareHolderChangeInSixMonthOther" class="form-control" id="hasShareHolderChangeInSixMonthOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="capitalReturnMethod"
+						            title="公司资金回笼的主要方式(如有多选，请备注比率)"><span class="required">*</span>公司资金回笼的主要方式(如有多选，请备注比率)</label>
+						            <div class="col-sm-6">
+							            <select id="capitalReturnMethod" name="capitalReturnMethod" class="form-control">
+						                	<option value="1">银行帐户</option>
+						                	<option value="2">银行承兑</option>
+						                	<option value="3">个人帐户</option>
+						                	<option value="4">现金</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasLawsuitRecentYear"
+						            title="公司最近12个月是否涉及诉讼或被执行"><span class="required">*</span>公司最近12个月是否涉及诉讼或被执行</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasLawsuitRecentYear" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasLawsuitRecentYear" value="1"> 是，请提供法院判决书、付款记录等
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasLawsuitRecentYearDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <div class="input-group" id="divFileUpload">
+						            		<input type="text" class="form-control" id="hasLawsuitRecentYearOther" name="hasLawsuitRecentYearOther" placeholder="上传附件" readonly>
+						            		<span class="input-group-addon">
+												<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+												<input type="file" name="file" id="hasLawsuitRecentYearFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+									      	</span>
+						            	</div>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasTrouble"
+						            title="公司业务近期是否遇到了麻烦&#10;（包括但不限于重要人员/合约的流失、&#10;关键人员患重大疾病、应收帐款回收困难、&#10;债务纠纷等）"><span class="required">*</span>公司业务近期是否遇到了麻烦（包括但不限于重要人员...</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasTrouble" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasTrouble" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasTroubleDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasTroubleOther" class="form-control" id="hasTroubleOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="hasArrearsOfWages"
+						            title="公司最近12个月内是否有拖欠员工工资或福利"><span class="required">*</span>公司最近12个月内是否有拖欠员工工资或福利</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasArrearsOfWages" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasArrearsOfWages" value="1"> 是
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group" id="hasArrearsOfWagesDiv">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+							            <input type="text" name="hasArrearsOfWagesOther" class="form-control" id="hasArrearsOfWagesOther" placeholder="请备注" maxlength="30">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="biggestBuyer"><span class="required">*</span>公司最大采购商名称</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="biggestBuyer" class="form-control" id="biggestBuyer" placeholder="公司最大采购商名称" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="ratioOfBiggestBuyer"><span class="required">*</span>比率</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="ratioOfBiggestBuyer" class="form-control" id="ratioOfBiggestBuyer" placeholder="比率" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="biggestSupplier"><span class="required">*</span>公司最大供应商名称</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="biggestSupplier" class="form-control" id="biggestSupplier" placeholder="公司最大供应商名称" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="ratioOfBiggestSupplier"><span class="required">*</span>比率</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="ratioOfBiggestSupplier" class="form-control" id="ratioOfBiggestSupplier" placeholder="比率" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="hasExport"><span class="required">*</span>公司是否涉及外销</label>
+						            <div class="col-sm-6">
+								        <label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasExport" value="0" checked> 否
+										</label>
+										<label class="col-sm-6 control-label textLeft">
+											<input type="radio" name="hasExport" value="1"> 是，请备注比率
+										</label>
+									</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="ratioOfExport">比率</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="ratioOfExport" class="form-control" id="ratioOfExport" placeholder="比率" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="diffEarningsTax"><span class="required">*</span>企业财报与税报差异</label>
+						            <div class="col-sm-6">
+							            <select id="diffEarningsTax" name="diffEarningsTax" class="form-control">
+						                	<option value="1">&lt;30%</option>
+						                	<option value="2">&ge;30%</option>
+						                	<option value="3">&ge;50%</option>
+						                	<option value="4">&ge;70%</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="arAvgPeriod"><span class="required">*</span>公司应收帐款平均帐期</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="arAvgPeriod" class="form-control" id="arAvgPeriod" placeholder="公司应收帐款平均帐期" maxlength="8">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">财务因素</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="apAvgPeriod"><span class="required">*</span>公司应付帐款平均帐期</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="apAvgPeriod" class="form-control" id="apAvgPeriod" placeholder="公司应付帐款平均帐期" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="materialStockFrequency"><span class="required">*</span>公司材料采购频率</label>
+						            <div class="col-sm-6">
+							            <select id="materialStockFrequency" name="materialStockFrequency" class="form-control">
+						                	<option value="1">1次/月</option>
+						                	<option value="2">2次/月</option>
+						                	<option value="3">3次及以上/月</option>
+						                </select>
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="productionCycle">产品生产周期（适用制造业）</label>
+						            <div class="col-sm-6">
+							            <input type="text" name="productionCycle" class="form-control" id="productionCycle" placeholder="产品生产周期（适用制造业）" maxlength="8">
+						               </div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="nearly3yAvgGrossMarginTrend"><span class="required">*</span>公司近3年平均毛利率趋势</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="nearly3yAvgGrossMarginTrend" class="form-control" id="nearly3yAvgGrossMarginTrend" placeholder="公司近3年平均毛利率趋势" maxlength="60">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label" for="nowGrossMargin"><span class="required">*</span>公司目前毛利率</label>
+						            <div class="col-sm-6">
+							            <input type="text" name="nowGrossMargin" class="form-control" id="nowGrossMargin" placeholder="公司目前毛利率" maxlength="8">
+						               </div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">企业其他信息</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="processDisc"
+						            title="企业生产工艺流程（生产企业）/&#10;交易流程（贸易企业）描述"><span class="required">*</span>企业生产工艺流程（生产企业）/交易流程（贸易企业）描述</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="processDisc" class="form-control" id="processDisc" placeholder="企业生产工艺流程（生产企业）/交易流程（贸易企业）描述" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="relLoanDemand"
+						            title="客户融资真实需求（包括未来商业计划和资金安排）"><span class="required">*</span>客户融资真实需求（包括未来商业计划和资金安排）</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="relLoanDemand" class="form-control" id="relLoanDemand" placeholder="客户融资真实需求（包括未来商业计划和资金安排）" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline"  for="otherNoteEvaluation"
+						            title="其他需说明的问题及总体评价"><span class="required">*</span>其他需说明的问题及总体评价</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="otherNoteEvaluation" class="form-control" id="otherNoteEvaluation" placeholder="其他需说明的问题及总体评价" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="taxInvSysChk"><span class="required">*</span>纳税开票系统查核</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="taxInvSysChk" class="form-control" id="taxInvSysChk" placeholder="纳税开票系统查核" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="bankWaterSysChk"><span class="required">*</span>银行流水系统查核</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="bankWaterSysChk" class="form-control" id="bankWaterSysChk" placeholder="银行流水系统查核" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="financeSysChk"><span class="required">*</span>财务系统查核</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="financeSysChk" class="form-control" id="financeSysChk" placeholder="财务系统查核" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="otherInfoChk">其他资料查核</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="otherInfoChk" class="form-control" id="otherInfoChk" placeholder="其他资料查核" maxlength="500">
+						         	</div>
+						          </div>
+						         </fieldset>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="tab3">
+							<!-- 风控报告 -->
+							<div id="tab3Div" style="margin-top:5px;">
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="isStockCustomer"><span class="required">*</span>是否存量客户</label>
+						        <div class="col-sm-6">
+							        <label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="isStockCustomer" value="1" checked> 是
+									</label>
+									<label class="col-sm-6 control-label textLeft">
+										<input type="radio" name="isStockCustomer" value="0"> 否
+									</label>
+								</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="area"><span class="required">*</span>区域</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="area" class="form-control" id="area" placeholder="区域" maxlength="30">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="custManager"><span class="required">*</span>客户经理</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="custManager" class="form-control" id="custManager" placeholder="客户经理" maxlength="30">
+						        	</div>
+						         </div>
+						         <fieldset>
+						             <legend class="little-title">行业风险点分析</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="isIndustryRipe"><span class="required">*</span>判断行业是起步，成熟</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="isIndustryRipe" class="form-control" id="isIndustryRipe" placeholder="判断行业是起步，成熟" maxlength="300">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="riskPoints"><span class="required">*</span>行业风险点</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="riskPoints" class="form-control" id="riskPoints" placeholder="行业风险点" maxlength="300">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="shortageAndPositionInIndustry"
+						            title="客户在行业里面的优势和不足及地位"><span class="required">*</span>客户在行业里面的优势和不足及地位</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="shortageAndPositionInIndustry" class="form-control" id="shortageAndPositionInIndustry" placeholder="客户在行业里面的优势和不足及地位" maxlength="500">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">负面信息分析</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="webSearchInfo"
+						            title="网查信息（百度，工商网，法院网等）"><span class="required">*</span>网查信息（百度，工商网，法院网等）</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="webSearchInfo" class="form-control" id="webSearchInfo" placeholder="网查信息（百度，工商网，法院网等）" maxlength="500">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="zhongdengSearch"><span class="required">*</span>中登网筛查</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="zhongdengSearch" class="form-control" id="zhongdengSearch" placeholder="中登网筛查" maxlength="500">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">企业经营风险点分析</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="foreignInvestment"><span class="required">*</span>对外投资情况</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="foreignInvestment" class="form-control" id="foreignInvestment" placeholder="对外投资情况" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="busiRisk"><span class="required">*</span>企业的业务风险</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="busiRisk" class="form-control" id="busiRisk" placeholder="企业的业务风险" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="insideOperationAnalysis"><span class="required">*</span>内部运营分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="insideOperationAnalysis" class="form-control" id="insideOperationAnalysis" placeholder="内部运营分析" maxlength="1000">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">财务风险点分析</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="changeMore20perAnalysis"
+						            title="年度同比变化大于20%的科目分析"><span class="required">*</span>年度同比变化大于20%的科目分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="changeMore20perAnalysis" class="form-control" id="changeMore20perAnalysis" placeholder="年度同比变化大于20%的科目分析" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="finacialRtAnalysis"><span class="required">*</span>财务比率分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="finacialRtAnalysis" class="form-control" id="finacialRtAnalysis" placeholder="财务比率分析" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="incomeVerifMethod"><span class="required">*</span>收入的核实手段</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="incomeVerifMethod" class="form-control" id="incomeVerifMethod" placeholder="收入的核实手段" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="incomeAuthenticityEvaluate"><span class="required">*</span>收入的真实性评价</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="incomeAuthenticityEvaluate" class="form-control" id="incomeAuthenticityEvaluate" placeholder="收入的真实性评价" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="profitLevel"><span class="required">*</span>利润水平</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="profitLevel" class="form-control" id="profitLevel" placeholder="利润水平" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="profitQuality"><span class="required">*</span>利润质量</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="profitQuality" class="form-control" id="profitQuality" placeholder="利润质量" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="rigidLiabilityAnalysis"><span class="required">*</span>刚性负债分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="rigidLiabilityAnalysis" class="form-control" id="rigidLiabilityAnalysis" placeholder="刚性负债分析" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="hiddenLiabilities"><span class="required">*</span>隐形负债</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="hiddenLiabilities" class="form-control" id="hiddenLiabilities" placeholder="隐形负债" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="contingentLiabilities"><span class="required">*</span>或有负债</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="contingentLiabilities" class="form-control" id="contingentLiabilities" placeholder="或有负债" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="historicalRecordsAnalysis"><span class="required">*</span>历史征信记录分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="historicalRecordsAnalysis" class="form-control" id="historicalRecordsAnalysis" placeholder="历史征信记录分析" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="turnoverRate"><span class="required">*</span>应收/应付/存货周转率</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="turnoverRate" class="form-control" id="turnoverRate" placeholder="应收/应付/存货周转率" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="receivableConcentration"><span class="required">*</span>应收/应付帐款集中度</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="receivableConcentration" class="form-control" id="receivableConcentration" placeholder="应收/应付帐款集中度" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="survivalScale"><span class="required">*</span>存活规模</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="survivalScale" class="form-control" id="survivalScale" placeholder="存活规模" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="advanceFundingPressure"><span class="required">*</span>预付资金压力</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="advanceFundingPressure" class="form-control" id="advanceFundingPressure" placeholder="预付资金压力" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="survivalPriceChanges"><span class="required">*</span>存活的价格变动</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="survivalPriceChanges" class="form-control" id="survivalPriceChanges" placeholder="存活的价格变动" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="mobilityTest"><span class="required">*</span>流动性测试</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="mobilityTest" class="form-control" id="mobilityTest" placeholder="流动性测试" maxlength="1000">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">债项风险点分析</legend>
+						             <legend class="little-title">基础合同</legend>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="whetherContractTransferred"><span class="required">*</span>合同是否可以转让</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="whetherContractTransferred" class="form-control" id="whetherContractTransferred" placeholder="合同是否可以转让" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="businessDisputeAgreement"><span class="required">*</span>商业纠纷的约定</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="businessDisputeAgreement" class="form-control" id="businessDisputeAgreement" placeholder="商业纠纷的约定" maxlength="100">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="contractValidity"><span class="required">*</span>合同的有效期</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="contractValidity" class="form-control" id="contractValidity" placeholder="合同的有效期" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="cntValuationMethod"><span class="required">*</span>合同的计价方式</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="cntValuationMethod" class="form-control" id="cntValuationMethod" placeholder="合同的计价方式" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="settlementMethod"><span class="required">*</span>结算方式</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="settlementMethod" class="form-control" id="settlementMethod" placeholder="结算方式" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="billing"><span class="required">*</span>开票</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="billing" class="form-control" id="billing" placeholder="开票" maxlength="30">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">应收帐款与发票的对应</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="invoiceCorrespondsContract"><span class="required">*</span>发票与合同对应</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="invoiceCorrespondsContract" class="form-control" id="invoiceCorrespondsContract" placeholder="发票与合同对应" maxlength="100">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="invoiceBillContract"><span class="required">*</span>发票与单据对应</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="invoiceBillContract" class="form-control" id="invoiceBillContract" placeholder="发票与单据对应" maxlength="100">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="invoiceCorrespondsSettlementMethod"><span class="required">*</span>发票与结算方式的对应</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="invoiceCorrespondsSettlementMethod" class="form-control" id="invoiceCorrespondsSettlementMethod" placeholder="发票与结算方式的对应" maxlength="100">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="confirmArProportionReceivable"><span class="required">*</span>确认应收帐款的受让比例</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="confirmArProportionReceivable" class="form-control" id="confirmArProportionReceivable" placeholder="确认应收帐款的受让比例" maxlength="100">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">自尝性审查</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="informFactoring"><span class="required">*</span>明保</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="informFactoring" class="form-control" id="informFactoring" placeholder="明保" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="recourse"><span class="required">*</span>有追</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="recourse" class="form-control" id="recourse" placeholder="有追" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="unInformFactoring"><span class="required">*</span>暗保理</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="unInformFactoring" class="form-control" id="unInformFactoring" placeholder="暗保理" maxlength="1000">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">应对措施</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="industryRiskAcceptanceAnalysis"><span class="required">*</span>行业的风险接受分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="industryRiskAcceptanceAnalysis" class="form-control" id="industryRiskAcceptanceAnalysis" placeholder="行业的风险接受分析" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="introductionOtherIncreaseCreditMethod"><span class="required">*</span>引入其他的增信手段</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="introductionOtherIncreaseCreditMethod" class="form-control" id="introductionOtherIncreaseCreditMethod" placeholder="引入其他的增信手段" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="associatedRiskMatchingMeasures"
+						            title="关联风险匹配措施，可要求关联方担保等措施规避"><span class="required">*</span>关联风险匹配措施，可要求关联方担保等措施规避</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="associatedRiskMatchingMeasures" class="form-control" id="associatedRiskMatchingMeasures" placeholder="关联风险匹配措施，可要求关联方担保等措施规避" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label oneline" for="assetLiabilityRatioHigh"
+						            title="资产负债率比率高，强化后期的资产管理"><span class="required">*</span>资产负债率比率高，强化后期的资产管理</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="assetLiabilityRatioHigh" class="form-control" id="assetLiabilityRatioHigh" placeholder="资产负债率比率高，强化后期的资产管理" maxlength="1000">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="mortgageGuaranteeAnalysis"><span class="required">*</span>抵质押担保分析</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="mortgageGuaranteeAnalysis" class="form-control" id="mortgageGuaranteeAnalysis" placeholder="抵质押担保分析" maxlength="1000">
+						         	</div>
+						          </div>
+						         </fieldset>
+						         <fieldset>
+						             <legend class="little-title">审查结论</legend>
+						             <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="reditLine"><span class="required">*</span>授信额度</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="reditLine" class="form-control" id="reditLine" placeholder="授信额度">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="reditLineType"><span class="required">*</span>授信额度类型</label>
+						            <div class="col-sm-6">
+						            	<select id="reditLineType" name="reditLineType" class="form-control">
+						                	<option value="1">循环额度</option>
+						                	<option value="2">单次</option>
+						                </select>
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="deadline"><span class="required">*</span>期限</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="deadline" class="form-control" id="deadline" placeholder="期限" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="arFarmInRatio"><span class="required">*</span>应收帐款的受让比例</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="arFarmInRatio" class="form-control" id="arFarmInRatio" placeholder="应收帐款的受让比例" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="busiDeadline"><span class="required">*</span>业务期限</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="busiDeadline" class="form-control" id="busiDeadline" placeholder="业务期限" maxlength="30">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="serviceFeeCollection"><span class="required">*</span>服务费的收取</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="serviceFeeCollection" class="form-control" id="serviceFeeCollection" placeholder="服务费的收取" maxlength="8">
+						         	</div>
+						          </div>
+						          <div class="form-group">
+						            <label class="col-sm-4 control-label"  for="reviewConclusion"><span class="required">*</span>复核结论</label>
+						            <div class="col-sm-6">
+						            	<input type="text" name="reviewConclusion" class="form-control" id="reviewConclusion" placeholder="复核结论" maxlength="1000">
+						         	</div>
+						          </div>
+						         </fieldset>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="tab4">
+							<!-- 合同申请 -->
+							<div id="tab4Div" style="margin-top:5px;">
+								<input type="hidden" id="interest" name="interest" />
+								<input type="hidden" id="interestRate" name="interestRate" />
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="contractNo"><span class="required">*</span>合同编号</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="contractNo" class="form-control" id="contractNo" placeholder="合同编号" maxlength="16">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="busiRela">买卖关系</label>
+						           <div class="col-sm-6">
+						            <select id="busiRela" name="busiRela" class="form-control">
+						               	<option value="1">一对一</option>
+						               	<option value="2">多对多</option>
+						               </select>
+						              </div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="arAmt"><span class="required">*</span>应收账款</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="arAmt" class="form-control" id="arAmt" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="arNote">应收账款说明</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="arNote" class="form-control" id="arNote" placeholder="应收账款说明" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="arTransfAmt"><span class="required">*</span>应收账款受让款</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="arTransfAmt" class="form-control" id="arTransfAmt" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="arTransfNote">应收账款受让款说明</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="arTransfNote" class="form-control" id="arTransfNote" placeholder="应收账款受让款说明" maxlength="4000">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="earnestMoney"><span class="required">*</span>保证金</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="earnestMoney" class="form-control" id="earnestMoney" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="serviceAmt"><span class="required">*</span>服务费</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="serviceAmt" class="form-control" id="serviceAmt" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="arTransfNotice"><span class="required">*</span>应收账款转让通知</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="arTransfNotice" class="form-control" id="arTransfNotice" placeholder="应收账款转让通知" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="guarantorName">担保人名称</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="guarantorName" class="form-control" id="guarantorName" placeholder="担保人名称" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="guaranteeName">担保品名称</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="guaranteeName" class="form-control" id="guaranteeName" placeholder="担保品名称" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="guaranteeMethod">担保方式</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="guaranteeMethod" class="form-control" id="guaranteeMethod" placeholder="担保方式" maxlength="50">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="ccy">币种</label>
+						           <div class="col-sm-6">
+						           	<select id="ccy" name="ccy" class="form-control">
+						           		<option value="0">人民币</option>
+						           		<option value="1">美元</option>
+						           	</select>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="guaranteeValue">担保价值</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="guaranteeValue" class="form-control" id="guaranteeValue" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="guaranteeFile">担保附件上传</label>
+						           <div class="col-sm-6">
+						           	<div class="input-group">
+						           		<input type="text" class="form-control" id="guaranteeFile" name="guaranteeFile" placeholder="上传附件" readonly>
+						           		<span class="input-group-addon">
+											<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+											<input type="file" name="file" id="guaranteeFileFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+								      	</span>
+						           	</div>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="inComeMakeUp">收益补偿</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="inComeMakeUp" class="form-control" id="inComeMakeUp" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="cntEffectiveTerms">合同生效条款</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="cntEffectiveTerms" class="form-control" id="cntEffectiveTerms" placeholder="合同生效条款" maxlength="4000">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="specTermsNotice">特别条款说明</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="specTermsNotice" class="form-control" id="specTermsNotice" placeholder="特别条款说明" maxlength="4000">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="cntVersion"><span class="required">*</span>合同版本</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="cntVersion" class="form-control" id="cntVersion" placeholder="1.0" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="cntEffectDate"><span class="required">*</span>合同生效日期</label>
+						           <div id="divDate" class="col-sm-6 has-feedback">
+						           	<input type="text" name="cntEffectDate" class="form-control" style="cursor: pointer;" id="cntEffectDate" readonly>
+						           	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="cntEndDate"><span class="required">*</span>合同结束日期</label>
+						           <div id="divDate" class="col-sm-6 has-feedback">
+						           	<input type="text" name="cntEndDate" class="form-control" style="cursor: pointer;" id="cntEndDate" readonly>
+						           	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="cntFiles"><span class="required">*</span>合同附件上传</label>
+						           <div class="col-sm-6">
+						           	<div class="input-group" id="divFileUpload">
+						           		<input type="text" class="form-control" id="cntFiles" name="cntFiles" placeholder="上传附件" readonly>
+						           		<span class="input-group-addon">
+											<i class="fa fa-ellipsis-h" aria-hidden="true"  onclick="FlowMngCommon.fileSelect(this);"></i>
+											<input type="file" name="file" id="cntFilesFileTab" onchange="FlowMngCommon.ajaxFileUpload(this);" style="display:none;">
+								      	</span>
+						           	</div>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="loanLimit"><span class="required">*</span>融资期限(月)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="loanLimit" class="form-control" id="loanLimit" placeholder="10" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="loanPct"><span class="required">*</span>融资比例(%)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="loanPct" class="form-control" id="loanPct" placeholder="10.00" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="loanAmt"><span class="required">*</span>融资金额(元)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="loanAmt" class="form-control" id="loanAmt" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="standardRate"><span class="required">*</span>基准利率(%)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="standardRate" class="form-control" id="standardRate" placeholder="10.00" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="rateFloatPct"><span class="required">*</span>利率上浮比例(%)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="rateFloatPct" class="form-control" id="rateFloatPct" placeholder="10.00" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="commission">手续费</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="commission" class="form-control" id="commission" placeholder="10.00">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="otherCost">其它费用</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="otherCost" class="form-control" id="otherCost" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="penaltyIntRate">罚息率(%)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="penaltyIntRate" class="form-control" id="penaltyIntRate" placeholder="10.00" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="managementFee">管理费</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="managementFee" class="form-control" id="managementFee" placeholder="10.00" readonly>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="managementFeeRate">管理费率(%)</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="managementFeeRate" class="form-control" id="managementFeeRate" placeholder="10.00" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="penalty">违约金</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="penalty" class="form-control" id="penalty" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="loanPeriod">融资期数</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="loanPeriod" class="form-control" id="loanPeriod" placeholder="10" maxlength="8">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentCorp">还款企业</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="repaymentCorp" class="form-control" id="repaymentCorp" readonly>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentDate">还款时间</label>
+						          	<div class="col-sm-6 has-feedback">
+						           	<input type="text" name="repaymentDate" class="form-control" style="cursor: pointer;" id="repaymentDate" readonly>
+						           	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentPerson">还款人</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="repaymentPerson" class="form-control" id="repaymentPerson" placeholder="还款人" maxlength="16">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentCorpAcount"><span class="required">*</span>还款企业账户</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="repaymentCorpAcount" class="form-control" id="repaymentCorpAcount" placeholder="还款企业账户" maxlength="16">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentPlan"><span class="required">*</span>还款计划</label>
+						           <div class="col-sm-6">
+						           	<select id="repaymentPlan" name="repaymentPlan" class="form-control" onchange="FlowMngCommon.changeRepaymentPlan('financeForm')">
+						               	<option value="1">年</option>
+						               	<option value="2">季度</option>
+						               	<option value="3">月</option>
+						               	<option value="4">天</option>
+						               </select>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentTimes"><span class="required">*</span>还款时长</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="repaymentTimes" class="form-control" id="repaymentTimes" placeholder="10" maxlength="11">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentAmt"><span class="required">*</span>还款金额</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="repaymentAmt" class="form-control" id="repaymentAmt" placeholder="10.00" maxlength="18">
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="repaymentType"><span class="required">*</span>还款类型</label>
+						           <div class="col-sm-6">
+						           	<select id="repaymentType" name="repaymentType" class="form-control" onchange="FlowMngCommon.setRepaymentCorp(this, 'financeForm');">
+						               	<option value="1">买方</option>
+						               	<option value="2">卖方</option>
+						               </select>
+						        	</div>
+						         </div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="tab5">
+							<!-- 放款申请 -->
+							<div id="tab5Div" style="margin-top:5px;">
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="lendBathNo">放款批次号1</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="lendBathNo" class="form-control" id="lendBathNo" placeholder="放款批次号" maxlength="11">
+						           </div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="lendAmt">放款金额1</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="lendAmt" class="form-control" id="lendAmt" placeholder="放款金额">
+						           </div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label"  for="lendDate">放款时间1</label>
+						           <div class="col-sm-6 has-feedback">
+						           	<input name="lendDate" class="form-control" id="lendDate" style="cursor: pointer;" readonly="readonly" type="text">
+						           	<span class="glyphicon glyphicon-calendar form-control-feedback"></span>
+						        	</div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="lendPerson"><span class="required">*</span>放款人1</label>
+						           <div class="col-sm-6">
+						           	<input type="text" name="lendPerson" class="form-control" id="lendPerson" placeholder="放款人" maxlength="16">
+						           </div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="lendCorp"><span class="required">*</span>放款企业1</label>
+						           <div class="col-sm-6">
+						           	<!-- <input type="text" name="lendCorp" class="form-control" id="lendCorp" placeholder="放款企业" maxlength="32"> -->
+						           	<select id="lendCorp" name="lendCorp" class="form-control">
+						           	</select>
+						           </div>
+						         </div>
+						         <div class="form-group">
+						           <label class="col-sm-4 control-label" for="lendState"><span class="required">*</span>放款状态1</label>
+						           <div class="col-sm-6">
+						           	<select id="lendState" name="lendState" class="form-control">
+						               	<option value="1">已放款</option>
+						               	<option value="2">未放款</option>
+						               </select>
+						           </div>
+						         </div>
+						         <div class="form-group">
+						            <label class="col-sm-4 control-label"></label>
+						            <div class="col-sm-6">
+						            	<div style="float:left; height:40px;">
+						            		<input type="button" value="+"
+						            		style="width:40px; height:40px; background-color:#75f25c; font-size:30px; border: none; color: #fff;" onclick="addLoan('tab5Div')">
+						            	</div>
+						            	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">添加放款批次</div>
+						            	<div style="float:left; height:40px; margin-left:10px;">
+						            		<input type="button" value="-"
+						            		style="width:40px; height:40px; background-color:#75f25c; font-size:40px; border: none; color: #fff;" onclick="delLoan('tab5Div')">
+						            	</div>
+						            	<div style="float:left; margin-left:10px; height:40px; line-height:40px;">删除放款批次</div>
+						         	</div>
+						          </div>
+						         <div id="loanDiv">
+						         </div>
+							</div>
+						</div>
+					</div>
+		        </div>
+		        <div class="modal-footer">
+				  <div class="form-group">
+					<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel"
+							data-dismiss="modal">取消
+						</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="submit" class="btn btn-default add"
+							onclick="create('financeForm', 'financeModal')">创建
+						</button>
+					</div>
+				  </div>
+				</div>
+	      	  </div>
+	    	</div>
+	 		</div>
+	 	</form>
+    </div>
+</section>
+
+</body>
+</html>

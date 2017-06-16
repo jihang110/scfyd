@@ -1,0 +1,334 @@
+package com.ut.scf.service.project.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RepositoryService;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.history.HistoricTaskInstance;
+import org.activiti.engine.history.HistoricTaskInstanceQuery;
+import org.activiti.engine.history.HistoricVariableInstance;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.activiti.engine.repository.ProcessDefinition;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.project.IActivitiDao;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.ListRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.respbean.StringRespBean;
+import com.ut.scf.service.project.IActivitiService;
+
+@Service("activitiService")
+public class ActivitiServiceImpl implements IActivitiService {
+	@Resource
+	ProcessEngine processEngine;
+	@Resource
+	RuntimeService runtimeService;
+	@Resource
+	TaskService taskService;
+	@Resource
+	RepositoryService repositoryService;
+	@Resource
+	IActivitiDao activitiDao;
+
+	/**
+	 * 发起流程
+	 */
+	public BaseRespBean startProcess(JSONObject jsonObject) {
+		BaseRespBean respBean = new BaseRespBean();
+		String userName = (String) jsonObject.get("userId");
+		String key = (String) jsonObject.get("activitiKey");
+		// 加上当前用户
+		ProcessInstance pi = processEngine.getRuntimeService()// 管理流程实例和执行对象，也就是表示正在执行的操作
+				.startProcessInstanceByKey(key);
+		// TaskService taskService =
+		// processEngine.getTaskService();//获取任务的Service，设置和获取流程变量
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId())
+				.singleResult();
+		// 获取所有的候选人
+		// List<IdentityLink> identityLinksForTask =
+		// taskService.getIdentityLinksForTask(task.getId());
+		// 判断候选人
+
+		// 拾取用户
+		taskService.claim(task.getId(), userName);
+		// 设置变量
+		taskService.setVariableLocal(task.getId(), "agencyJson",
+				jsonObject.toString());
+		// 完成节点
+		taskService.complete(task.getId());
+
+		return respBean;
+	}
+
+	/**
+	 * 查找代办
+	 */
+	@Override
+	public BaseRespBean getAgencyTaskList(Map<String, Object> map,
+			PageInfoBean page) {
+		// 2.查出所有的任务
+		/*
+		 * List<Task> tasks = processEngine.getTaskService()//与任务相关的Service
+		 * .createTaskQuery()//创建一个任务查询对象 .taskCandidateUser(userName) .list();
+		 * List<Map<String, String>> list = new ArrayList<Map<String,String>>();
+		 * for (Task task : tasks) { Map<String, String> taskMap = new
+		 * HashMap<String, String>(); taskMap.put("taskId", task.getId());
+		 * taskMap.put("processDefinitionId", task.getProcessDefinitionId());
+		 * taskMap.put("processInstanceId", task.getProcessInstanceId());
+		 * taskMap.put("taskName", task.getName()); taskMap.put("assignee",
+		 * task.getAssignee()); taskMap.put("processDefinitionName",
+		 * repositoryService
+		 * .getProcessDefinition(task.getProcessDefinitionId()).getName());
+		 * list.add(taskMap); }
+		 */
+		List<Map<String, Object>> list = activitiDao
+				.selectAgencyTask(map, page);
+		for (Map<String, Object> taskMap : list) {
+			String processInstanceId = (String) taskMap.get("procInstId");
+			// 获取倒数第二个taskId
+			List<HistoricTaskInstance> AllTaskList = processEngine
+					.getHistoryService().createHistoricTaskInstanceQuery()
+					.processInstanceId(processInstanceId).list();
+			if (AllTaskList.size() >= 2) {
+				String parentId = AllTaskList.get(AllTaskList.size() - 2)
+						.getId();
+				HistoricTaskInstance preTask = processEngine
+						.getHistoryService().createHistoricTaskInstanceQuery()
+						.taskId(parentId).singleResult();
+				taskMap.put("preAssignee", preTask.getAssignee());
+				taskMap.put("preName", preTask.getName());
+				taskMap.put("preDefKey", preTask.getTaskDefinitionKey());
+			}
+		}
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getDataByTaskId(String taskId) {
+		// TODO Auto-generated method stub
+		// 根据taskId获取流程数据
+		String processInstanceId = processEngine.getHistoryService()
+				.createHistoricTaskInstanceQuery().taskId(taskId)
+				.singleResult().getProcessInstanceId();
+		// 根据流程id查询出所有的taskId,获取倒数到第二个
+		// List<Task> list =
+		// taskService.createTaskQuery().processInstanceId(processInstanceId).list();
+		List<HistoricTaskInstance> list = processEngine.getHistoryService()
+				.createHistoricTaskInstanceQuery()
+				.processInstanceId(processInstanceId).list();
+		StringRespBean respBean = new StringRespBean();
+		if (list.size() > 1) {
+			Object value = processEngine.getHistoryService()
+					.createHistoricVariableInstanceQuery()
+					.variableName("agencyJson")
+					.taskId(list.get(list.size() - 2).getId()).list().get(0)
+					.getValue();
+			respBean.setStr(value.toString());
+		}
+		return respBean;
+	}
+
+	// 取当前节点 流程变量
+	@Override
+	public BaseRespBean findDataByTaskId(String taskId) {
+		// TODO Auto-generated method stub
+		// 根据taskId获取流程数据
+		Object value = processEngine.getHistoryService()
+				.createHistoricVariableInstanceQuery()
+				.variableName("agencyJson").taskId(taskId).singleResult()
+				.getValue();
+		StringRespBean respBean = new StringRespBean();
+		respBean.setStr(value.toString());
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean doAgree(JSONObject jsonObject) {
+		// TODO Auto-generated method stub
+		boolean flag;
+		StringRespBean respBean = new StringRespBean();
+		// 1.获取taskId和当前用户
+		String taskId = (String) jsonObject.get("taskId");
+		String agree = (String) jsonObject.get("agree");
+		String userId = (String) jsonObject.get("userId");
+
+		// 2.拾取用户
+		taskService.claim(taskId, userId);
+		// 3.设置变量
+		taskService.setVariableLocal(taskId, "agencyJson",
+				jsonObject.toString());
+		// 4.流程走向
+		if (agree.equals("0")) {
+			flag = true;
+		} else {
+			flag = false;
+		}
+		taskService.setVariable(taskId, "agree", flag);
+		// 5.完成流程
+		taskService.complete(taskId);
+		respBean.setStr(jsonObject.toString());
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean reApply(JSONObject jsonObject) {
+		// TODO Auto-generated method stub
+		BaseRespBean respBean = new BaseRespBean();
+		// 1.获取taskId和userId
+		String taskId = (String) jsonObject.get("taskId");
+		String userId = (String) jsonObject.get("userId");
+		// 2.拾取用户
+		taskService.claim(taskId, userId);
+		// 3.设置流程变量
+		taskService.setVariableLocal(taskId, "agencyJson",
+				jsonObject.toString());
+		// 4.完成流程
+		taskService.complete(taskId);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getAllHistoryVariable(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		// 1.获取流程Id
+		String procInstId = (String) map.get("procInstId");
+		ListRespBean respBean = new ListRespBean();
+		List<HistoricVariableInstance> historyList = processEngine
+				.getHistoryService().createHistoricVariableInstanceQuery()
+				.processInstanceId(procInstId).list();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (HistoricVariableInstance historicVariableInstance : historyList) {
+			Map<String, Object> historyMap = new HashMap<String, Object>();
+			if (historicVariableInstance.getVariableName().equals("agencyJson")) {
+				Object value = historicVariableInstance.getValue();
+				JSONObject jsonObject = new JSONObject(value.toString());
+				if (jsonObject.has("agree")
+						&& StringUtils.isNotEmpty(jsonObject.getString("agree"))
+						&& !"null".equals(jsonObject.getString("agree"))) {
+					String taskId = historicVariableInstance.getTaskId();
+					HistoricTaskInstance task = processEngine
+							.getHistoryService()
+							.createHistoricTaskInstanceQuery().taskId(taskId)
+							.list().get(0);
+					historyMap.put("taskName", task.getName());
+					historyMap.put("assignee", task.getAssignee());
+					historyMap.put("createTime",
+							historicVariableInstance.getCreateTime());
+					historyMap.put("advice", jsonObject.get("advice")=="null"?"":jsonObject.get("advice"));
+					historyMap.put("taskId", taskId);
+					historyMap.put("agree", jsonObject.getString("agree"));
+					historyMap.put("hisId", historicVariableInstance.getId());
+					list.add(historyMap);
+				}
+			}
+		}
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getAgencyTaskNum(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		int agencyTaskNum = activitiDao.countAgencyTask(map);
+		ListRespBean respBean = new ListRespBean();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Map<String, Object> numlist = new HashMap<String, Object>();
+		numlist.put("AgencyTaskNum", agencyTaskNum);
+		list.add(numlist);
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getHandleTaskList(Map<String, Object> map,
+			PageInfoBean page) {
+		// TODO Auto-generated method stub
+		List<Map<String, Object>> list = activitiDao
+				.selectHandleTask(map, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getHandleTaskNum(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		int HandleTaskNum = activitiDao.countHandleTask(map);
+		ListRespBean respBean = new ListRespBean();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		Map<String, Object> numlist = new HashMap<String, Object>();
+		numlist.put("HandleTaskNum", HandleTaskNum);
+		list.add(numlist);
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getHistoryTaskList(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		String procInstId = (String) map.get("procInstId");
+		ListRespBean respBean = new ListRespBean();
+		HistoricTaskInstanceQuery histTaskQuery = processEngine
+				.getHistoryService().createHistoricTaskInstanceQuery()
+				.processInstanceId(procInstId).orderByTaskCreateTime().asc();
+		List<HistoricTaskInstance> historyTaskList = histTaskQuery.list();
+		HistoricTaskInstance histSingleResult = historyTaskList.get(0);
+		ProcessDefinition ProDefInfo = processEngine.getRepositoryService()
+				.createProcessDefinitionQuery()
+				.processDefinitionId(histSingleResult.getProcessDefinitionId())
+				.singleResult();
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (HistoricTaskInstance historicTaskInstance : historyTaskList) {
+			Map<String, Object> historyMap = new HashMap<String, Object>();
+			historyMap.put("taskId", historicTaskInstance.getId());
+			historyMap.put("assignee", historicTaskInstance.getAssignee());
+			historyMap.put("name", historicTaskInstance.getName());
+			historyMap.put("procInstId",
+					historicTaskInstance.getProcessInstanceId());
+			historyMap.put("taskDefKey",
+					historicTaskInstance.getTaskDefinitionKey());
+			historyMap.put("proDefName", ProDefInfo.getName());
+			historyMap.put("proDefKey", ProDefInfo.getKey());
+			historyMap.put("createTime",
+					getStringDate(historicTaskInstance.getCreateTime()));
+			historyMap.put("endTime",
+					getStringDate(historicTaskInstance.getEndTime()));
+			list.add(historyMap);
+		}
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	public static String getStringDate(Date date) {
+		if (date != null) {
+			SimpleDateFormat formatter = new SimpleDateFormat(
+					"yyyy-MM-dd HH:mm:ss");
+			String dateString = formatter.format(date);
+			return dateString;
+		} else {
+			return null;
+		}
+
+	}
+
+}

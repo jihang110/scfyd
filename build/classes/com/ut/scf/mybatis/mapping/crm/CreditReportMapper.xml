@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.crm.ICreditReportDao">
+  
+  <select id="selectCreditReportList" parameterType="hashmap" resultType="hashmap">
+    select 
+    cr.credit_id creditId, cr.rela_corp_id relaCorpId,cr.corp_id corpId, cr.credit_situation creditSituation, 
+    cr.rating_type ratingType, cr.rating_agency ratingAgency, cr.rating_time ratingTime, 
+    cr.rating_result ratingResult, cr.note note, cr.loan_card_no loanCardNo, 
+    cr.inquiry_password inquiryPassword, cr.inquiry_time inquiryTime, 
+    cr.summary_of_credit_report summaryOfCreditReport, 
+    cr.other_channel_info otherChannelInfo, ci.corp_name corpName
+    from credit_report cr
+    join corp_info ci on ci.corp_id=cr.corp_id
+    <where>
+        1=1 and ci.status = 1
+        <if test="corpId!=null and corpId!='' ">  
+            and cr.corp_id = #{corpId}   
+        </if>
+        <if test="corpName!=null and corpName!='' ">  
+            and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')   
+        </if>
+        <if test="userCorpList !=null">
+	  		and ci.corp_id in ${userCorpList}
+		</if>
+        <if test="relaCorpId != null">
+	  		and cr.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and cr.create_user_id = #{createUserId}
+		</if>
+    </where>
+  </select>
+  
+  <delete id="deleteCreditReport" parameterType="hashmap">
+    delete from credit_report
+    where credit_id = #{creditId}
+  </delete>
+  
+  <insert id="insertCreditReport" parameterType="hashmap">
+    insert into credit_report (credit_id, corp_id, credit_situation, 
+      rating_type, rating_agency, rating_time, 
+      rating_result, note, loan_card_no, 
+      inquiry_password, inquiry_time, summary_of_credit_report, 
+      other_channel_info,rela_corp_id, create_user_id, create_time)
+    values (#{creditId}, #{corpId}, #{creditSituation}, 
+      #{ratingType}, #{ratingAgency}, #{ratingTime}, 
+      #{ratingResult}, #{note}, #{loanCardNo}, 
+      #{inquiryPassword}, #{inquiryTime}, #{summaryOfCreditReport}, 
+      #{otherChannelInfo},#{relaCorpId}, #{createUserId}, now())
+  </insert>
+  
+  <update id="updateCreditReport" parameterType="hashmap">
+    update credit_report
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId},
+      </if>
+      <if test="creditSituation != null">
+        credit_situation = #{creditSituation},
+      </if>
+      <if test="ratingType != null">
+        rating_type = #{ratingType},
+      </if>
+      <if test="ratingAgency != null">
+        rating_agency = #{ratingAgency},
+      </if>
+      <if test="ratingTime != null">
+        rating_time = #{ratingTime},
+      </if>
+      <if test="ratingResult != null">
+        rating_result = #{ratingResult},
+      </if>
+      <if test="note != null">
+        note = #{note},
+      </if>
+      <if test="loanCardNo != null">
+        loan_card_no = #{loanCardNo},
+      </if>
+      <if test="inquiryPassword != null">
+        inquiry_password = #{inquiryPassword},
+      </if>
+      <if test="inquiryTime != null">
+        inquiry_time = #{inquiryTime},
+      </if>
+      <if test="summaryOfCreditReport != null">
+        summary_of_credit_report = #{summaryOfCreditReport},
+      </if>
+      <if test="otherChannelInfo != null">
+        other_channel_info = #{otherChannelInfo},
+      </if>
+    </set>
+    where credit_id = #{creditId}
+  </update>
+  
+</mapper>

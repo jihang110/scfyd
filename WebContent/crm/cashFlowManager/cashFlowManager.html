@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="ThemeBucket">
+<link rel="shortcut icon" href="#" type="image/png">
+<title>现金流量表</title>
+<link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/style-responsive.css" rel="stylesheet">
+<link href="../../css/bootstrap-table.css" rel="stylesheet">
+<link href="../../css/bootstrap-fileupload.min.css" rel="stylesheet"
+	type="text/css" />
+
+<link href="../../css/sysfun.css" rel="stylesheet">
+<link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+<link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css"
+	rel="stylesheet" />
+<link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+<script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/CloudUtils.js"></script>
+<script src="../../js/password.js"></script>
+<script src="../../js/store.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+<script src="../../js/validation-init.js"></script>
+<script type="text/javascript"
+	src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/zh_CN.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-fileupload.min.js"></script>
+<script type="text/javascript" src="../../js/ajaxfileupload.js"></script>
+<script type="text/javascript" src="../../js/jquery.number.js"></script>
+<!--dynamic table initialization -->
+<script src="../../js/crm/cashFlowManager/cashFlowManager.js"
+	type="text/javascript"></script>
+</head>
+<body class="iframeBody">
+	<section>
+		<div class="main-content-child">
+			<div class="row">
+				<div class="title">
+					<span>现金流量表</span>
+				</div>
+			</div>
+			<fieldset>
+				<div class="form-group" style="margin: 0px;">
+					<div class="row rowpad">
+						<div class="col-sm-2">
+							<button id="btn_add" type="button" class="btn btn-default add"
+								data-toggle="modal" onclick="addFun()">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加流量信息
+							</button>
+						</div>
+						<div class="col-sm-2">
+							<button id="btn_add" type="button" class="btn btn-default add"
+								data-toggle="modal" onclick="riskAnalyAdd()" style="background:#52f99a">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加经营分析
+							</button>
+						</div>
+						<div class="col-sm-2">
+                			<button id="btn_add" type="button" class="btn btn-default add" style="background-color: #fad164;" data-toggle="modal" onclick="impFun()">
+                  			<span class="fa fa-sign-in" aria-hidden="true"></span>导入</button>
+              			</div>
+              			<div class="col-sm-2">
+                			<button id="btn_add" type="button" class="btn btn-default add" style="background-color: #db84f7;" data-toggle="modal" onclick="expFun()">
+                  			<span class="fa fa-sign-out" aria-hidden="true"></span>导出</button>
+             		 	</div>
+						<form class="form-horizontal" role="form" id="searchForm">
+							<div class="col-sm-2">
+								<select id="txt_corpId" name="txt_corpId" class="form-control">
+								</select>
+							</div>
+						</form>
+						<div class="col-sm-2">
+							<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			 <form class="form-horizontal" role="form" id="importForm" data-toggle="validator">
+        <div class="modal fade" id="importModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="importModalLabel">
+		    <div class="modal-dialog" role="document">
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="importModalLabel">导入</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<div class="form-group">
+			            <label class="col-sm-4 control-label" for="relaCorpId">下载模板</label>
+			            <div class="col-sm-6">
+				            <a style="display: inline-block;height: 40px;line-height: 40px;" id="downloadTemp" href="#">下载</a>
+		                </div>
+			        </div>
+			        <div class="form-group">
+			            <label class="col-sm-4 control-label" for="relaCorpId">所属企业</label>
+			            <div class="col-sm-6">
+				            <select id="relaCorpId" name="relaCorpId" class="form-control">
+			                </select>
+		                </div>
+			        </div>
+		        	<div class="form-group">
+						<label class="col-sm-4 control-label" for="logoUrl">上传Excel:</label>
+						<div class="col-sm-6">
+			            	  <input type="file" class="form-control" name="file1" id="file1">
+						</div>
+					</div>
+		        </div>
+		        <div class="modal-footer" >
+				  <div class="form-group">
+				  	<div class="col-sm-4"></div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消</button>
+					</div>
+					<div class="col-sm-3">
+						<button type="button" class="btn btn-default add" onclick="ajaxFileUpload1();">导入</button>
+					</div>
+				  </div>
+				</div>
+	      	  </div>
+	    	</div>
+	 	</div>
+        </form>
+
+			<form class="form-horizontal" role="form" id="addForm"
+				data-toggle="validator" ENCTYPE="multipart/form-data">
+				<input type="hidden" id="isEdit" name="isEdit"> <input
+					type="hidden" id="recUid" name="recUid">
+				<div class="modal fade" aria-hidden="true" data-backdrop="static" id="addModal" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="addModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<fieldset id='field'>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" for="corpId"><span class="required">*</span>企业名称</label>
+										<div class="col-sm-5">
+											<select id="corpId" name="corpId" class="form-control">
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-5 control-label" for="operYear"><span class="required">*</span>年份</label>
+										<div class="col-sm-5">
+											<span style="position: relative; z-index: 9999;"> <input
+												id="operYear" name="operYear" style="cursor: pointer;" class="form-control" size="16"
+												type="text" value="2016" readonly>
+											</span> <span class="add-on"><i class="icon-calendar"></i></span>
+										</div>
+									</div>
+									<div class="panel-group" id="accordion">
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+												 <legend class="little-title">经营活动产生的现金流量</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse1" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeFromSellingAndOffering">销售商品、提供劳务收到的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeFromSellingAndOffering" class="form-control"
+																id="incomeFromSellingAndOffering" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="taxBeReturned">收到的税费返还</label>
+														<div class="col-sm-5">
+															<input id="taxBeReturned"  
+																name="taxBeReturned" class="form-control" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="otherCapitalAboutTheActivity">收到其他与经营活动有关的资金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="otherCapitalAboutTheActivity" class="form-control"
+																id="otherCapitalAboutTheActivity" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeSubtotalOfOperatActivity">经营活动现金流入小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeSubtotalOfOperatActivity" class="form-control"
+																id="incomeSubtotalOfOperatActivity" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="expendOfSellCommodity">购买商品、接受劳务支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="expendOfSellCommodity" class="form-control"
+																id="expendOfSellCommodity" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="expendOfPayToStaffs">支付给职工以及为职工支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="expendOfPayToStaffs" class="form-control"
+																id="expendOfPayToStaffs" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="paymentsOfTaxes">支付的各项税费</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="paymentsOfTaxes" class="form-control"
+																id="paymentsOfTaxes" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="therExpendOfActivity">支付其他与经营活动有关的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="therExpendOfActivity" class="form-control"
+																id="therExpendOfActivity" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="outcomeSubtotalOfOperatActivity">经营活动现金流出小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="outcomeSubtotalOfOperatActivity" class="form-control"
+																id="outcomeSubtotalOfOperatActivity" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="netAmountOfCashFlow">经营活动产生的现金流量净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="netAmountOfCashFlow" class="form-control"
+																id="netAmountOfCashFlow" readonly placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+												 <legend class="little-title">投资活动产生的现金流量</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse2" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeFromWithdrawInvestment">收回投资收到的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeFromWithdrawInvestment" class="form-control"
+																id="incomeFromWithdrawInvestment" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="otherCashReceivedInvestActivity">收到其他与投资活动有关的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="otherCashReceivedInvestActivity" class="form-control"
+																id="otherCashReceivedInvestActivity" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashOfFixedIntangibleOtherLong" title="处置固定资产、无形资产和其他长期资产收回的现金净额">处置固定资产、无形资产和其他长期资产收回的现金净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashOfFixedIntangibleOtherLong" class="form-control"
+																id="cashOfFixedIntangibleOtherLong" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashFromDisposalOtherBusiness" title="处置子公司及其他营业单位收到的现金净额">处置子公司及其他营业单位收到的现金净额</label>
+														<div class="col-sm-5">
+															<input type="text" name="cashFromDisposalOtherBusiness"
+																class="form-control" id="cashFromDisposalOtherBusiness" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashFromInvestIncome">取得投资收益收到的现金</label>
+														<div class="col-sm-5">
+															<input type="text" name="cashFromInvestIncome"
+																class="form-control" id="cashFromInvestIncome" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeSubtotalOfInvestmentActivities">投资活动现金流入小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeSubtotalOfInvestmentActivities"
+																class="form-control"
+																id="incomeSubtotalOfInvestmentActivities" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashOfFixedIntangibleLong" title="购建固定资产、无形资产和其他长期资产支付的现金">购建固定资产、无形资产和其他长期资产支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashOfFixedIntangibleLong" class="form-control"
+																id="cashOfFixedIntangibleLong" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="expenditureOfInvest">投资支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="expenditureOfInvest" class="form-control"
+																id="expenditureOfInvest" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashPaidForBusinessSubsidiaries" title="取得子公司及其他营业单位支付的现金净额">取得子公司及其他营业单位支付的现金净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashPaidForBusinessSubsidiaries" class="form-control"
+																id="cashPaidForBusinessSubsidiaries" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="expendOfActivityAboutInvestment">支付其他与投资活动有关的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="expendOfActivityAboutInvestment" class="form-control"
+																id="expendOfActivityAboutInvestment" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="outcomeSubtotalOfInvestmentActivities">投资活动现金流出小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="outcomeSubtotalOfInvestmentActivities"
+																class="form-control"
+																id="outcomeSubtotalOfInvestmentActivities" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="investmentAmountOfCashFlow">投资活动产生的现金流量净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="investmentAmountOfCashFlow" class="form-control"
+																id="investmentAmountOfCashFlow" readonly placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+												 <legend class="little-title">筹资活动产生的现金流量</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse3" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeFromAbsorbInvestment">吸收投资收到的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeFromAbsorbInvestment" class="form-control"
+																id="incomeFromAbsorbInvestment" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeFromObtainBorrowMoney">取得借款收到的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeFromObtainBorrowMoney" class="form-control"
+																id="incomeFromObtainBorrowMoney" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="otherIncomeFromRaiseMoney">收到其他与筹资活动有关的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="otherIncomeFromRaiseMoney" class="form-control"
+																id="otherIncomeFromRaiseMoney" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="incomeSubtotalOfFinanceActivities">筹资活动现金流入小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="incomeSubtotalOfFinanceActivities"
+																class="form-control" id="incomeSubtotalOfFinanceActivities" readonly placeholder="1000.00">  
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="expendOfRepaymentOfDept">偿还债务支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="expendOfRepaymentOfDept" class="form-control"
+																id="expendOfRepaymentOfDept" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashOfDividendsProfitInterest" title="分配股利、利润或偿付利息支付的现金">分配股利、利润或偿付利息支付的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="cashOfDividendsProfitInterest" class="form-control"
+																id="cashOfDividendsProfitInterest" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="otherExpendActivityRaiseMoney">支付其他与筹资活动有关的现金</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="otherExpendActivityRaiseMoney" class="form-control"
+																id="otherExpendActivityRaiseMoney" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="outcomeSubtotalOfFinancingActivities">筹资活动现金流出小计</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="outcomeSubtotalOfFinancingActivities"
+																class="form-control"
+																id="outcomeSubtotalOfFinancingActivities" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="financingAmountOfCashFlow">筹资活动产生的现金流量净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="financingAmountOfCashFlow" class="form-control"
+																id="financingAmountOfCashFlow" readonly placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="influenceFluctuationCash">汇率变动对现金及现金等价物的影响</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="influenceFluctuationCash" class="form-control"
+																id="influenceFluctuationCash" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="increaseCashEquivalent">现金及现金等价物净增加额</label>
+														<div class="col-sm-5">
+															<input type="text" name="increaseCashEquivalent"
+																class="form-control" id="increaseCashEquivalent" readonly placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse4">
+												 <legend class="little-title">将净利润调节为经营活动现金流量</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse4" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="margin">净利润</label>
+														<div class="col-sm-5">
+															<input type="text" name="margin" class="form-control"
+																id="margin" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="preparationOfDevaluation">资产减值准备</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="preparationOfDevaluation" class="form-control"
+																id="preparationOfDevaluation" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="depreciationOfFixed" title="固定资产折旧、油气资产折耗、生产性生物资产折旧">固定资产折旧、油气资产折耗、生产性生物资产折旧</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="depreciationOfFixed" class="form-control"
+																id="depreciationOfFixed" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="amortizationOfIntangible">无形资产摊销</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="amortizationOfIntangible" class="form-control"
+																id="amortizationOfIntangible" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="amortizationOfLong">长期待摊费用摊销</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="amortizationOfLong" class="form-control"
+																id="amortizationOfLong" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="lossFromDisposal" title="处置固定资产、无形资产和其他长期资产的损失">处置固定资产、无形资产和其他长期资产的损失</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="lossFromDisposal" class="form-control"
+																id="lossFromDisposal" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="lossOfFixed">固定资产报废损失</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="lossOfFixed" class="form-control" id="lossOfFixed" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="changeInFairValueLoss">公允价值变动损失</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="changeInFairValueLoss" class="form-control"
+																id="changeInFairValueLoss" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="financialExpenses">财务费用</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="financialExpenses" class="form-control"
+																id="financialExpenses" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="investmentLoss">投资损失</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="investmentLoss" class="form-control"
+																id="investmentLoss" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="decreaseInDeferredTax">递延所得税资产减少</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="decreaseInDeferredTax" class="form-control"
+																id="decreaseInDeferredTax" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="increaseInDeferredTaxLiabilities">递延所得税负债增加</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="increaseInDeferredTaxLiabilities"
+																class="form-control" id="increaseInDeferredTaxLiabilities" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="decreaseInInventories">存货的减少</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="decreaseInInventories" class="form-control"
+																id="decreaseInInventories" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="decreaseInOperatingReceivables">经营性应收项目的减少</label>
+														<div class="col-sm-5">
+															<input type="text" name="decreaseInOperatingReceivables"
+																class="form-control" id="decreaseInOperatingReceivables" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="increaseInOperatingPayables">经营性应付项目的增加</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="increaseInOperatingPayables" class="form-control"
+																id="increaseInOperatingPayables" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="other">其他</label>
+														<div class="col-sm-5">
+															<input type="text"   name="other"
+																class="form-control" id="other" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="otherAmountOfCashFlow">其他经营活动产生的现金流量净额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="otherAmountOfCashFlow" class="form-control"
+																id="otherAmountOfCashFlow" readonly placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse5">
+												 <legend class="little-title">不涉及现金收支的重大投资和筹资活动</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse5" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="debtTurnIntoCapital">债务转为资本</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="debtTurnIntoCapital" class="form-control"
+																id="debtTurnIntoCapital" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="convertibleBonds">一年内到期的可转换公司债券</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="convertibleBonds" class="form-control"
+																id="convertibleBonds" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="theLeasedAssets">融资租入固定资产</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="theLeasedAssets" class="form-control"
+																id="theLeasedAssets" placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+										<fieldset class="panel panel-default">
+											<div class="panal-head-title">
+												<h4 class="panel-title">
+												<a data-toggle="collapse" data-parent="#accordion" href="#collapse6">
+												 <legend class="little-title">现金及现金等价物净变动情况</legend>
+												</a>
+												</h4>
+											</div>
+											<div id="collapse6" class="panel-collapse collapse in">
+												<div class="panel-body">
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="closeBalanceOfCash">现金的期末余额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="closeBalanceOfCash" class="form-control"
+																id="closeBalanceOfCash" placeholder="1000.00" >
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label" for="openBalanceOfCash">现金的期初余额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="openBalanceOfCash" class="form-control"
+																id="openBalanceOfCash" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="closeBalanceOfCashEquivalents">现金等价物的期末余额</label>
+														<div class="col-sm-5">
+															<input type="text"  
+																name="closeBalanceOfCashEquivalents" class="form-control"
+																id="closeBalanceOfCashEquivalents" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="openBalanceOfCashEquivalents">现金等价物的期初余额</label>
+														<div class="col-sm-5">
+															<input type="text" name="openBalanceOfCashEquivalents"
+																class="form-control" id="openBalanceOfCashEquivalents" placeholder="1000.00">
+														</div>
+													</div>
+													<div class="form-group">
+														<label class="col-sm-5 control-label"
+															for="cashAndCashEquivalents">现金及现金等价物净增加额</label>
+														<div class="col-sm-5">
+															<input type="text" name="cashAndCashEquivalents"
+																class="form-control" id="cashAndCashEquivalents" readonly placeholder="1000.00">
+														</div>
+													</div>
+												</div>
+											</div>
+										</fieldset>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer">
+								<div class="form-group">
+									<div class="col-sm-4"></div>
+									<div class="col-sm-3">
+										<button type="button" class="btn btn-default cancel"
+											data-dismiss="modal">取消</button>
+									</div>
+									<div class="col-sm-3">
+										<button type="submit" id="btn_save"
+											class="btn btn-default add" 
+											onclick="saveUser()">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<form class="form-horizontal" role="form" id="riskForm"
+				data-toggle="validator">
+				<div class="modal fade" id="riskModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="riskModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<fieldset id='field2'>
+									<input type="hidden" id="recUid" name="recUid"> <input
+										type="hidden" id="riskEdit" name="riskEdit">
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="r_corpId">企业名称</label>
+										<div class="col-sm-6">
+											<select id="r_corpId" name="r_corpId" class="form-control">
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="environmentPolicyRegulationAnaly">宏观、行业、区域环境及政策法规分析</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="environmentPolicyRegulationAnaly"
+												class="form-control" id="environmentPolicyRegulationAnaly"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="marketPositionAnaly">所在区域市场及行业市场地位分析</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="marketPositionAnaly"
+												class="form-control" id="marketPositionAnaly"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="competitorGeneralizeAnaly">同业竞争对手、所在区域竞争对手的概括及评价</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="competitorGeneralizeAnaly"
+												class="form-control" id="competitorGeneralizeAnaly"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="productAnaly">产品分析</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="productAnaly" class="form-control"
+												id="productAnaly"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="operateFlowChart">经营流程图</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="operateFlowChart" class="form-control"
+												id="operateFlowChart"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="operateFlowFile">经营流程关键文件</label>
+										<div class="col-sm-6">
+											<div class="input-group">
+												<input type="text" class="form-control" id="operateFlowFile"
+													name="operateFlowFile" readonly> <span
+													class="input-group-addon"> <i
+													class="fa fa-ellipsis-h" aria-hidden="true"
+													onclick="fileSelect();"></i> <input type="file" name="file"
+													id="file" onchange="ajaxFileUpload();"
+													style="display: none;">
+												</span>
+											</div>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="operateFlowRiskAnaly">经营流程风险点分析</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="operateFlowRiskAnaly"
+												class="form-control" id="operateFlowRiskAnaly"></textarea>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer">
+								<div class="form-group">
+									<div class="col-sm-4" id="btn_blank"></div>
+									<div class="col-sm-3">
+										<button type="button" class="btn btn-default cancel"
+											data-dismiss="modal">取消</button>
+									</div>
+									<div class="col-sm-3">
+										<button type="submit" id="btn_risk_submit"
+											class="btn btn-default add" 
+											onclick="saveRiskAnaly()">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="panel-body">
+				<table id="cashflowList" class="table" cellspacing="0" width="100%">
+				</table>
+				<table id="riskAnalyList" class="table" cellspacing="0" width="100%">
+				</table>
+			</div>
+		</div>
+	</section>
+
+</body>
+</html>

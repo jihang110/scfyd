@@ -1,0 +1,108 @@
+       <form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+		         <input type="hidden" name="agencyName" id="agencyName" >
+		          <input type="hidden" name="agencyNum" id="agencyNum">
+		           <input type="hidden" name="maxCredit" id="maxCredit" >
+		          <input type="hidden" name="availableCredit" id="availableCredit">
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label" for="financeId">融资编号</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="financeId" name="financeId" readonly/>
+	                </div>
+	                <button type="button" onclick="getFinanceInfo()" class="btn btn-info">获取融资信息</button>
+		            <label class="col-sm-2 control-label" for="applyDate">申请日期</label>
+		            <div class="col-sm-3">
+			            <input type="text" class="form-control" id="applyDate" name="applyDate" readonly/>
+	                </div>
+		          </div>
+		            <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="financeStartDate">融资起始日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeStartDate" class="form-control" id="financeStartDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="融资起始日" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="financeEndDate">融资到期日</label>
+		            <div class="col-sm-3">
+		            	<input name="financeEndDate" class="form-control" id="financeEndDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="融资到期日" readonly >
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="financeAmount">融资金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label"  for="payDate">付款日期</label>
+		            <div class="col-sm-3">
+		            	<input name="payDate" class="form-control" id="payDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="付款日期" readonly >
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="payAmt">付款金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payAmt" class="form-control" id="payAmt" readonly>
+		         	</div>
+		            <label class="col-sm-2 control-label" for="guaranteeMoneyRate">保证金比例(%)</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="guaranteeMoneyRate" class="form-control" id="guaranteeMoneyRate" readonly>
+		          	</div>
+		          </div>
+		           <div class="form-group">
+		            <label class="col-sm-2 control-label" for="payAbleGuarantee">应缴保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payAbleGuarantee" class="form-control" id="payAbleGuarantee" readonly>
+		          	</div>
+		            <label class="col-sm-2 control-label"  for="guaranteePayDate">保证金缴纳日期</label>
+		            <div class="col-sm-3">
+		            	<input name="guaranteePayDate" class="form-control" id="guaranteePayDate"
+		 				style="cursor: pointer;" size="16" type="text" placeholder="保证金缴纳日期" readonly >
+		         	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label" for="payActGuarantee">实缴保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="payActGuarantee" class="form-control" id="payActGuarantee" readonly>
+		          	</div>
+		            <label class="col-sm-2 control-label" for="returnGuaranteeAmt">退还保证金金额</label>
+		            <div class="col-sm-3">
+		            	<input type="text" name="returnGuaranteeAmt" class="form-control" id="returnGuaranteeAmt" readonly>
+		          	</div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-2 control-label"  for="remark">备注</label>
+		            <div class="col-sm-3">
+					    <textarea id="remark"  name="remark" class="form-control"></textarea>
+		          	</div>
+		          </div>
+		        </form> 
+		    	    	    <!-- 获取经销商融资信息 -->
+	 	<div class="modal fade" id="financeModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="financeModalLabel">
+		 <div class="modal-dialog" role="document" style='width:800px'>
+			 <div class="modal-content">
+			 	<div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+		          <h4 class="modal-title" id="financeModalLabel">经销商融资信息</h4>
+		        </div>
+		        <div class="modal-body">
+		        <div class="panel-body">
+			        <table  id="agencyListTable" class="table" height="100%" cellspacing="0" width="100%">
+					</table>
+				 </div>
+		        </div>
+		        <div class="modal-footer">
+					  <div class="form-group">
+						<div class="col-sm-2 col-sm-offset-8">
+							<button type="button" class="btn btn-default cancel"
+								data-dismiss="modal">取消
+							</button>
+						</div>
+						<div class="col-sm-1">
+							<button type="submit" id="btn_save" class="btn btn-default save"
+								 onclick="checkFinaceInfo()">保存
+							</button>
+						</div>
+					</div>
+				 </div>
+		 </div>
+	</div>
+	</div>              

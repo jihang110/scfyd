@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IDykRateDao" >
+
+   <resultMap id="dykRateResultMap" type="com.ut.scf.pojo.auto.DykRate">
+   	<id column="product_id" jdbcType="VARCHAR" property="productId" />
+    <result column="product_name" jdbcType="VARCHAR" property="productName" />
+    <result column="rate_standard" jdbcType="VARCHAR" property="guaranteeMoneyRate" />
+    
+  </resultMap>
+  
+  <select id="getDykRateList" resultType="hashmap" parameterType="hashmap">
+  		select  product_id productId,product_name productName,rate_standard rateStandard,
+				dyk_rate dykRate 
+				from dyk_rate  
+    <where> 
+        <if test="productId!=null and productId!='' ">  
+            and product_id = #{productId}
+        </if>
+    </where>
+  </select>
+  
+</mapper>

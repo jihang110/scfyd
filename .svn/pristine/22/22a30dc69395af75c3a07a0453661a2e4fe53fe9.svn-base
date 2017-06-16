@@ -1,0 +1,342 @@
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
+var procdefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procdefKey;
+var processDefinitionId = "";
+$(function() {
+    showTabs();
+    showGraph();
+    initTaskTable(procInstId);
+    getAllHisVal();
+    $('#adviceModal').on('hidden.bs.modal', function(){
+		$("#advice").val("");
+	});
+});
+
+
+function showTabs() {
+    showOrHideButton();
+    //企业信息管理
+    if (procdefKey == "custManage") {
+        if (taskDefKey == "usertask1") {
+            //在申请
+            CloudUtils.getTab("../../pubManager/custManager/custReapplyPackage.html", "projectInfo");
+            jQuery.getScript("../../js/project/agencyCommon/custReapply.js");
+        } else {
+            //审批
+            CloudUtils.getTab("../../pubManager/custManager/custAgencyPackage.html", "projectInfo");
+            jQuery.getScript("../../js/project/agencyCommon/custInfo.js");
+        }
+    } else if (procdefKey == "contractManager") {
+        if (taskDefKey == "task_contract_pm" || taskDefKey == "task_contract_fw") {
+            CloudUtils.getTab('../../project/dykManager/contractManager/contractAgencyTask.html', "projectInfo");
+            jQuery.getScript("../../js/project/dykManager/contractManager/contractAgencyTask.js");
+        } else if (taskDefKey == "task_contract_jxs") {
+            CloudUtils.getTab('../../project/dykManager/contractManager/contractReapply.html', "projectInfo");
+            jQuery.getScript("../../js/project/dykManager/contractManager/contractReapply.js");
+        }
+    } else if (procdefKey == "accAgencyProcess") {
+        CloudUtils.getTab('../../project/dykManager/agencyReview.html', "projectInfo");
+        jQuery.getScript("../../js/project/dykManager/agencyReview.js");
+    } else if (procdefKey == "contractSign") {
+        if (taskDefKey == "task_sign_ssm") {
+            CloudUtils.getTab('../../project/ssmManager/orderManager/ssmAgencyTask.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/orderManager/ssmAgencyTask.js");
+
+        } else if (taskDefKey == "task_sign_fw") {
+            CloudUtils.getTab('../../project/ssmManager/orderManager/fwAgencyTask.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/orderManager/fwAgencyTask.js");
+
+        } else if (taskDefKey == "task_sign_pl") {
+            CloudUtils.getTab('../../project/ssmManager/orderManager/contractReapply.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/orderManager/contractReapply.js");
+        }
+    } else if (procdefKey == "ssmRepayManager") {
+        if (taskDefKey == "task_repay_cw") {
+            CloudUtils.getTab('../../project/ssmManager/repayManager/repayAgencyTask.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/repayManager/repayAgencyTask.js");
+        }
+    } else if (procdefKey=="financeMngProcess") {
+		if (taskDefKey == "usertask1") {
+			CloudUtils.getTab('../../project/dykManager/financeApply.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/financeApply.js");
+		} else if (taskDefKey == "usertask2") {
+			CloudUtils.getTab('../../project/dykManager/regGuarantee.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/regGuarantee.js");
+		} else {
+			CloudUtils.getTab('../../project/dykManager/financeReview.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/financeReview.js");
+		}
+	} else if (procdefKey=="payCommitment") {
+		if (taskDefKey == "usertask1") {
+			CloudUtils.getTab('../../project/dykManager/payCommitmentReapply.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/payCommitmentReapply.js");
+		} else if (taskDefKey == "usertask2") {
+			CloudUtils.getTab('../../project/dykManager/fillGuarantee.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/fillGuarantee.js");
+		} else {
+			CloudUtils.getTab('../../project/dykManager/payCommitmentReview.html',"projectInfo");
+			jQuery.getScript("../../js/project/dykManager/payCommitmentReview.js");
+		}
+	} else if(procdefKey == "refundDeposit"){
+    	if(taskDefKey == "usertask1"){
+    		CloudUtils.getTab('../../project/dykManager/refundDepositReapply.html', "projectInfo");
+    		jQuery.getScript("../../js/project/dykManager/refundDepositReApply.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/refundDepositAgency.html', "projectInfo");
+	        jQuery.getScript("../../js/project/dykManager/refundDepositAgency.js");
+    	}
+	    	 
+    }else if(procdefKey == "OffsetDeposit"){
+    	if(taskDefKey == "usertask1"){
+    		CloudUtils.getTab('../../project/dykManager/offsetDepositReapply.html', "projectInfo");
+    		jQuery.getScript("../../js/project/dykManager/offsetDepositReapply.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/offsetDepositAgency.html', "projectInfo");
+	        jQuery.getScript("../../js/project/dykManager/offsetDepositAgency.js");
+    	}
+    } else if(procdefKey == "revenue"){
+    	if(taskDefKey == "task_reg_revenue"){
+    		CloudUtils.getTab('../../project/dykManager/revenueReapply.html', "projectInfo");
+    		jQuery.getScript("../../js/project/dykManager/revenueReapply.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/revenueAgency.html', "projectInfo");
+	        jQuery.getScript("../../js/project/dykManager/revenueAgency.js");
+    	}
+    } else if(procdefKey == "dykRepayment"){
+    	if(taskDefKey == "usertask1"){
+    		CloudUtils.getTab('../../project/dykManager/repayReapply.html', "projectInfo");
+    		jQuery.getScript("../../js/project/dykManager/repayReapply.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/repayReview.html', "projectInfo");
+	        jQuery.getScript("../../js/project/dykManager/repayReview.js");
+    	}
+    }
+}
+
+function doAgree(type) {
+    $("#agree").val(type);
+	// 融资管理和付款承诺函的场合
+	if ((procdefKey == "financeMngProcess" && taskDefKey == "usertask3")
+		|| procdefKey == "payCommitment") {
+		if (type == 0) {//同意
+			$("#backDiv").hide();
+		} else {//拒绝
+			$("#backDiv").show();
+		}
+	}
+}
+
+function showOrHideButton() {
+    if (taskDefKey == "task_sign_ssm") {
+        $("#btn_refuse").hide();
+    }
+
+    if (taskDefKey == "usertask1"
+    	|| (procdefKey == "financeMngProcess"
+        	&& taskDefKey == "usertask2")
+    	|| taskDefKey == "task_contract_jxs"
+    	|| taskDefKey == "task_sign_pl") {
+        $(".reapplyButton").show();
+        $(".agencyButton").hide();
+    } else {
+        $(".reapplyButton").hide();
+        $(".agencyButton").show();
+    }
+}
+
+//图片
+function showGraph() {
+    $("#pic").attr("src", "../../activiti/graph?processDefinitionId=" + processDefinitionId +
+        "&processInstanceId=" + procInstId + "&taskId=" + taskId);
+    $("#picModal").modal({ backdrop: 'static', keyboard: false });
+}
+//历史
+function initTaskTable(procInstId) {
+    $('#taskListTable').bootstrapTable('destroy');
+    $("#taskListTable").bootstrapTable({
+        method: "post",
+        url: "../../activiti/getHistoryTaskList",
+        striped: true, //表格显示条纹  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) { //设置查询参数  
+            var param = {
+                procInstId: procInstId
+            };
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'procInstId',
+            title: '进程Id',
+            align: 'center',
+            valign: 'middle',
+            visible: false
+        }, {
+            field: 'taskId',
+            title: 'taskId',
+            align: 'center',
+            valign: 'middle',
+            visible: false
+
+        }, {
+            field: 'name',
+            title: '任务名称',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'assignee',
+            title: '办理人',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'createTime',
+            title: '创建时间',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'endTime',
+            title: '结束时间',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'operation',
+            title: '编辑',
+            align: 'center',
+            formatter: function(value, row, index) {
+                var d = '<a class = "fa fa-list-ul detail" style="color:#278bdd;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+                return d;
+            },
+            events: 'agencyOperateEvents'
+        }]
+    });
+}
+//获取历审核的意见
+function getAllHisVal() {
+    $('#historyAdviceTable').bootstrapTable('destroy');
+    $("#historyAdviceTable").bootstrapTable({
+        method: "post",
+        url: "../../activiti/getAllHistoryVariable",
+        striped: true, //表格显示条纹  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) { //设置查询参数  
+            var param = {
+                procInstId: procInstId
+            };
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'assignee',
+            title: '办理人',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'createTime',
+            title: '创建时间',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                return CloudUtils.FormatDate(value);
+            }
+        }, {
+            field: 'agree',
+            title: '是否同意',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                if (value == "0") {
+                    return "是";
+                } else if (value = "1") {
+                    return "否";
+                }
+            }
+        }, {
+            field: 'advice',
+            title: '意见',
+            align: 'center',
+            valign: 'middle'
+        }]
+    });
+}
+
+
+function goback() {
+    history.go(-1);
+}
+
+window.agencyOperateEvents = {
+	    'click .detail': function (e, value, row, index) {
+	    	/*getVariableByTaskId(row.taskId)*/
+	    	store.set('agencyRow',row);//把数据存储在缓存中
+	    	choosePage(row);
+	    } 
+};
+
+function choosePage(row){
+	if (row.proDefKey == "custManage") {
+		CloudUtils.getTab("../../pubManager/custManager/custHisDetail/custHisDetail.html", "taskInfo");
+		if(row.taskDefKey=="usertask1"){
+			$(".adviceHidden").hide();
+		}else{
+			$(".adviceHidden").show();
+		}
+       jQuery.getScript("../../js/project/agencyCommon/custHisDetail/custHisDetail.js");
+    }else if(row.proDefKey == "refundDeposit"){
+    	if(row.taskDefKey == "usertask1"){
+    		CloudUtils.getTab('../../project/dykManager/refundDepositDetail/refundDepositRepDetail.html', "taskInfo");
+    		jQuery.getScript("../../js/project/agencyCommon/refundDepositHisDetail/refundDepositHisDetail.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/refundDepositDetail/refundDepositAgeDetail.html', "taskInfo");
+	        jQuery.getScript("../../js/project/agencyCommon/refundDepositHisDetail/refundDepositHisDetail.js");
+    	}
+    }else if(row.proDefKey == "OffsetDeposit"){
+    	if(row.taskDefKey == "usertask1"){
+    		CloudUtils.getTab('../../project/dykManager/offsetDepositDetail/offsetDepositRepDetail.html', "taskInfo");
+    		jQuery.getScript("../../js/project/agencyCommon/offsetDepositHisDetail/offsetDepositHisDetail.js");
+    	}else {
+    		CloudUtils.getTab('../../project/dykManager/offsetDepositDetail/offsetDepositAgeDetail.html', "taskInfo");
+	        jQuery.getScript("../../js/project/agencyCommon/offsetDepositHisDetail/offsetDepositHisDetail.js");
+    	}
+    }
+}

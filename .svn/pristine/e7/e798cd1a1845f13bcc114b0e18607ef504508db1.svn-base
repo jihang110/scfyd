@@ -1,0 +1,10 @@
+package com.ut.scf.dao.pub;
+
+import java.util.List;
+import java.util.Map;
+
+import com.ut.scf.core.dict.PageInfoBean;
+
+public interface IStuInfoDao {
+	List<Map<String, Object>> getStuIfnoPageList(PageInfoBean page);
+}

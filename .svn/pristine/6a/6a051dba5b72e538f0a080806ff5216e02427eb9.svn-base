@@ -1,0 +1,59 @@
+package com.ut.scf.reqbean.sys;
+
+import java.util.Date;
+
+import com.ut.scf.reqbean.PageReqBean;
+
+public class WarningReqBean extends PageReqBean {
+
+	private String warningId;
+
+	private String warningTitle;
+
+	private Date sendTime;
+
+	private String warningStatus;
+
+	private String warningMsg;
+
+	public String getWarningId() {
+		return warningId;
+	}
+
+	public void setWarningId(String warningId) {
+		this.warningId = warningId;
+	}
+
+	public String getWarningTitle() {
+		return warningTitle;
+	}
+
+	public void setWarningTitle(String warningTitle) {
+		this.warningTitle = warningTitle;
+	}
+
+	public Date getSendTime() {
+		return sendTime;
+	}
+
+	public void setSendTime(Date sendTime) {
+		this.sendTime = sendTime;
+	}
+
+	public String getWarningStatus() {
+		return warningStatus;
+	}
+
+	public void setWarningStatus(String warningStatus) {
+		this.warningStatus = warningStatus;
+	}
+
+	public String getWarningMsg() {
+		return warningMsg;
+	}
+
+	public void setWarningMsg(String warningMsg) {
+		this.warningMsg = warningMsg;
+	}
+
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IStuInfoDao" >
+  
+  <resultMap id="StuInfoResultMap" type="com.ut.scf.pojo.auto.StuInfo">
+   <id column="stu_id" jdbcType="VARCHAR" property="stuId" />
+    <result column="stu_name" jdbcType="VARCHAR" property="stuName" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="age" jdbcType="TINYINT" property="age" />
+    <result column="birth_date" jdbcType="VARCHAR" property="birthDate" />
+    <result column="id_card" jdbcType="VARCHAR" property="idCard" />
+    <result column="nation" jdbcType="VARCHAR" property="nation" />
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone" />
+    <result column="school_name" jdbcType="VARCHAR" property="schoolName" />
+    <result column="grade" jdbcType="VARCHAR" property="grade" />
+    <result column="dorm" jdbcType="VARCHAR" property="dorm" />
+    <result column="graduate_date" jdbcType="VARCHAR" property="graduateDate" />
+    <result column="stu_file" jdbcType="VARCHAR" property="stuFile" />
+  </resultMap>
+  
+  <select id="getStuIfnoPageList" resultType="hashmap"  parameterType="hashmap">
+    select si.stu_id stuId, si.stu_name stuName, si.gender gender, si.age age, si.birth_date birthDate, si.id_card idCard, si.nation nation, si.mobile_phone mobilePhone, si.school_name schoolName, 
+    si.grade grade, si.dorm dorm, si.graduate_date graduateDate 
+    from  stu_info si
+    where 1=1
+    <if test="stuName != null and stuName != ''">
+	  and si.stu_name LIKE CONCAT(CONCAT('%', #{stuName}),'%')
+	</if>
+	<if test="mobilePhone != null and mobilePhone != ''">
+	  and si.mobile_phone LIKE CONCAT(CONCAT('%', #{mobilePhone}),'%') 
+	</if>
+	<if test="idNum !=null">
+	  and si.id_card LIKE CONCAT(CONCAT('%', #{idCard}),'%')
+	</if>
+    order by si.graduate_date
+  </select>
+  
+  <select id="getStuDetailList" resultType="hashmap"  parameterType="hashmap">
+    select si.stu_id stuId, si.stu_name stuName, si.gender gender, si.age age, si.birth_date birthDate, si.id_card idCard, si.nation nation, si.mobile_phone mobilePhone, si.school_name schoolName, 
+    si.grade grade, si.dorm dorm, si.graduate_date graduateDate ,sfi.stu_file stuFile
+    from  stu_info si
+    left join stu_file_info sfi on si.stu_id = sfi.stu_id
+    where 1=1
+  </select>
+  
+</mapper>

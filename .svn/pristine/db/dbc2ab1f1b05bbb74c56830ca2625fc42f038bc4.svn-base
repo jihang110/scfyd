@@ -1,0 +1,24 @@
+package com.ut.scf.service.pub;
+
+import java.util.Map;
+
+import org.activiti.engine.RuntimeService;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.pojo.auto.CorpInfo;
+import com.ut.scf.respbean.BaseRespBean;
+
+/**
+ * @author jihang
+ *	企业
+ */
+public interface ICustManagerService {
+
+	public BaseRespBean startProcess(RuntimeService runtimeService,String processDefinitionKey);
+	
+	public BaseRespBean getcorpList(Map<String, Object> paramMap, PageInfoBean page);
+	
+	public BaseRespBean addCorp(CorpInfo corpInfo);
+	
+	public BaseRespBean updateCorp(CorpInfo corpInfo);
+}

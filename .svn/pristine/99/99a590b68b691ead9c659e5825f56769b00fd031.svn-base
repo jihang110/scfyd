@@ -1,0 +1,101 @@
+package com.ut.scf.service.project.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.dao.auto.DykRateMapper;
+import com.ut.scf.dao.auto.FinanceInfoMapper;
+import com.ut.scf.dao.auto.GuaranteeMoneyManagementMapper;
+import com.ut.scf.dao.auto.InterestManagementMapper;
+import com.ut.scf.dao.project.IFinanceInfoDao;
+import com.ut.scf.pojo.auto.DykRate;
+import com.ut.scf.pojo.auto.DykRateExample;
+import com.ut.scf.pojo.auto.GuaranteeMoneyManagement;
+import com.ut.scf.pojo.auto.InterestManagement;
+import com.ut.scf.pojo.auto.InterestManagementExample;
+import com.ut.scf.pojo.auto.InterestManagementExample.Criteria;
+import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.respbean.project.FinanceInfoRespBean;
+import com.ut.scf.service.project.IFinanceInfoService;
+
+@Service("financeInfoService")
+public class FinanceInfoServiceImpl implements IFinanceInfoService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Resource
+	private FinanceInfoMapper financeInfoMapper;
+	
+	@Resource
+	private IFinanceInfoDao financeInfoDao;
+	
+	@Resource
+	private GuaranteeMoneyManagementMapper guaranteeMapper;
+	
+	@Resource
+	private InterestManagementMapper interestMapper;
+	
+	@Resource
+	private DykRateMapper dykRateMapper;
+
+	/**
+	 * 条件查询 分页获取financeInfo
+	 * 
+	 * @param paramMap
+	 * @param page
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getFinanceInfoList(Map<String, Object> paramMap,
+			PageInfoBean page) {
+		List<Map<String, Object>> list = financeInfoDao.getFinanceInfoList(
+				paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean getProGuarantee(FinanceInfoListReqBean reqBean) {
+		FinanceInfoRespBean respBean = new FinanceInfoRespBean();
+		// 保证金比例取得
+		GuaranteeMoneyManagement guaranteeMoneyManagement = guaranteeMapper.selectByPrimaryKey(reqBean.getProductId());
+		if (guaranteeMoneyManagement != null) {
+			respBean.setGuaranteeRate(guaranteeMoneyManagement.getGuaranteeMoneyRate());
+		}
+		
+		// 费率取得
+		InterestManagementExample interestExample = new InterestManagementExample();
+		Criteria criteria = interestExample.createCriteria();
+		criteria.andProductIdEqualTo(reqBean.getProductId());
+		List<InterestManagement> list = interestMapper.selectByExample(interestExample);
+		if (CollectionUtils.isNotEmpty(list)) {
+			respBean.setCostRate(list.get(0).getCostRate());
+		}
+		
+		// 利息列表取得
+		DykRateExample dykRateExample = new DykRateExample();
+		com.ut.scf.pojo.auto.DykRateExample.Criteria criteria1 = dykRateExample.createCriteria();
+		criteria1.andProductIdEqualTo(reqBean.getProductId());
+		List<DykRate> list1 = dykRateMapper.selectByExample(dykRateExample);
+		if (CollectionUtils.isNotEmpty(list1)) {
+			respBean.setDataList(list1);
+		}
+		
+		return respBean;
+	}
+
+}

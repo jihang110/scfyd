@@ -1,0 +1,161 @@
+<section>
+    <div class="main-content-child">
+        <div class="row whiteBgDiv">
+            <form class="form-horizontal" role="form" id="detailForm">
+                <input type="hidden" name="productType" id="productType" value="1">
+                <input type="hidden" name="contractType" id="contractType" value="1">
+                <input type="hidden" name="url" id="url" value="1">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="signDate">签约日期</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="signDate" class="form-control" id="signDate" placeholder="签约日期" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="sequence">序号</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="sequence" class="form-control" id="sequence" placeholder="序号" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="orderBatchId2">订单批次</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="orderBatchId" class="form-control" id="orderBatchId2" placeholder="订单批次" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="orderTotalNum">同步订单总数</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="orderTotalNum" class="form-control" id="orderTotalNum" placeholder="同步订单总数" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="orderTotalAmt">同步订单总金额</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="orderTotalAmt" class="form-control" id="orderTotalAmt" placeholder="同步订单总金额" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="recOrderNum">接受订单数量</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="recOrderNum" class="form-control" id="recOrderNum" placeholder="接受订单数量" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="recOrderAmt">接受订单金额</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="recOrderAmt" class="form-control" id="recOrderAmt" placeholder="接受订单金额" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="crReqTotalAmt">超人所需总费用</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="crReqTotalAmt" class="form-control" id="crReqTotalAmt" placeholder="超人所需总费用" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="loanAmt">放款金额</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="crReqTotalAmt" class="form-control" id="loanAmt" placeholder="放款金额" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="syncDate">同步时间</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="syncDate" class="form-control" id="syncDate" placeholder="同步时间" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-4 control-label" for="selDate">确认时间</label>
+                    <div class="col-sm-6">
+                        <input type="text" name="selDate" class="form-control" id="selDate" placeholder="确认时间" readonly>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="panel-body">
+            <div class="nav">
+                <ol class="breadcrumb">
+                    <li class="active">订单信息表</li>
+                </ol>
+            </div>
+            <div class="col-sm-1">
+                <input type='button' id="btnRepayPlan" data-toggle="modal" data-target="#repayInfo" class="btn btn-default add" value="还款计划" onclick='initRepayPlanListTable()'>
+            </div>
+            <div class="col-sm-1">
+                <input type='button' id="btnInitBatchInfo" data-toggle="modal" data-target="#financeInfo" class="btn btn-default add" value="获取订单信息" onclick='getBatchInfo()'>
+            </div>
+            <table id="repayListTable" class="table" height="100%" cellspacing="0" width="100%">
+            </table>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="financeInfo" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1">
+    <div class="modal-dialog" role="document" style='width:1000px'>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button>
+                <h4 class="modal-title" id="myModalLabel1">订单详情信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="display: none;">
+                    <form class="form-horizontal" role="form" id="searchForm">
+                        <div class="col-sm-2">
+                            <input class="form-control" id="orderBatchId" name="orderBatchId" type="text" placeholder="订单批次号" />
+                        </div>
+                        <div class="col-sm-2">
+                            <input name="contractNo" class="form-control" id="contractNo" size="16" type="text" placeholder="合同编号">
+                        </div>
+                        <div class="col-sm-2 date form_datetime">
+                            <input name="loanDate" class="form-control" id="loanDate" size="16" type="text" placeholder="放款日期">
+                        </div>
+                        <div class="col-sm-2 date form_datetime">
+                            <input name="financeStartDate" class="form-control" id="financeStartDate" size="16" type="text" placeholder="融资起始日期">
+                        </div>
+                        <div class="col-sm-2 date form_datetime">
+                            <input name="financeDueDay" class="form-control" id="financeDueDay" size="16" type="text" placeholder="融资结束日期">
+                        </div>
+                        <div class="col-sm-2">
+                            <a onclick="searchFun()" class="btn btn-primary search">查找</a>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-body">
+                    <table id="orderListTable" class="table" cellspacing="0" width="100%">
+                    </table>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-default add" data-dismiss="modal" onclick="setForm()">保存
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="repayInfo" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="repayModal">
+    <div class="modal-dialog" role="document" style='width:800px'>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button>
+                <h4 class="modal-title" id="repayModal">还款计划详情信息</h4>
+            </div>
+            <div class="modal-body">
+                <div class="panel-body">
+                    <table id="repayPlanListTable" class="table" height="100%" cellspacing="0" width="100%">
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="form-group">
+                    <div class="col-sm-4"></div>
+                    <div class="col-sm-3">
+                        <button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

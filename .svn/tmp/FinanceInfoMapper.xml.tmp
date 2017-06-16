@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IFinanceInfoDao" >
+  <select id="getFinanceInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      finance_id financeId,
+      apply_date applyDate,
+      agency_name agencyName,
+      agency_num agencyNum,
+      max_credit maxCredit,
+      available_credit availableCredit,
+      finance_rate financeRate, 
+      cash_rate cashRate,
+      finance_start_date financeStartDate,
+      finance_end_date financeEndDate,
+      finance_amount financeAmount,
+      expense,
+      finance_status financeStatus
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+  </select>
+  
+  <select id="getFinanceInfoGroupByName" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+   		agency_name agencyName,agency_num agencyNum,SUM(finance_amount) financAemountSum,SUM(pay_amt) payAmtSum
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+    GROUP BY agency_name
+  </select>
+  
+</mapper>

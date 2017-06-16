@@ -1,0 +1,115 @@
+$(document).ready(function() {
+	
+} );
+
+
+function initTable(){
+	 
+	$('#repayInfoListTable').bootstrapTable('destroy');  
+	$("#repayInfoListTable").bootstrapTable({  
+         method: "post", 
+         url: "../..//", 
+         striped: false,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+                             
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'agencyName',
+ 	        title: '订单批次',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'agencyCode',
+ 	        title: '订单号',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'maxReditLine',
+ 	        title: '学生姓名',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'corpAddress',
+ 	        title: '身份证号',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'contact',
+ 	        title: '联系方式',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '期数',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '本期还款日',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '本期应还金额',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '本期应还利息',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '资金到账日',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '本期到账金额',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    }, {
+ 	        field: 'fixedPhone',
+ 	        title: '利息到账金额',
+ 	        align: 'center',
+             valign: 'middle'
+ 	    },{
+ 	        field: 'operation',
+ 	        title: '操作',
+ 	       align: 'center',
+           valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	            var d = '<a class = "fa fa-list-ul detail" style="color:#a9d86e;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'operateEvents'
+ 	    }]
+       });  
+
+}

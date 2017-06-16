@@ -1,0 +1,21 @@
+package com.ut.scf.service.sys;
+
+import java.util.Map;
+
+import com.ut.scf.reqbean.sys.MenuListReqBean;
+import com.ut.scf.reqbean.sys.MenuTreeReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IMenuService {
+
+	public BaseRespBean getMenuTree(MenuTreeReqBean reqBean);
+
+	public BaseRespBean addMenu(Map<String, Object> paramMap);
+
+	public BaseRespBean deleteMenu(String menuId);
+
+	public BaseRespBean updateMenu(Map<String, Object> paramMap);
+
+	public BaseRespBean getMenuList(MenuListReqBean reqBean);
+
+}

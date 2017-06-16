@@ -1,0 +1,139 @@
+var orderBatchId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).orderBatchId;
+var isFirst = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).isFirst;//表示是否为发起 0 表示被打回
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+
+
+$(document).ready(function() {
+    initTable();
+} );
+
+//并发起流程
+function startProcess(data) {
+    debugger;
+    var jsonData = eval("(" + data + ")");
+    var options = {
+
+        // url: '../../../sign/startProcess',
+        data: JSON.stringify(jsonData),
+        callBackFun: function(data) {
+            bootbox.alert(data.resultNote);
+        }
+    };
+    CloudUtils.ajax(options);
+}
+
+
+//同意流程
+function agree(type) {
+    debugger;
+    var jsonData = eval("(" + data + ")");
+    jsonData.agree = type;
+    jsonData.taskId = taskId;
+    jsonData.signDate = CloudUtils.getcurrentdate();
+    var options = {
+
+        // url: '../../../sign/agreeAndSign',
+        data: JSON.stringify(jsonData),
+        callBackFun: function(data) {
+            bootbox.alert(data.resultNote);
+        }
+    };
+    CloudUtils.ajax(options);
+}
+
+
+function initTable() {
+    $('#repaymentListTable').bootstrapTable('destroy');
+    $("#repaymentListTable").bootstrapTable({
+        method: "post",
+        // url: "../../product/list",
+        striped: true, //表格显示条纹  
+        pagination: true, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) { //设置查询参数  
+            var data = CloudUtils.convertStringJson('searchForm');
+            var jsonData = eval("(" + data + ")");
+            var param = {
+                pageNumber: params.pageNumber,
+                pageSize: params.pageSize,
+                isPage: 1,
+                productName: jsonData.productName,
+            };
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'productId',
+            title: '序号',
+            align: 'center',
+            valign: 'middle',
+            //          visible: false
+        }, {
+            field: 'productName',
+            title: '订单批次号',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'attachment',
+            title: '超人所需总费用',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'attachment',
+            title: '放款金额',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'attachment',
+            title: '本期应还本金金额',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'attachment',
+            title: '本期应还利息金额',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'operation',
+            title: '接收订单明细',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                var d = '<span><input type="radio" name="result" value="0" checked/>详情';
+                return d;
+            }
+        }, {
+            field: 'operation',
+            title: '还款计划',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                var s = '<input type="radio" name="result" value="1"/>详情</span>';
+                return  s;
+            }
+        }]
+    });
+}

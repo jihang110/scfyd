@@ -1,0 +1,145 @@
+package com.ut.scf.service.pub.impl;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.RuntimeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.dict.ScfBizConsts;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.auto.CorpInfoMapper;
+import com.ut.scf.dao.crm.IShareHolderInfoDao;
+import com.ut.scf.dao.pub.ICustDao;
+import com.ut.scf.dao.pub.IUploadFileRelaDao;
+import com.ut.scf.pojo.auto.CorpInfo;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.pub.ICustManagerService;
+@Service("custManagerService ")
+public class CustManagerServiceImpl implements ICustManagerService {
+	private static final Logger log = LoggerFactory
+			.getLogger(CustManagerServiceImpl.class);
+	@Resource private ICustDao custDao;
+	@Resource private CorpInfoMapper corpInfoMapper;
+	@Resource private IShareHolderInfoDao shareHolderInfoDao;
+	@Resource private IUploadFileRelaDao uploadFileRelaDao;
+	@Override
+	public BaseRespBean startProcess(RuntimeService runtimeService, String processDefinitionKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getcorpList(Map<String,Object> paramMap, PageInfoBean page) {
+		List<Map<String, Object>> list = custDao.getCorpInfoList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(list);
+		return respBean;
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public BaseRespBean addCorp(CorpInfo corpInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+//		1.添加到corp_info数据库
+		String corpId = ScfUUID.generate();
+		corpInfo.setCorpId(corpId);
+		corpInfo.setStatus((byte) ScfBizConsts.STATUS_NORMAL);
+		corpInfo.setCreateTime(new Date());
+		int insertNum =  corpInfoMapper.insert(corpInfo);
+		log.debug("insertMenuNum : {}", insertNum);
+		
+		if (insertNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		}
+//		2.添加到share_holder_info数据库
+//		循环插入
+		
+		List<Map<String,Object>> shareInfoList = (List<Map<String, Object>>) corpInfo.getShareInfoList();
+		if(shareInfoList.size()>0){
+			for(Map<String,Object> map:shareInfoList){
+				map.put("shareHolderId", ScfUUID.generate());
+				map.put("corpId", corpId);
+				map.put("relaCorpId", corpInfo.getRelaCorpId());
+				shareHolderInfoDao.insertShareHolder(map);
+			}
+		}
+		
+//		3.添加到upload_file_rela表中
+		List<Map<String,Object>> attachInfoList = (List<Map<String, Object>>) corpInfo.getAttachInfoList();
+		if(shareInfoList.size()>0){
+			for(Map<String,Object> attachMap:attachInfoList){
+				attachMap.put("fileId", ScfUUID.generate());
+				attachMap.put("corpId", corpId);
+//				attachMap.put("relaCorpId", corpInfo.getRelaCorpId());
+				uploadFileRelaDao.insertFileRela(attachMap);
+			}
+		}
+		return respBean;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(propagation = Propagation.REQUIRED)
+	@Override
+	public BaseRespBean updateCorp(CorpInfo corpInfo) {
+		BaseRespBean respBean = new BaseRespBean();
+//		1.修改corp_info的信息
+		int updateNum =  corpInfoMapper.updateByPrimaryKeySelective(corpInfo);
+		log.debug("updateMenuNum : {}", updateNum);
+		if (updateNum <= 0) {
+			respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+			return respBean;
+		}
+//		2.修改share_holder_info表
+//		1)先删除
+		Map<String,Object> paramMap = new HashMap<String,Object>();
+		if(!corpInfo.getCorpId().equals(null)||!corpInfo.getCorpId().equals("")){
+			paramMap.put("corpId", corpInfo.getCorpId());
+			shareHolderInfoDao.deleteShareHolder(paramMap);
+		}
+//		2)后添加
+		List<Map<String,Object>> shareInfoList = (List<Map<String, Object>>) corpInfo.getShareInfoList();
+		if(shareInfoList.size()>0){
+			for(Map<String,Object> map:shareInfoList){
+				map.put("shareHolderId", ScfUUID.generate());
+				map.put("corpId", corpInfo.getCorpId());
+				map.put("relaCorpId", corpInfo.getRelaCorpId());
+				shareHolderInfoDao.insertShareHolder(map);
+			}
+		}
+//		3.修改upload_file_rela表
+//		1)先删除
+		if(!corpInfo.getCorpId().equals(null)||!corpInfo.getCorpId().equals("")){
+			uploadFileRelaDao.deleteFileRela(corpInfo.getCorpId());
+		}
+//		2)后添加
+		List<Map<String,Object>> attachInfoList = (List<Map<String, Object>>) corpInfo.getAttachInfoList();
+		if(shareInfoList.size()>0){
+			for(Map<String,Object> attachMap:attachInfoList){
+				attachMap.put("fileId", ScfUUID.generate());
+				attachMap.put("corpId", corpInfo.getCorpId());
+//				attachMap.put("relaCorpId", corpInfo.getRelaCorpId());
+				uploadFileRelaDao.insertFileRela(attachMap);
+			}
+		}
+		return respBean;
+	}
+
+}

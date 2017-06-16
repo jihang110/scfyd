@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.ICustDao" >
+  
+  <select id="getUserByRole" resultType="hashmap" parameterType="hashmap" >
+    SELECT su.username username
+    FROM sys_user su 
+    JOIN sys_user_role sur ON su.user_id = sur.user_id 
+    JOIN sys_role sr ON sur.role_id = sr.role_id left 
+    join corp_dept cd on su.dept_id=cd.dept_id 
+    left join corp_info ci on ci.corp_id=cd.corp_id 
+    WHERE su.STATUS = 1 
+    <if test="roleId!=null and roleId!='' ">  
+        and sr.role_id = #{roleId}   
+    </if>
+    <if test="corpId!=null and corpId!='' ">  
+        and ci.corp_id = #{corpId}
+    </if>
+  </select>
+  
+</mapper>

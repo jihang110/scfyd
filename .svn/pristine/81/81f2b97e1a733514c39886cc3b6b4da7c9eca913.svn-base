@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/bootstrap-table.css" rel="stylesheet">
+<script src="js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="js/bootstrap.min.js" type="text/javascript"></script> 
+  <script type="text/javascript" src="js/bootstrap-table.js"></script>
+</body>
+
+<table id="daiban"></table>
+<script type="text/javascript">
+	$('#daiban').bootstrapTable({
+		method: "post", 
+        url: "../../agency/getDaibanList", 
+        striped: false,  //表格显示条纹  
+        pagination: true, //启动分页  
+        pageSize: 5,  //每页显示的记录数  
+        pageNumber:1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+        search: false,  //是否启用查询  
+        showColumns: false,  //显示下拉框勾选要显示的列  
+        showRefresh: false,  //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType : "undefined",   
+        queryParams: function queryParams(params) {   //设置查询参数  
+                          
+        },  
+        responseHandler:function responseHandler(res) {
+       	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+       	 } else {
+       		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+       	 }
+        },
+        onDblClickRow:function(row, $element, field){
+        	alert("扶好了  要跳转了 :)")
+        },
+        columns: [{
+	        field: 'taskDefinitionKey',
+	        title: 'task_key',
+	        align: 'center',
+            valign: 'middle'
+	    }, {
+	        field: 'processInstanceId',
+	        title: 'id',
+	        align: 'center',
+            valign: 'middle'
+	    },{
+	        field: 'processDefinitionId',
+	        title: 'processDefinitionId',
+	        align: 'center',
+            valign: 'middle'
+	    }, {
+	        field: 'name',
+	        title: '经办人',
+	        align: 'center',
+            valign: 'middle'
+	    }, {
+	        field: 'id',
+	        title: 'id',
+	        align: 'center',
+            valign: 'middle'
+	    }]
+      }); 
+	getDaibanList();
+	function getDaibanList(){
+		debugger;
+		$.ajax({
+			url:'agency/getDaibanList',
+			data:{},
+			method:'post',
+			success:function(data){
+				if(data !== null){
+					console.log(data);
+					$('#daiban').bootstrapTable("append",eval(data));
+				}
+			},error:function(data){
+				console.log(data);
+			}
+		});
+	}
+</script>
+</html>

@@ -1,0 +1,213 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
+
+$(document).ready(function() {
+    getTaskData();
+
+});
+function getTaskData(){
+    debugger;
+    var data = {};
+    data.taskId = taskId;
+     var options = {
+        url : '../../../activiti/findDataByTaskId',
+        data : JSON.stringify(data),
+        callBackFun : function(data) {
+            if (data.result == 0) {
+                debugger;
+                var jsonData = eval("(" + data.str + ")");
+                initOrderListTable(jsonData.orderId);
+            } else {
+                return false;
+            }
+        },
+        errorCallback : function(data) {
+            bootbox.alert(data.resultNote);
+            return false;
+        }
+    };
+     CloudUtils.ajax(options);
+}
+function getOrderInfo(orderIds){
+    var data = {};
+    data.orderId = orderIds;
+     var options = {
+        url : '../../../order/orderList',
+        data : JSON.stringify(data),
+        callBackFun : function(data) {
+            if (data.result == 0) {
+                
+                
+            } else {
+                return false;
+            }
+        },
+        errorCallback : function(data) {
+            bootbox.alert(data.resultNote);
+            return false;
+        }
+    };
+     CloudUtils.ajax(options);
+}
+function initOrderListTable(orderIds) {
+    $('#orderList').bootstrapTable('destroy');
+    $("#orderList").bootstrapTable({
+        method: "post",
+        url: "../../../order/orderList",
+        striped: false, //表格显示条纹  
+        pagination: fasle, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) {
+            debugger;
+            var param = {orderId:orderIds};
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'productName',
+            title: '产品名称',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'productAmt',
+            title: '产品金额',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'period',
+            title: '分期期数',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'loan',
+            title: '分期总费用',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'sellerId',
+            title: '商家id',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'sellerName',
+            title: '商家名称',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'crReqAmt',
+            title: '超人所需费用',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'startPayAmt',
+            title: '首付金额',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'payM',
+            title: '每期还款金额',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'startPayDay',
+            title: '首期还款日期',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'name',
+            title: '姓名',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'gender',
+            title: '性别',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'birth_ym',
+            title: '出身年月',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'age',
+            title: '年龄',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'idCard',
+            title: '身份证',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'contact',
+            title: '联系方式',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'school',
+            title: '学校',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'grade',
+            title: '年级',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'graduateDate',
+            title: '毕业时间',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }, {
+            field: 'file',
+            title: '相关图片',
+            align: 'center',
+            valign: 'middle',
+            width: 150
+        }]
+    });
+}

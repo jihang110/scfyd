@@ -1,0 +1,133 @@
+var orderBatchId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).orderBatchId;
+
+$(document).ready(function() {
+    $('.date').html("");
+    $('.date').append(CloudUtils.getcurrentdate());
+    initRepayPlanListTable();
+});
+
+function initRepayPlanListTable() {
+    $('#repayPlanListTable').bootstrapTable('destroy');
+    $("#repayPlanListTable").bootstrapTable({
+        method: "post",
+        url: "../../../orderQuery/contract",
+        striped: false, //表格显示条纹  
+        pagination: false, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) {
+            var jsonData = {
+                orderBatchId: orderBatchId
+            };
+            return JSON.stringify(jsonData);
+            // return JSON.stringify({});
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'orderId',
+            title: '订单号',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'period',
+            title: '期数',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'currentRepayDate',
+            title: '本期还款日',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'currentPayablePrincipal',
+            title: '本期还款本金',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'currentPayableInterest',
+            title: '本期应款利息',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'repayStatus',
+            title: '还款状态',
+            align: 'center',
+            valign: 'middle',
+
+        }, {
+            field: 'orderBatchId',
+            title: '订单批次号',
+            align: 'center',
+            valign: 'middle',
+
+        }]
+    });
+}
+
+function uploadContract(obj) {
+    $(obj).hide();
+    html2canvas(document.body, { //截图对象
+        //此处可配置详细参数
+        onrendered: function(canvas) { //渲染完成回调canvas
+            canvas.id = "mycanvas";
+            // 生成base64图片数据
+            var dataUrl = canvas.toDataURL('../../../images/ht'); //指定格式，也可不带参数
+            var formData = new FormData(); //模拟表单对象
+            formData.append("imgData", convertBase64UrlToBlob(dataUrl), "ht.png"); //写入数据
+            var xhr = new XMLHttpRequest(); //数据传输方法
+            xhr.open("POST", "../../../file/exportPdf"); //配置传输方式及地址
+            xhr.send(formData);
+            xhr.onreadystatechange = function() { //回调函数
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var back = JSON.parse(xhr.responseText);
+                       bootbox.alert(xhr.responseText);
+                    }
+                }
+            };
+        }
+    });
+}
+
+
+
+
+//将以base64的图片url数据转换为Blob
+function convertBase64UrlToBlob(urlData) {
+    //去掉url的头，并转换为byte
+    var bytes = window.atob(urlData.split(',')[1]);
+    //处理异常,将ascii码小于0的转换为大于0
+    var ab = new ArrayBuffer(bytes.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < bytes.length; i++) {
+        ia[i] = bytes.charCodeAt(i);
+    }
+    return new Blob([ab], { type: '../../../images/ht' });
+}

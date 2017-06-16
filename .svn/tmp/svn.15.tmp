@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IFinanceInfoDao" >
+  <select id="getFinanceInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      finance_id financeId,
+      apply_date applyDate,
+      agency_name agencyName,
+      agency_num agencyNum,
+      max_credit maxCredit,
+      available_credit availableCredit,
+      finance_rate financeRate, 
+      cash_rate cashRate,
+      finance_start_date financeStartDate,
+      finance_end_date financeEndDate,
+      finance_amount financeAmount,
+      expense,
+      finance_status financeStatus
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+  </select>
+  
+  <select id="getFinanceInfoGroupByName" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+   		agency_name agencyName,agency_num agencyNum,SUM(finance_amount) financeAmountSum,SUM(pay_amt) payAmtSum,
+   		SUM(finance_balance) financeBalanceSum,(SUM(finance_amount)-SUM(finance_balance)) financeAlreadySum,
+		SUM(if(finance_status = 5, finance_amount, 0)) overdueFinanceAmountSum,
+		SUM(if(finance_status = 1, finance_amount, 0)) toBeFinanceAmountSum
+    from finance_info
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeStartDate != null and financeStartDate !='' ">  
+        and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeEndDate != null and financeEndDate !='' ">  
+        and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
+    </if>
+     <if test="financeStatus != null and financeStatus !='' ">  
+        and finance_status = #{financeStatus}
+    </if>
+    GROUP BY agency_name
+  </select>
+  
+  <select id="getRefundDepositInfo" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+     fi.finance_id financeId,fi.agency_name agencyName,fi.apply_date applyDate,fi.agency_num agencyNum,fi.max_credit maxCredit,
+     fi.available_credit availableCredit,fi.finance_start_date financeStartDate,fi.finance_end_date financeEndDate,
+     fi.finance_amount financeAmount,fi.pay_date payDate,fi.finance_balance financeBalance,fi.pay_amt payAmt,pi.guarantee_money_rate guaranteeMoneyRate,
+     pi.pay_able_guarantee payAbleGuarantee,pi.guarantee_pay_date guaranteePayDate,pi.pay_act_guarantee payActGuarantee,
+     pi.guarantee_pay_his guaranteePayHis
+    from finance_info fi 
+    join guarantee_info pi on fi.finance_id =pi.finance_id
+    <where>
+    	fi.pay_amt<![CDATA[<=]]>fi.finance_amount
+    </where>
+    
+  </select>
+  
+</mapper>

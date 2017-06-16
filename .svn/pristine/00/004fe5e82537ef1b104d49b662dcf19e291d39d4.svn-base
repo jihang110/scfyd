@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.ILoanInfoDao" >
+  
+  <select id="getLoanInfoList" resultType="hashmap" parameterType="hashmap">
+  		select  loan_id loanId  
+				from loan_info  
+    <where> 
+        <if test="loanId!=null and loanId!='' ">  
+            and loan_id = #{loanId}
+        </if>
+    </where>
+  </select>
+  
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.pub.IStuInfoDao" >
+  
+  <resultMap id="StuInfoResultMap" type="com.ut.scf.pojo.auto.StuInfo">
+   <id column="stu_id" jdbcType="VARCHAR" property="stuId" />
+    <result column="stu_name" jdbcType="VARCHAR" property="stuName" />
+    <result column="gender" jdbcType="VARCHAR" property="gender" />
+    <result column="age" jdbcType="INTEGER" property="age" />
+    <result column="birth_date" jdbcType="VARCHAR" property="birthDate" />
+    <result column="id_num" jdbcType="VARCHAR" property="idNum" />
+    <result column="nation" jdbcType="VARCHAR" property="nation" />
+    <result column="mobile_phone" jdbcType="VARCHAR" property="mobilePhone" />
+    <result column="school_name" jdbcType="VARCHAR" property="schoolName" />
+    <result column="grade" jdbcType="VARCHAR" property="grade" />
+    <result column="dorm" jdbcType="VARCHAR" property="dorm" />
+    <result column="graduate_date" jdbcType="VARCHAR" property="graduateDate" />
+    <result column="attachment" jdbcType="VARCHAR" property="attachment" />
+  </resultMap>
+  
+  <select id="getStuIfnoPageList" resultType="hashmap"  >
+    select stu_id stuId, stu_name stuName, gender gender, age age, birth_date birthDate, id_num idNum, nation nation, mobile_phone mobilePhone, school_name schoolName, 
+    grade grade, dorm dorm, graduate_date graduateDate, attachment attachment
+    from  stu_info
+  </select>
+  
+</mapper>

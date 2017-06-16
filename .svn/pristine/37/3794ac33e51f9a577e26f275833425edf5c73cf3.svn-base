@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.finance.ICorpAccountDao">
+  <select id="selectCorpAccountList" parameterType="hashmap" resultType="hashmap">
+  	select
+	   a.rec_uid recUid, 
+	   a.corp_id corpId, 
+	   c.corp_name corpName,
+	   a.account_type accountType, 
+	   a.account_mark accountMark, 
+	   a.account account, 
+	   a.account_name accountName, 
+	   a.currency currency, 
+       a.account_bank accountBank, 
+       a.bank_location bankLocation,
+       a.account_amount accountAmount,
+	   a.create_time createTime
+    from corp_account a join corp_info c on a.corp_id=c.corp_id
+    <where>
+        1=1 and c.status = 1
+		<if test="account != null ">
+	  		and a.account LIKE CONCAT('%',#{account},'%')
+		</if>
+		<if test="corpId != null and corpId !=''">
+	  		and a.corp_id = #{corpId}
+		</if>
+		<if test="userCorpList !=null">
+	  		and a.corp_id in ${userCorpList}
+		</if>
+		<if test="accountBank != null ">
+	  		and a.account_bank LIKE CONCAT('%',#{accountBank},'%')
+		</if>
+		<if test="relaCorpId != null">
+	  		and a.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and a.create_user_id = #{createUserId}
+		</if>
+    </where>
+    order by a.create_time desc
+  </select>
+  
+  <insert id="insertCorpAccount" parameterType="hashmap">
+    insert into corp_account (rec_uid, corp_id, account_type, 
+      account_mark, account, account_name, 
+      currency, account_bank, bank_location, 
+      account_amount,
+      rela_corp_id, create_user_id, create_time
+      )
+    values (#{recUid,jdbcType=VARCHAR}, #{corpId,jdbcType=VARCHAR}, #{accountType,jdbcType=TINYINT}, 
+      #{accountMark,jdbcType=TINYINT}, #{account,jdbcType=VARCHAR}, #{accountName,jdbcType=VARCHAR}, 
+      #{currency,jdbcType=VARCHAR}, #{accountBank,jdbcType=VARCHAR}, #{bankLocation,jdbcType=VARCHAR}, 
+      #{accountAmount,jdbcType=DECIMAL},  
+      #{relaCorpId,jdbcType=VARCHAR}, #{createUserId,jdbcType=VARCHAR}, now()
+      )
+  </insert>
+  
+  <delete id="deleteCorpAccount" parameterType="java.lang.String">
+    delete from corp_account
+    where rec_uid = #{recUid}
+  </delete>
+  
+  <update id="updateCorpAccount" parameterType="hashmap">
+   update corp_account
+    <set>
+      <if test="corpId != null">
+        corp_id = #{corpId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null">
+        account_type = #{accountType,jdbcType=TINYINT},
+      </if>
+      <if test="accountMark != null">
+        account_mark = #{accountMark,jdbcType=TINYINT},
+      </if>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="accountName != null">
+        account_name = #{accountName,jdbcType=VARCHAR},
+      </if>
+      <if test="currency != null">
+        currency = #{currency,jdbcType=VARCHAR},
+      </if>
+      <if test="accountBank != null">
+        account_bank = #{accountBank,jdbcType=VARCHAR},
+      </if>
+      <if test="bankLocation != null">
+        bank_location = #{bankLocation,jdbcType=VARCHAR},
+      </if>
+      <if test="accountAmount != null">
+        account_amount = #{accountAmount,jdbcType=DECIMAL},
+      </if>
+    </set>
+    where rec_uid = #{recUid,jdbcType=VARCHAR}
+  </update>
+</mapper>

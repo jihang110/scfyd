@@ -1,0 +1,5 @@
+<input type="hidden" id="orderBatchId" name="orderBatchId">
+<input type="hidden" id="contractInfo" name="contractInfo">
+<!-- <div id ='contractPage'class="form-group"></div> -->
+<iframe id="contractFrame" scrolling="auto" frameborder="0" name='contractFrame' style="width: 100%;height:450px" src=""></iframe>
+

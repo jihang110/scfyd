@@ -1,0 +1,925 @@
+package com.ut.scf.service.bpm.impl;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.sunyard.sunflow.client.SunflowClient;
+import com.sunyard.sunflow.engine.context.ProcessInstanceContext;
+import com.sunyard.sunflow.engine.context.WorkItemContext;
+import com.sunyard.sunflow.engine.context.WorkItemContextCollection;
+import com.sunyard.sunflow.engine.dataclass.WMTAttribute;
+import com.sunyard.sunflow.engine.dataclass.WMTWflParticipant;
+import com.sunyard.sunflow.engine.workflowexception.SunflowException;
+import com.ut.scf.core.dict.ErrorCodeEnum;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.dict.ScfCacheDict;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.core.util.ScfDateUtil;
+import com.ut.scf.core.util.ScfUUID;
+import com.ut.scf.dao.bpm.IExpenseDao;
+import com.ut.scf.dao.bpm.IInvoiceMngDao;
+import com.ut.scf.dao.bpm.IPriProjectDao;
+import com.ut.scf.dao.finance.IRecManageDao;
+import com.ut.scf.pojo.FlowListInfo;
+import com.ut.scf.pojo.WorkItemListInfo;
+import com.ut.scf.reqbean.bpm.FlowSearchPageReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.respbean.bpm.ContractAddRespBean;
+import com.ut.scf.respbean.bpm.CreditAddRespBean;
+import com.ut.scf.respbean.bpm.FinanceAddRespBean;
+import com.ut.scf.respbean.bpm.LendingApplicationAddRespBean;
+import com.ut.scf.respbean.bpm.ProDetailRespBean;
+import com.ut.scf.respbean.bpm.ProjectAddRespBean;
+import com.ut.scf.respbean.bpm.RiskCtrlReptAddRespBean;
+import com.ut.scf.respbean.bpm.SpMatterAddRespBean;
+import com.ut.scf.respbean.bpm.WorkFlowRespBean;
+import com.ut.scf.service.bpm.IWorkFlowService;
+
+@Service("workflowService")
+public class WorkFlowServiceImpl implements IWorkFlowService {
+
+	private static final Logger log = LoggerFactory
+			.getLogger(WorkFlowServiceImpl.class);
+
+	private static final String fmt = "yyyy/MM/dd HH:mm:ss";
+
+	@Resource
+	private IExpenseDao expenseDao;
+	
+	@Resource
+	private IInvoiceMngDao invoiceMngDao;
+	
+	@Resource
+	private IPriProjectDao priProjectDao;
+	
+	@Resource
+	private IRecManageDao recManageDao;
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getNotProcList(FlowSearchPageReqBean reqBean) {
+		
+		PageRespBean respBean = new PageRespBean();
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String monitorUrl = ScfCacheDict.sysConfigMap.get("monitorURL");
+		
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("areaCode", areaCode);
+		paramMap.put("monitorUrl", monitorUrl);
+		
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		// 未结流程：等待我办理以及等待他人办理
+		List<FlowListInfo> flowNotList = expenseDao.selectNotProcList(paramMap, page);
+		// 分页设置
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(flowNotList);
+		return respBean;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getOverProcList(FlowSearchPageReqBean reqBean) {
+		
+		PageRespBean respBean = new PageRespBean();
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String monitorUrl = ScfCacheDict.sysConfigMap.get("monitorURL");
+		
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		paramMap.put("areaCode", areaCode);
+		paramMap.put("monitorUrl", monitorUrl);
+		
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		// 已结流程：有我参与的完结流程
+		List<FlowListInfo> flowOverList = expenseDao.selectOverProcList(paramMap, page);
+		// 分页设置
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(flowOverList);
+		return respBean;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getWkiDetailList(Map<String, Object> paramMap) {
+		
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long procInsId = (long) paramMap.get("procInsId");
+		ProDetailRespBean respBean = new ProDetailRespBean();
+		List<WorkItemListInfo> details = new ArrayList<WorkItemListInfo>();
+		SunflowClient sunflowClient = null;
+		int status = 0;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			// 流程状态取得
+			status = sunflowClient.getProcessInstanceStatusByProInsID(procInsId);
+			
+			// 列出所有工作项
+			WorkItemContextCollection allWorkItems = sunflowClient
+					.listWorkItems("PRI_ID = " + procInsId, areaCode);
+			
+			// 等待我办理:拉方式
+			WorkItemContextCollection myWorkItems = sunflowClient
+					.listWorkItems("WKI_STATE = 2 AND WKA_APPLYMAN LIKE '%," + username
+							+ ",%' AND PRI_ID = " + procInsId, areaCode);
+
+			for (int i = 0; i < allWorkItems.size(); i++) {
+				WorkItemContext wic = allWorkItems.get(i);
+				WorkItemListInfo info = new WorkItemListInfo();
+				info.setWorkItemId(wic.getWorkItemID());
+				info.setName(wic.getWorkItemName());
+				info.setStartDate(ScfDateUtil.format(wic.getDeliverTime(),fmt));
+				info.setEndDate(ScfDateUtil.format(wic.getWorkItemCheckedInTime(), fmt));
+				info.setUser(StringUtils.isEmpty(wic.getExecutorID()) ? "-" : wic.getExecutorID());
+				info.setProcInsId(wic.getProInstanceID());
+				// 节点ID
+				WMTAttribute[] stepIds = sunflowClient.getWorkItemRelevantData(
+						wic.getWorkItemID(), new String[] { "nodeId" }, areaCode);
+				String stepId = stepIds[0].getStringValue();
+				String flowType = stepId.substring(0, 1);
+				String chkNm = stepId.substring(1);
+				info.setStepId(stepId);
+				// 工作项未完成
+				if (wic.getState() == 1 || wic.getState() == 2 || wic.getState() == 4) {
+					// 待办状态
+					info.setEndDate("-");
+					info.setStatus("3");
+					// 当前用户正好为执行者，可以进行操作（经办、转移权限），否则只能查看
+					if (username.equals(wic.getExecutorID()) || myWorkItems.size() > 0) {
+						respBean.setWorkItemId(wic.getWorkItemID());
+						respBean.setOperateFlg(1);
+						respBean.setStepId(stepId);
+					}
+				} else {
+					// 审批意见取得
+					WMTAttribute[] agrees = null;
+					WMTAttribute[] advices = null;
+
+					// 标准流程
+					if ("N".equals(flowType)) {
+						// 立项申请，风险初审，风险终审，合同申请，放款申请
+						if ("N1".equals(stepId) || "N4".equals(stepId)
+								|| "N5".equals(stepId) || "N7".equals(stepId)
+								|| "N12".equals(stepId)) {
+							info.setStatus("2");// 2--申请
+							// 审批
+						} else {
+							agrees = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "agree" + chkNm }, areaCode);
+							advices = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "advice" + chkNm }, areaCode);
+						}
+						
+						// 特殊事项审批,特殊事项快速审批,融资直通车
+					} else if ("S".equals(flowType)
+								|| "A".equals(flowType)
+								|| "B".equals(flowType)) {
+						if ("S1".equals(stepId)
+								|| "A1".equals(stepId)
+								|| "B1".equals(stepId)) {
+							info.setStatus("2");// 2--申请
+							// 审批
+						} else {
+							agrees = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "agree" + chkNm }, areaCode);
+							advices = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "advice" + chkNm }, areaCode);
+						}
+					} else if ("O".equals(flowType)) {
+						if ("O1".equals(stepId)) {
+							info.setStatus("2");// 2--申请
+							// 审批
+						} else if("O2".equals(stepId)){
+							agrees = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "agree" + chkNm  }, areaCode);
+							advices = sunflowClient.getWorkItemRelevantData(
+									wic.getWorkItemID(),
+									new String[] { "advice" + chkNm }, areaCode);
+						} else if("O3".equals(stepId)){
+							WMTAttribute waStatu = new WMTAttribute();
+							waStatu.setStringValue("0");
+							agrees = new WMTAttribute[] {waStatu};
+						}
+					}
+					
+					if (agrees != null) {
+						info.setStatus(agrees[0].getStringValue());// 0--同意,1--不同意
+					}
+					if (advices != null) {
+						info.setAdvice(advices[0].getStringValue());
+					}
+				}
+				details.add(info);
+			}
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		// 工作项按开始时间顺序排序
+		if (CollectionUtils.isNotEmpty(details)) {
+			Collections.sort(details, new Comparator<WorkItemListInfo>() {
+
+				@Override
+				public int compare(WorkItemListInfo o1, WorkItemListInfo o2) {
+					return o1.getStartDate().compareTo(o2.getStartDate());
+				}
+			});
+			
+			// 终止的场合
+			if (status == 4) {
+				details.get(details.size() - 1).setUser(priProjectDao.selectTerminateUserName(procInsId));// 终止流程用户名称
+				details.get(details.size() - 1).setStatus("4");// 4--终止
+			}
+		}
+		
+		respBean.setDataList(details);
+		return respBean;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getProDetailInfo(Map<String, Object> paramMap) {
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		long workItemId = (long) paramMap.get("workItemId");
+		String username = paramMap.get("username").toString();
+		String stepId = paramMap.get("stepId").toString();
+		String flowType = stepId.substring(0, 1);
+		BaseRespBean respBean = new BaseRespBean();
+		Map<String, Object> attrDataMap = new HashMap<String, Object>();
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			WMTAttribute[] attrs = sunflowClient
+					.getWorkItemRelevantData(workItemId, null, areaCode);
+			for (WMTAttribute attr : attrs) {
+				String attrName = attr.getAttributeName();
+				int attrType = attr.getAttributeType();
+				if (attrType == 1) {
+					attrDataMap.put(attrName, attr.getIntValue());
+				} else if (attrType == 2) {
+					attrDataMap.put(attrName, attr.getBooleanValue());
+				} else if (attrType == 3) {
+					attrDataMap.put(attrName, attr.getDoubleValue());
+				} else if (attrType == 4) {
+					attrDataMap.put(attrName, attr.getStringValue());
+				} else if (attrType == 5) {
+					attrDataMap.put(attrName, attr.getTimestampValue());
+				} else if (attrType == 6) {
+					attrDataMap.put(attrName, attr.getDateValue());
+				} else {
+					attrDataMap.put(attrName, attr.getObjectValue());
+				}
+			}
+			
+			// 标准流程
+			if ("N".equals(flowType)) {
+				// 项目立项
+				if ("N1".equals(stepId) || "N2".equals(stepId) || "N3".equals(stepId)) {
+					respBean = new ProjectAddRespBean();
+					// 项目评审
+				} else if ("N4".equals(stepId)) {
+					respBean = new CreditAddRespBean();
+					// 风控报告
+				} else if ("N5".equals(stepId) || "N6".equals(stepId)) {
+					respBean = new RiskCtrlReptAddRespBean();
+					// 合同起草及审批
+				} else if ("N7".equals(stepId) || "N8".equals(stepId) || "N9".equals(stepId)
+						|| "N10".equals(stepId) || "N11".equals(stepId)) {
+					respBean = new ContractAddRespBean();
+					// 出账流程
+				} else if ("N12".equals(stepId) || "N13".equals(stepId)) {
+					respBean = new LendingApplicationAddRespBean();
+				}
+				
+				// 特殊事项审批,特殊事项快速审批
+			} else if ("S".equals(flowType) || "A".equals(flowType)) {
+				respBean = new SpMatterAddRespBean();
+				// 在线申请签约
+			} else if ("O".equals(flowType)) {
+				respBean = new ContractAddRespBean();
+				// 融资直通车
+			} else if ("B".equals(flowType)) {
+				respBean = new FinanceAddRespBean();
+			}
+			
+			BeanUtil.mapToBean(attrDataMap, respBean);
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean reApply(Map<String, Object> paramMap) {
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long workItemId = (long) paramMap.get("workItemId");
+		BaseRespBean respBean = new BaseRespBean();
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			// checkout
+			int workState = sunflowClient
+					.getWorkItemStatusByWorkItemID(workItemId);
+			if (workState == 1) {
+				sunflowClient.checkOutWorkItem(workItemId);
+			} else if (workState == 2) {
+				sunflowClient.applyWorkItem(workItemId);
+			} else if (workState == 6) {
+				respBean.setResult(ErrorCodeEnum.WKI_STATE_ERROR);
+				return respBean;
+			}
+			
+			// checkin
+			WMTAttribute[] attrs = sunflowClient.getWorkItemRelevantData(
+					workItemId, null, areaCode);
+			String attributesName = "";
+			int attrType = 0;
+			
+			for (WMTAttribute attr : attrs) {
+				attributesName = attr.getAttributeName();
+				attrType = attr.getAttributeType();
+				
+				if (paramMap.containsKey(attributesName)) {
+					// 属性类型 int - 1 bool - 2 double - 3 String - 4 Timestamp
+					// - 5 Date - 6 Array - 7 File - 8 Object - 9 Binary -
+					// 10
+					if (attrType == 1) {
+						attr.setIntValue(Integer.parseInt(paramMap.get(attributesName).toString()));
+					} else if (attrType == 2) {
+						attr.setBooleanValue(Boolean.parseBoolean(paramMap.get(attributesName).toString()));
+					} else if (attrType == 3) {
+						attr.setDoubleValue(Double.parseDouble(paramMap.get(attributesName).toString()));
+					} else if (attrType == 4) {
+						attr.setStringValue(paramMap.get(attributesName) == null ?
+								"" : String.valueOf(paramMap.get(attributesName)));
+					} else if (attrType == 5) {
+						attr.setTimestampValue(Timestamp.valueOf(paramMap.get(attributesName).toString()));
+					} else if (attrType == 6) {
+						attr.setDateValue(ScfDateUtil.parseDate(paramMap.get(attributesName).toString()));
+					} else if (attrType == 7) {
+						attr.setArrayValue(paramMap.get(attributesName));
+					} else if (attrType == 8) {
+						// wa.setFileValue(arg0);
+					} else if (attrType == 9) {
+						attr.setObjectValue(paramMap.get(attributesName));
+					} else if (attrType == 10) {
+						// wa.setBinaryValue(arg0);
+					}
+				}
+			}
+			
+			sunflowClient.modifyWorkItemRelevantData(workItemId, attrs, areaCode);
+			sunflowClient.checkInWorkItem(workItemId);
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return respBean;
+	}
+	
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean chkWorkItem(Map<String, Object> paramMap) {
+		
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long workItemId = (long) paramMap.get("workItemId");
+		long procInsId = (long) paramMap.get("procInsId");
+		String agreeFlg = paramMap.get("agreeFlg").toString();
+		String proAdvice = (String) paramMap.get("proAdvice");
+		String stepId = (String) paramMap.get("stepId");
+		String chkNm = stepId.substring(1);
+
+		BaseRespBean respBean = new BaseRespBean();
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			// checkout
+			int workState = sunflowClient
+					.getWorkItemStatusByWorkItemID(workItemId);
+			if (workState == 1) {
+				sunflowClient.checkOutWorkItem(workItemId);
+			} else if (workState == 2) {
+				sunflowClient.applyWorkItem(workItemId);
+			} else if (workState == 6) {
+				respBean.setResult(ErrorCodeEnum.WKI_STATE_ERROR);
+				return respBean;
+			}
+
+			// checkin
+			WMTAttribute[] attr = sunflowClient.getWorkItemRelevantData(workItemId, null, areaCode);
+			for (WMTAttribute attribute : attr) {
+				// 审批
+				if ("N2".equals(stepId) || "N3".equals(stepId)
+						|| "N6".equals(stepId) || "N8".equals(stepId)
+						|| "N9".equals(stepId) || "N10".equals(stepId)
+						|| "N11".equals(stepId) || "N13".equals(stepId)
+						|| "S2".equals(stepId) || "S3".equals(stepId)
+						|| "S4".equals(stepId) || "S5".equals(stepId)
+						|| "A2".equals(stepId) || "A3".equals(stepId)
+						|| "B2".equals(stepId) || "B3".equals(stepId)
+						|| "O2".equals(stepId)) {
+					if (("agree" + chkNm).equals(attribute.getAttributeName())) {
+						attribute.setStringValue(agreeFlg);
+					} else if (("advice" + chkNm).equals(attribute.getAttributeName())) {
+						attribute.setStringValue(proAdvice);
+					}
+				}
+			}
+			
+			// 合同申请_总经理审批同意后
+			if (("N11".equals(stepId)
+					|| "B3".equals(stepId)) && "0".equals(agreeFlg)) {
+				// 发票信息登录后台
+				String projectName = ""; //项目名称
+				String invoiceUrl = ""; //发票附件地址
+				String invoiceNo = ""; //发票编号
+				String invoiceAmt = ""; //发票金额
+				String contractNo = ""; //合同编号
+				String corpId = ""; //企业ID
+				String createUserId = ""; //创建者ID
+				String[] invoiceUrlArr = null;
+				String[] invoiceNoArr = null;
+				String[] invoiceAmtArr = null;
+				Map<String, Object> newMap = new HashMap<String, Object>();
+				
+				WMTAttribute[] insertItems = sunflowClient.getProcessRelevantData(procInsId,
+						new String[] {"proName", "invoice", "invNo", "invAmt",
+									"contractNo", "corpId", "proMembId"}, areaCode);
+				for (WMTAttribute insertItem : insertItems) {
+					if ("proName".equals(insertItem.getAttributeName())) {
+						projectName = insertItem.getStringValue();
+					} else if ("invoice".equals(insertItem.getAttributeName())) {
+						invoiceUrl = insertItem.getStringValue();
+					} else if ("invNo".equals(insertItem.getAttributeName())) {
+						invoiceNo = insertItem.getStringValue();
+					} else if ("invAmt".equals(insertItem.getAttributeName())) {
+						invoiceAmt = insertItem.getStringValue();
+					} else if ("contractNo".equals(insertItem.getAttributeName())) {
+						contractNo = insertItem.getStringValue();
+					} else if ("corpId".equals(insertItem.getAttributeName())) {
+						corpId = insertItem.getStringValue();
+					} else if ("proMembId".equals(insertItem.getAttributeName())) {
+						createUserId = insertItem.getStringValue();
+					}
+				}
+				
+				// 发票存在的场合
+				if (StringUtils.isNotEmpty(invoiceUrl)) {
+					invoiceUrlArr = invoiceUrl.split(",");
+					invoiceNoArr = invoiceNo.split(",");
+					invoiceAmtArr = invoiceAmt.split(",");
+					for (int i = 0; i < invoiceUrlArr.length; i++) {
+						newMap.put("recUid", ScfUUID.generate());
+						newMap.put("projectName", projectName);
+						newMap.put("invoiceUrl", invoiceUrlArr[i]);
+						newMap.put("invoiceNo", invoiceNoArr[i]);
+						newMap.put("invoiceAmt", invoiceAmtArr[i]);
+						newMap.put("contractNo", contractNo);
+						newMap.put("corpId", corpId);
+						newMap.put("createUserId", createUserId);
+						invoiceMngDao.insInvMng(newMap);
+					}
+				}
+			}
+			
+			// 融资直通车_总经理审批同意后
+			if ("B3".equals(stepId) && "0".equals(agreeFlg)) {
+				// 更新费用表、同时插入对账管理表
+				addCntFlowExpense(paramMap);
+			}
+			
+			sunflowClient.modifyWorkItemRelevantData(workItemId, attr, areaCode);
+			sunflowClient.checkInWorkItem(workItemId);
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean create(Map<String, Object> paramMap) {
+		
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		// 用户名
+		String username = paramMap.get("username").toString();
+		// 工作流名称
+		String sunFlowNm = paramMap.get("workflowNm").toString();
+		BaseRespBean respBean = new BaseRespBean();
+		SunflowClient sunflowClient = null;
+		try {
+			// 构造一个工作流客户端对象，和引擎建立连接
+			sunflowClient = new SunflowClient(url, port);
+			// 用户登录
+			sunflowClient.connect(username, "");
+			
+			long procInsID = 0;
+			int weight = 0;
+			procInsID = sunflowClient.createProcessInstanceByName(sunFlowNm,
+					sunFlowNm, sunFlowNm, weight, 20, areaCode);
+			paramMap.put("procInsID", procInsID);
+
+			// 流程变量
+			WMTAttribute[] attrs = sunflowClient.getProcessRelevantData(procInsID, null, areaCode);
+			String attributesName = "";
+			int attrType = 0;
+			
+			for (WMTAttribute attr : attrs) {
+				attributesName = attr.getAttributeName();
+				attrType = attr.getAttributeType();
+				
+				if (paramMap.containsKey(attributesName)) {
+					if (paramMap.get(attributesName) == null) {
+						continue;
+					}
+					
+					// 属性类型
+					// int - 1, bool - 2, double - 3, String - 4, Timestamp - 5,
+					// Date - 6, Array - 7, File - 8, Object - 9, Binary -10
+					if (attrType == 1) {
+						attr.setIntValue(Integer.parseInt(paramMap.get(attributesName).toString()));
+					} else if (attrType == 2) {
+						attr.setBooleanValue(Boolean.parseBoolean(paramMap.get(attributesName).toString()));
+					} else if (attrType == 3) {
+						attr.setDoubleValue(Double.parseDouble(paramMap.get(attributesName).toString()));
+					} else if (attrType == 4) {
+						attr.setStringValue(String.valueOf(paramMap.get(attributesName)));
+					} else if (attrType == 5) {
+						attr.setTimestampValue(Timestamp.valueOf(paramMap.get(attributesName).toString()));
+					} else if (attrType == 6) {
+						attr.setDateValue(ScfDateUtil.parseDate(paramMap.get(attributesName).toString()));
+					} else if (attrType == 7) {
+						attr.setArrayValue(paramMap.get(attributesName));
+					} else if (attrType == 8) {
+						// wa.setFileValue(arg0);
+					} else if (attrType == 9) {
+						attr.setObjectValue(paramMap.get(attributesName));
+					} else if (attrType == 10) {
+						// wa.setBinaryValue(arg0);
+					}
+				}
+			}
+			
+			sunflowClient.modifyProcessInstanceRelevantData(procInsID, attrs,
+					areaCode);
+			sunflowClient.startProcess(procInsID, areaCode);
+
+			/**
+			 * checkout
+			 */
+			// 根据工作流Id查询当前节点的位置取得节点Id
+			WorkItemContextCollection wcc = sunflowClient.listWorkItems(
+					"PRI_STATE = 1 AND WKI_STATE in (1, 2) AND WKI_PriID = " + procInsID, areaCode);
+			if (wcc.size() < 1) {
+				return respBean;
+			}
+			long workItemId = wcc.get(0).getWorkItemID();
+			int workState = sunflowClient
+					.getWorkItemStatusByWorkItemID(workItemId);
+			if (workState == 1) {
+				sunflowClient.checkOutWorkItem(workItemId);
+			} else if (workState == 2) {
+				sunflowClient.applyWorkItem(workItemId);
+			} else if (workState == 6) {
+				respBean.setResult(ErrorCodeEnum.WKI_STATE_ERROR);
+				return respBean;
+			}
+
+			/**
+			 * checkin
+			 */
+			sunflowClient.checkInWorkItem(workItemId);
+		} catch (SunflowException e) {
+			log.error(e.getMessage(), e);
+			respBean.setResult(ErrorCodeEnum.CREATE_SUNFLOW_ERROR);
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean terminate(Map<String, Object> paramMap) {
+		
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long procInsId = (long) paramMap.get("procInsId");
+		BaseRespBean respBean = new BaseRespBean();
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+			
+			// 流程终止
+			sunflowClient.terminateProcessInstanceCascade(procInsId, areaCode);
+			
+			// 流程实例与项目名称对应关系表_终止流程用户名称登入
+			int updCnt = priProjectDao.updatePriProject(paramMap);
+			if (updCnt <= 0) {
+				respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+				return respBean;
+			}
+			
+			ProcessInstanceContext instanceContext = sunflowClient.findProcessInstance(procInsId);
+			String instanceName = instanceContext.getInstanceName();
+			if ("标准流程".equals(instanceName)
+					|| "融资直通车".equals(instanceName)) {
+				paramMap.put("status", 0);// 终止
+				// 费用表_状态更新
+				int updateCnt = expenseDao.updateExpense(paramMap);
+				if (updateCnt <= 0) {
+					respBean.setResult(ErrorCodeEnum.UPDATE_FAILED);
+					return respBean;
+				}
+				// 对账管理表_状态更新
+				recManageDao.updateStatus(paramMap);
+				// 发票管理表_状态更新
+				invoiceMngDao.updateInvMng(paramMap);
+			}
+			
+			
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(propagation = Propagation.REQUIRED)
+	public BaseRespBean transfer(Map<String, Object> paramMap) {
+		
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap.get("workflowport"));
+		String username = paramMap.get("username").toString();
+		String transferUser = paramMap.get("transferUser").toString();
+		long workItemId = (long) paramMap.get("workItemId");
+		BaseRespBean respBean = new BaseRespBean();
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+			int workState = sunflowClient.getWorkItemStatusByWorkItemID(workItemId);
+			// 拉方式
+			if (workState == 2) {
+				sunflowClient.applyWorkItem(workItemId);
+			}
+			WMTWflParticipant participant = new WMTWflParticipant();
+			participant.setParticipantID(transferUser);
+			sunflowClient.modifyWorkItemExecutor(workItemId, participant);
+			respBean.setResult(ErrorCodeEnum.SUCCESS);
+		} catch (Exception e) {
+			respBean.setResult(ErrorCodeEnum.SUNFLOW_ERROR);
+			log.error(e.getMessage(), e);
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					respBean.setResult(ErrorCodeEnum.DISC_SUNFLOW_ERROR);
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return respBean;
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getOnPassageItemCount(Map<String, Object> paramMap) {
+		WorkFlowRespBean respBean = new WorkFlowRespBean();
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String monitorUrl = ScfCacheDict.sysConfigMap.get("monitorURL");
+		paramMap.put("areaCode", areaCode);
+		paramMap.put("monitorUrl", monitorUrl);
+		List<FlowListInfo> flowNotList = expenseDao.selectNotProcList(paramMap);
+		respBean.setWorkItemsCount(flowNotList.size());
+		return respBean;
+	}
+
+	@Transactional(propagation = Propagation.REQUIRED)
+	private void addCntFlowExpense(Map<String, Object> paramMap) {
+		Map<String, Object> map = queryAttrs(paramMap);
+		map.put("projectName", map.get("proName"));
+		map.put("balanceAccount", map.get("repaymentCorpAcount"));
+		map.put("repayTime", map.get("repaymentDate"));
+		
+		int updateExpenseNum = expenseDao.updateExpense(map);
+		log.debug("update Expense num {}", updateExpenseNum);
+		
+		//一条费用表记录对应五条对账管理记录
+		String createUserId =  map.get("proMembId").toString();
+		int insertRecManageNum1 = 0;
+		int insertRecManageNum2 = 0;
+		int insertRecManageNum3 = 0;
+		int insertRecManageNum4 = 0;
+		int insertRecManageNum5 = 0;
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "手续费 ");
+		map.put("shouldRepayAmount", "".equals(map.get("commission")) ? null : map.get("commission"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum1 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num1 {}", insertRecManageNum1);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "管理费");
+		map.put("shouldRepayAmount", "".equals(map.get("managementFee")) ? null : map.get("managementFee"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum2 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num2 {}", insertRecManageNum2);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "利息 ");
+		map.put("shouldRepayAmount", "".equals(map.get("interest")) ? null : map.get("interest"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum3 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num3 {}", insertRecManageNum3);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "违约金 ");
+		map.put("shouldRepayAmount", "".equals(map.get("penalty")) ? null : map.get("penalty"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum4 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num4 {}", insertRecManageNum4);
+		
+		map.put("recUid", ScfUUID.generate());
+		map.put("expenseType", "融资金额 ");
+		map.put("shouldRepayAmount", "".equals(map.get("loanAmt")) ? null : map.get("loanAmt"));
+		map.put("createUserId", createUserId);
+		if (recManageDao.countExistRecord(map) <= 0) {
+			insertRecManageNum5 = recManageDao.insertRecManage(map);
+		}
+		log.debug("insert RecManage num5 {}", insertRecManageNum5);
+	}
+	
+	private Map<String, Object> queryAttrs(Map<String, Object> paramMap){
+		Map<String, Object> map = new HashMap<String, Object>();
+		String url = ScfCacheDict.sysConfigMap.get("workflowengine");
+		int port = Integer.parseInt(ScfCacheDict.sysConfigMap
+				.get("workflowport"));
+		String areaCode = ScfCacheDict.sysConfigMap.get("areaCode");
+		String username = paramMap.get("username").toString();
+		long procInsId = (long) paramMap.get("procInsId");
+		SunflowClient sunflowClient = null;
+		try {
+			sunflowClient = new SunflowClient(url, port);
+			sunflowClient.connect(username, "");
+
+			WMTAttribute[] attrs = sunflowClient.getProcessRelevantData(
+					procInsId, null, areaCode);
+			String attributesName = "";
+			int attrType = 0;
+			
+			for (WMTAttribute attr : attrs) {
+				attributesName = attr.getAttributeName();
+				attrType = attr.getAttributeType();
+				
+				if (attrType == 1) {
+					map.put(attributesName, attr.getIntValue());
+				} else if (attrType == 2) {
+					map.put(attributesName, attr.getBooleanValue());
+				} else if (attrType == 3) {
+					map.put(attributesName, attr.getDoubleValue());
+				} else if (attrType == 4) {
+					map.put(attributesName, attr.getStringValue());
+				} else if (attrType == 5) {
+					map.put(attributesName, attr.getTimestampValue());
+				} else if (attrType == 6) {
+					map.put(attributesName, attr.getDateValue());
+				} else if (attrType == 7) {
+					map.put(attributesName, attr.getArrayValue());
+				} else if (attrType == 8) {
+					// wa.setFileValue(arg0);
+				} else if (attrType == 9) {
+					map.put(attributesName, attr.getObjectValue());
+				} else if (attrType == 10) {
+					// wa.setBinaryValue(arg0);
+				}
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			return null;
+		} finally {
+			if (sunflowClient != null) {
+				try {
+					sunflowClient.disconnect();
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
+			}
+		}
+		return map;
+	}
+}

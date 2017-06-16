@@ -1,0 +1,381 @@
+//获取url中的值taskId
+var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
+var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
+var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
+var tableName = "";
+$(document).ready(function() {
+    initCntFileListTable();
+    initCertifyFileListTable();
+    setForm();
+    $("input").attr("readonly", true);
+    if (taskDefKey == "task_contract_fw") {
+        $("#btnAddFileInfo").hide();
+    } else {
+        $("#btnAddFileInfo").show();
+    }
+});
+
+
+
+function initCntFileListTable() {
+    $('#cntFileListTable').bootstrapTable('destroy');
+    $("#cntFileListTable").bootstrapTable({
+        method: "post",
+        //         url: "../..//", 
+        striped: true, //表格显示条纹  
+        pagination: false, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) { //设置查询参数  
+            var data = CloudUtils.convertStringJson('searchForm');
+            var jsonData = eval("(" + data + ")");
+            var param = {
+                pageNumber: params.pageNumber,
+                pageSize: params.pageSize,
+                isPage: 1,
+                productName: jsonData.productName,
+            };
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'fileName',
+            title: '附件名称',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row) {
+                var a = "<a href='/../../.." + row.fileUrl + "' download='" + value + "'>" + value + "</a>"
+                return a;
+            }
+        }, {
+            field: 'fileClass',
+            title: '附件类型',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                if (value == '0') {
+                    return '签约视频';
+                } else if (value == '1') {
+                    return '签约文件';
+                } else if (value == '2') {
+                    return '其他';
+                }
+            }
+        }, {
+            field: 'fileType',
+            title: '文件格式',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'fileUrl',
+            title: '文件路径',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'fileSize',
+            title: '文件大小',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'operation',
+            title: '操作',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row, index) {
+                var r = '<a class = "fa fa-trash-o remove" style="color:#fa8564;padding:0px 5px;" title="删除" href="javascript:void(0)"></a>';
+                if (taskDefKey == "task_contract_fw") {
+                    return "-";
+                }
+                return r;
+            },
+            events: 'operateEvents'
+        }]
+    });
+}
+
+function initCertifyFileListTable() {
+    $('#certifyFileListTable').bootstrapTable('destroy');
+    $("#certifyFileListTable").bootstrapTable({
+        method: "post",
+        //         url: "../../product/list", 
+        striped: true, //表格显示条纹  
+        pagination: false, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) { //设置查询参数  
+            var data = CloudUtils.convertStringJson('searchForm');
+            var jsonData = eval("(" + data + ")");
+            var param = {
+                pageNumber: params.pageNumber,
+                pageSize: params.pageSize,
+                isPage: 1,
+                productName: jsonData.productName,
+            };
+            return JSON.stringify(param);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'fileName',
+            title: '附件名称',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value, row) {
+                var a = "<a href='" + row.fileUrl + "' download>" + value + "</a>"
+                return a;
+            }
+        }, {
+            field: 'fileClass',
+            title: '附件类型',
+            align: 'center',
+            valign: 'middle',
+            formatter: function(value) {
+                if (value == '0') {
+                    return '三方协议';
+                } else if (value == '1') {
+                    return '最高额保证合同';
+                } else if (value == '2') {
+                    return '保单';
+                }
+            }
+        }, {
+            field: 'fileType',
+            title: '文件格式',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'fileUrl',
+            title: '文件路径',
+            align: 'center',
+            valign: 'middle',
+        }, {
+            field: 'fileSize',
+            title: '文件大小',
+            align: 'center',
+            valign: 'middle',
+        }]
+    });
+}
+
+function setForm() {
+    var data = {};
+    data.taskId = taskId;
+    var options = {
+        url: '../../activiti/getTaskDataByTaskId',
+        data: JSON.stringify(data),
+        callBackFun: function(data) {
+            if (data.result == 0) {
+            debugger;
+                var jsonData = eval("(" + data.str + ")");
+                CloudUtils.setForm(jsonData, "infoForm");
+                //初始化table数据
+                var tableJsonData = eval("(" + $("#fileInfo").val() + ")");
+                $("#certifyFileListTable").bootstrapTable("append", tableJsonData);
+                if ($("#pmFileInfo").val()) {
+                  var tableJsonData2 = eval("(" + $("#pmFileInfo").val() + ")");
+                  $("#cntFileListTable").bootstrapTable("append", tableJsonData2);
+                }
+            }
+        },
+        errorCallback: function(data) {
+            bootbox.alert(data.resultNote);
+            return false;
+        }
+    };
+    CloudUtils.ajax(options);
+}
+
+function checkAdvice() {
+    var advice = $.trim($("#advice").val());
+    if (advice == "") {
+        $("#check").text("意见说明不能为空");
+    } else {
+        $("#check").text("");
+    }
+}
+
+function doAgree(type) {
+    var advice = $.trim($("#advice").val());
+    if (type == 1) {
+        checkAdvice();
+        if (advice) {
+            getInfo(type);
+        }
+    }
+    if (type == 0) {
+        getInfo(type);
+    }
+}
+
+
+function fileSelect() {
+    document.getElementById("file").value = null;
+    document.getElementById("file").click();
+}
+
+function uploadAttachment(id) {
+    tableName = id;
+    fileSelect();
+}
+
+
+function ajaxFileUpload(obj) {
+
+    if ($(obj).val().length > 0) {
+        $.ajaxFileUpload({
+            url: '../../file/binUpload?pathId=2',
+            secureuri: false,
+            fileElementId: $(obj).attr("id"),
+            dataType: 'json',
+            success: function(data, status) {
+                if (data.result == 0) {
+                    CloudUtils.setForm(data, 'fileInfoForm');
+                } else {
+                    bootbox.alert("上传失败！");
+                }
+            },
+            error: function(data, status, e) {
+                bootbox.alert(e);
+            }
+        });
+    } else {
+        bootbox.alert("请选择附件");
+    }
+};
+
+function addFile() {
+    var data = CloudUtils.convertStringJson('fileInfoForm');
+    data = eval("(" + data + ")");
+    $("#cntFileListTable").bootstrapTable("append", data);
+    $('#fileModal').modal('hide')
+}
+
+function download() {
+    var path = $("#filePath").val();
+    $.ajax({
+        type: "get",
+        dataType: "text",
+        url: "http://localhost:8080/Practice/exit",
+        data: { "filePath": path },
+        success: function(data) {
+            //    window.location.href="http://localhost:8080/Practice/letGo?filePath=" + path;
+            $("#first").attr("src", 'http://localhost:8080/Practice/letGo?filePath=' + path);
+            //    $("#down").attr("href", "http://localhost:8080/Practice/letGo?filePath=" + path);
+        }
+    });
+}
+
+
+function getInfo(type) {
+    if (taskDefKey == "task_contract_pm") {
+        var allTableData = $("#cntFileListTable").bootstrapTable('getData');
+        $("#pmFileInfo").val(JSON.stringify(allTableData));
+    }
+
+    var fileInfo = $("#fileInfo").val();
+    fileInfo = eval("(" + fileInfo + ")");
+
+    var data = CloudUtils.convertStringJson('infoForm');
+    data = eval("(" + data + ")");
+    data.agree = type;
+    data.taskId = taskId;
+    var options = {
+        url: '../../contract/doAgree',
+        data: JSON.stringify(data),
+        callBackFun: function(data) {
+          debugger;
+            if (taskDefKey == "task_contract_pm"||type=="1") {
+                bootbox.alert(data.resultNote, function() {
+                    window.location.href = '../../project/agencyTask/agencyTask.html';
+                });
+            }
+        },
+        errorCallback: function(data) {
+            bootbox.alert(data.resultNote);
+            return false;
+        }
+    };
+    CloudUtils.ajax(options);
+    if (type == "0" && taskDefKey == "task_contract_fw") {
+        debugger;
+        var tempData = CloudUtils.convertStringJson('infoForm');
+        tempData = eval("(" + tempData + ")");
+        //添加
+        var options = {
+            url: '../../contract/add',
+            data: JSON.stringify(tempData),
+            callBackFun: function(data) {
+                bootbox.alert(data.resultNote, function() {
+                    window.location.href = '../../project/agencyTask/agencyTask.html';
+                });
+            },
+            errorCallback: function(data) {
+                bootbox.alert(data.resultNote);
+                return false;
+            }
+        };
+        CloudUtils.ajax(options);
+
+    }
+}
+
+
+
+window.operateEvents = {
+    'click .remove': function(e, value, row, index) {
+        bootbox.confirm("确定删除此条记录?", function(result) {
+            if (result) {
+                var values = [];
+                values.push(row.fileUrl);
+                $("#cntFileListTable").bootstrapTable("remove", { field: 'fileUrl', values: values });
+            }
+        });
+    },
+    'click .modify': function(e, value, row, index) {
+        modFun(row);
+    },
+
+};

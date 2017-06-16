@@ -1,0 +1,7 @@
+package com.ut.scf.service.project;
+
+public interface IAgencyService {
+
+	void addAgency(String json);
+	
+}

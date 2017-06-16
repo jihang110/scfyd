@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="ThemeBucket">
+<link rel="shortcut icon" href="#" type="image/png">
+<title>固定支出以及风险分析</title>
+<link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/style-responsive.css" rel="stylesheet">
+<link href="../../css/bootstrap-table.css" rel="stylesheet">
+<link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+<link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css"
+	rel="stylesheet" />
+<link href="../../css/sysfun.css" rel="stylesheet">
+<link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+<script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/CloudUtils.js"></script>
+<script src="../../js/password.js"></script>
+<script src="../../js/store.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+<script src="../../js/validation-init.js"></script>
+<script type="text/javascript"
+	src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/zh_CN.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="../../js/jquery.number.js"></script>
+<!--dynamic table initialization -->
+<script src="../../js/crm/fixedExpendManager/fixedExpendManager.js"
+	type="text/javascript"></script>
+</head>
+
+<body class="iframeBody">
+	<section>
+		<div class="main-content-child">
+			<div class="row">
+				<div class="title">
+					<span>固定支出及风险分析</span>
+				</div>
+			</div>
+			<div class="row rowpad">
+				<div class="form-group">
+					<div class="col-sm-2">
+						<button id="btn_add" type="button" class="btn btn-default add"
+							data-toggle="modal" onclick="addFun()">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加固定支出
+						</button>
+					</div>
+
+					<div class="col-sm-2">
+						<button id="btn_add" type="button" class="btn btn-default add"
+							data-toggle="modal" onclick="riskAnalyAdd()"
+							style="background: #52f99a;">
+							<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加风险分析
+						</button>
+					</div>
+					<form class="form-horizontal" role="form" id="searchForm">
+						<div class="col-sm-6">
+							<select id="txt_corpId" name="txt_corpId" class="form-control">
+							</select>
+						</div>
+					</form>
+
+					<div class="col-sm-2">
+						<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+					</div>
+				</div>
+			</div>
+			<form class="form-horizontal" role="form" id="addForm"
+				data-toggle="validator">
+				<div class="modal fade" id="addModal" aria-hidden="true"
+					data-backdrop="static" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="addModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="recUid" name="recUid"> <input
+									type="hidden" id="isEdit" name="isEdit">
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="corpId">企业名称</label>
+									<div class="col-sm-6">
+										<select id="corpId" name="corpId" class="form-control">
+										</select>
+									</div>
+								</div>
+								<!-- <div class="form-group">
+									<label class="col-sm-4 control-label" for="operTime">年月</label>
+									<div class="col-sm-6">
+										<input type="text" name="operTime" class="form-control"
+											id="operTime" placeholder="年月">
+										<div class="help-block with-errors"></div>
+									</div>
+								</div> -->
+
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="operTime">年月</label>
+									<div class="col-sm-6">
+										<span style="position: relative; z-index: 9999;"> <input
+											id="operTime" style="cursor: pointer;" name="operTime"
+											class="form-control" size="16" type="text" readonly>
+										</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="waterAmount">用水量(度)</label>
+									<div class="col-sm-6">
+										<input type="text" name="waterAmount" class="form-control"
+											id="waterAmount" placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="waterMoney">用水金额(元)</label>
+									<div class="col-sm-6">
+										<input type="text" name="waterMoney" class="form-control"
+											id="waterMoney" placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="electricityAmount">用电量(度)</label>
+									<div class="col-sm-6">
+										<input type="text" name="electricityAmount"
+											class="form-control" id="electricityAmount"
+											placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="electricityMoney">用电金额(元)</label>
+									<div class="col-sm-6">
+										<input type="text" name="electricityMoney"
+											class="form-control" id="electricityMoney"
+											placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="gasAmount">用气量(立方米)</label>
+									<div class="col-sm-6">
+										<input type="text" name="gasAmount" class="form-control"
+											id="gasAmount" placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="gasMoney">用气金额(元)</label>
+									<div class="col-sm-6">
+										<input type="text" name="gasMoney" class="form-control"
+											id="gasMoney" placeholder="10.00">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="paymentSituation">缴费情况</label>
+									<div class="col-sm-6">
+										<select id="paymentSituation" name="paymentSituation"
+											class="form-control">
+											<option value="0">未缴费</option>
+											<option value="1">已缴费</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="rest">其他</label>
+									<div class="col-sm-6">
+										<input type="text" name="rest" class="form-control" id="rest"
+											placeholder="其他">
+									</div>
+								</div>
+							</div>
+							<div class="modal-footer">
+								<div class="form-group">
+									<div class="col-sm-4"></div>
+									<div class="col-sm-3">
+										<button type="button" class="btn btn-default cancel"
+											data-dismiss="modal">取消</button>
+									</div>
+									<div class="col-sm-3">
+										<button type="submit" id="btn_submit"
+											class="btn btn-default add" onclick="saveUser()">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<form class="form-horizontal" role="form" id="riskForm"
+				data-toggle="validator">
+				<div class="modal fade" id="riskModal" aria-hidden="true"
+					data-backdrop="static" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="riskModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" id="recUid" name="recUid"> <input
+									type="hidden" id="riskEdit" name="riskEdit">
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="r_corpId">企业名称</label>
+									<div class="col-sm-6">
+										<select id="r_corpId" name="r_corpId" class="form-control">
+										</select>
+									</div>
+								</div>
+									<div class="form-group">
+									<label class="col-sm-4 control-label" for="startOperTime">开始年月</label>
+									<div class="col-sm-6">
+										<span style="position: relative; z-index: 9999;"> <input
+											id="startOperTime" style="cursor: pointer;"
+											name="startOperTime" class="form-control" size="16"
+											type="text" readonly>
+										</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label" for="endOperTime">结算年月</label>
+									<div class="col-sm-6">
+										<span style="position: relative; z-index: 9999;"> <input
+											id="endOperTime" style="cursor: pointer;" name="endOperTime"
+											class="form-control" size="16" type="text" readonly>
+										</span>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label"
+										for="generatRiskPointAnaly">生成风险点分析</label>
+									<div class="col-sm-6">
+										<textarea rows="3" name="generatRiskPointAnaly"
+											class="form-control" id="generatRiskPointAnaly"></textarea>
+									</div>
+								</div>
+							
+								<div class="modal-footer">
+									<div class="form-group">
+										<div class="col-sm-4"></div>
+										<div class="col-sm-3">
+											<button type="button" class="btn btn-default cancel"
+												data-dismiss="modal">取消</button>
+										</div>
+										<div class="col-sm-3">
+											<button type="submit" id="btn_risk_submit"
+												class="btn btn-default add" onclick="saveRiskAnaly()">保存</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="panel-body">
+				<table id="fixedExpendList" class="table" cellspacing="0"
+					width="100%">
+				</table>
+				<table id="riskAnalyList" class="table" cellspacing="0" width="100%">
+				</table>
+			</div>
+		</div>
+	</section>
+
+</body>
+</html>

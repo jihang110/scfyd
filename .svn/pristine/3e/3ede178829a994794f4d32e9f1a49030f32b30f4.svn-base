@@ -1,0 +1,5 @@
+jdbc.driver.class=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://172.25.1.52:3307/scfyd?tinyInt1isBit=false
+jdbc.activitiurl=jdbc:mysql://172.25.1.52:3307/activitiyd?tinyInt1isBit=false
+jdbc.username=sunyard
+jdbc.password=Sunyard123

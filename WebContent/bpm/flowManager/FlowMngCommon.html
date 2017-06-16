@@ -1,0 +1,2423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script type="text/javascript">
+  	$(document).ready(function() {
+  		// 融资直通车
+  		$("#financeLblModal").on('hidden.bs.modal', function() {
+  			$("#myTabLbl a:first").tab("show");
+  		});
+  	});
+  </script>
+</head>
+<body>
+	<!-- 详情_特殊事项审批 -->
+ 	<form class="form-horizontal" role="form" id="spMatterLblForm" data-toggle="validator">
+        <div class="modal fade" id="spMatterLblModal" tabindex="-1" role="dialog" aria-labelledby="spMatterLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="spMatterLblModalLabel">特殊事项审批</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <fieldset>
+	              <legend class="little-title">产品类型</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">是否有追</label>
+		            <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">保理类型</label>
+		            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">立项人员名称</label>
+		            <label id="proMembNameLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">立项发起日期</label>
+		            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">关联买方名称</label>
+		            <label id="relBuyNameLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">关联卖方名称</label>
+		            <label id="relSaleNameLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">关联企业名称</label>
+		            <label id="relSaleCorpNameLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">备注</label>
+		            <label id="noteLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">申请事项</label>
+		            <label id="applyItemLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="applyItem1">
+	              <legend class="little-title">展期</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款企业</label>
+		            <label id="repayCorpLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款时间</label>
+		            <label id="repayDateLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款人</label>
+		            <label id="repayUserLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款企业账户</label>
+		            <label id="repayCorpAccountLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款计划</label>
+		            <label id="repayPlanLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款金额</label>
+		            <label id="repayAmountLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">还款类型</label>
+		            <label id="repayTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="applyItem2">
+	              <legend class="little-title">费用减免</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">费用类型</label>
+		            <label id="feeTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">减免金额</label>
+		            <label id="reduceAmountLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="applyItem3">
+	              <legend class="little-title">转法务</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">是否转法务</label>
+		            <label id="chgForensicFlgLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">申请事由</label>
+		            <label id="applyReasonLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="applyItem4">
+	              <legend class="little-title">其它</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">备注</label>
+		            <label id="otherNoteLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	       </div>
+	       <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			  </div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+	<!-- 详情_立项管理 -->
+ 	<form class="form-horizontal" role="form" id="normalLblForm" data-toggle="validator">
+        <div class="modal fade" id="normalLblModal" tabindex="-1" role="dialog" aria-labelledby="normalLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="normalLblModalLabel">立项管理</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否有追</label>
+		        <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保理类型</label>
+	            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">发起日期</label>
+	            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联买方名称</label>
+	            <label id="relBuyNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联卖方名称</label>
+	            <label id="relSaleNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联企业名称</label>
+	            <label id="relSaleCorpNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">备注</label>
+	            <label id="noteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="contractLbl" id="contractLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="order">订单</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="orderLbl" id="orderLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="delivery">发货单</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="deliveryLbl" id="deliveryLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="receipt">收货单</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="receiptLbl" id="receiptLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="godownEntry">入库单</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="godownEntryLbl" id="godownEntryLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="list">榜单(保险)</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="listLbl" id="listLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label"  for="storage">仓储单</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="storageLbl" id="storageLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同/订单编号</label>
+	            <label id="billNoLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同名称/订单</label>
+	            <label id="billNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同/订单金额</label>
+	            <label id="billAmountLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">付款方式</label>
+	            <label id="payTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同/订单约定账期</label>
+	            <label id="accountPeriodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否开立发票</label>
+		        <label id="hasInvLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div id="detailInvcDiv">
+	          
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款余额</label>
+	            <label id="arBalLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">拟申请保理金额</label>
+	            <label id="aplFacAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">申请账期</label>
+	            <label id="aplPeriodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款受让比例</label>
+	            <label id="arPctLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">中登网查询截屏</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="srchPrtScLbl" id="srchPrtScLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	       </div>
+	       <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			  </div>
+		   </div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+	<!-- 详情_授信申请 -->
+	<form class="form-horizontal" role="form" id="creditLblForm" data-toggle="validator">
+        <div class="modal fade" id="creditLblModal" tabindex="-1" role="dialog" aria-labelledby="creditLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="creditLblModalLabel">授信申请</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否有追</label>
+		        <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保理类型</label>
+	            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">立项人员名称</label>
+	            <label id="proMembNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">立项发起日期</label>
+	            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联买方名称</label>
+	            <label id="relBuyNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联卖方名称</label>
+	            <label id="relSaleNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联企业名称</label>
+	            <label id="relSaleCorpNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">备注</label>
+	            <label id="noteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">营业执照注册地址</label>
+	            <label id="licenseRegAddrLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">实际生产经营地址</label>
+	            <label id="relPrdBusiAddrLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">访厂地址</label>
+	            <label id="visiAddrLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">三个地址是否一致</label>
+		        <label id="isAddrSameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">地址不一样的原因</label>
+	            <label id="unSameReasonLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">主要访谈对象1</label>
+	            <label id="mainVisiPerson1Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">职务</label>
+	            <label id="position1Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">电话</label>
+	            <label id="phone1Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">主要访谈对象2</label>
+	            <label id="mainVisiPerson2Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">职务</label>
+	            <label id="position2Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">电话</label>
+	            <label id="phone2Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">主要访谈对象3</label>
+	            <label id="mainVisiPerson3Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">职务</label>
+	            <label id="position3Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">电话</label>
+	            <label id="phone3Lbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <fieldset>
+	              <legend class="little-title">经营场所相关情况</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">厂区（经营场所）处于</label>
+		            <label id="facAddrAreaLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">厂房/经营场所</label>
+		            <label id="facAddrTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">经营场所为</label>
+		            <label id="busiPlaceTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="经营场所是否为本次授信担保品">经营场所是否为本次授信担保品</label>
+		            <label id="isFacGuaranteeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">主要经营场所建造时间</label>
+		            <label id="mainFacBuildTimeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="主要车间建造时间(适用制造业及自有)">主要车间建造时间(适用制造业及自有)</label>
+		            <label id="mainWorkShopBuildTimeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">车间/仓库安全生产配置</label>
+		            <label id="workShopSafeConfigLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">仓库情况</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">存货存放</label>
+		            <label id="inventoryStorageLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="仓库是否有存放较久的原材料或产品">仓库是否有存放较久的原材料或产品</label>
+		            <label id="hasLongTimeStoredGoodsLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="仓库进出库管理是出入库管理系统">仓库进出库管理是出入库管理系统</label>
+		            <label id="hasOutStorageManagementSystemLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司货物运输方式及比率</label>
+		            <label id="deliverMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">设备使用情况</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">公司主要生产设备</label>
+		            <label id="mainEquipmentLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">数量</label>
+		            <label id="equNumLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司产能利用</label>
+		            <label id="prdCapUtilLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">是否有任何机器闲置</label>
+		            <label id="hasAnyMachineIdleLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="企业是否有配套设施（如排污设施、净化设施等）">企业是否有配套设施（如排污设施、净化设施等）</label>
+		            <label id="hasSupportingFacilitiesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">生产情况</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">企业主要能耗</label>
+		            <label id="mainEnergyConsumptionLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">现场员工上岗人数</label>
+		            <label id="postsStaffOnSiteLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">工人忙碌程度</label>
+		            <label id="isBusyLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">每天开工班次</label>
+		            <label id="orderOfClassesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline"
+		            title="生产情况（如日产量、开工程度、产品单价等）&#10;与报告中营业额的80%">生产情况（如日产量、开工程度、产品单价等）与报告中营业额的80%</label>
+		            <label id="productionStatusLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="企业是否有专门的质检人员（适用制造业）">企业是否有专门的质检人员（适用制造业）</label>
+		            <label id="hasQCLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司是否有自有研发人员</label>
+		            <label id="hasOwnRDLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">是否有严格的质量保证体系</label>
+		            <label id="hasQASLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">机器的平均使用年限</label>
+		            <label id="machineAvgUseLifeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司主要产品或服务内容</label>
+		            <label id="mainPrdServContLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">非财务因素</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">业务来源</label>
+		            <label id="busiSourceLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">比率</label>
+		            <label id="ratioLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="股东在过去或未来6个月是否有变动">股东在过去或未来6个月是否有变动</label>
+		            <label id="hasShareHolderChangeInSixMonthLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="公司资金回笼的主要方式(如有多选，请备注比率)">公司资金回笼的主要方式(如有多选，请备注比率)</label>
+		            <label id="capitalReturnMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="公司最近12个月是否涉及诉讼或被执行">公司最近12个月是否涉及诉讼或被执行</label>
+		            <div class="col-sm-6">
+		            	<a id="hasLawsuitRecentYearA" class="fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		            <label id="hasLawsuitRecentYearLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline"
+		            title="公司业务近期是否遇到了麻烦&#10;（包括但不限于重要人员/合约的流失、&#10;关键人员患重大疾病、应收帐款回收困难、&#10;债务纠纷等）">公司业务近期是否遇到了麻烦（包括但不限于重要人员...</label>
+		            <label id="hasTroubleLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="公司最近12个月内是否有拖欠员工工资或福利">公司最近12个月内是否有拖欠员工工资或福利</label>
+		            <label id="hasArrearsOfWagesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司最大采购商名称</label>
+		            <label id="biggestBuyerLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">比率</label>
+		            <label id="ratioOfBiggestBuyerLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司最大供应商名称</label>
+		            <label id="biggestSupplierLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">比率</label>
+		            <label id="ratioOfBiggestSupplierLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司是否涉及外销</label>
+		            <label id="hasExportLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">比率</label>
+		            <label id="ratioOfExportLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">企业财报与税报差异</label>
+		            <label id="diffEarningsTaxLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司应收帐款平均帐期</label>
+		            <label id="arAvgPeriodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">财务因素</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">公司应付帐款平均帐期</label>
+		            <label id="apAvgPeriodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司材料采购频率</label>
+		            <label id="materialStockFrequencyLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">产品生产周期（适用制造业）</label>
+		            <label id="productionCycleLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司近3年平均毛利率趋势</label>
+		            <label id="nearly3yAvgGrossMarginTrendLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">公司目前毛利率</label>
+		            <label id="nowGrossMarginLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">企业其他信息</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label oneline"
+		            title="企业生产工艺流程（生产企业）/&#10;交易流程（贸易企业）描述">企业生产工艺流程（生产企业）/交易流程（贸易企业）描述</label>
+		            <label id="processDiscLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="客户融资真实需求（包括未来商业计划和资金安排）">客户融资真实需求（包括未来商业计划和资金安排）</label>
+		            <label id="relLoanDemandLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">其他需说明的问题及总体评价</label>
+		            <label id="otherNoteEvaluationLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">纳税开票系统查核</label>
+		            <label id="taxInvSysChkLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">银行流水系统查核</label>
+		            <label id="bankWaterSysChkLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">财务系统查核</label>
+		            <label id="financeSysChkLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">其他资料查核</label>
+		            <label id="otherInfoChkLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	       </div>
+	       <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+	<!-- 详情_风控报告 -->
+	<form class="form-horizontal" role="form" id="riskCtrlLblForm" data-toggle="validator">
+        <div class="modal fade" id="riskCtrlLblModal" tabindex="-1" role="dialog" aria-labelledby="riskCtrlLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="riskCtrlLblModalLabel">风控报告</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">立项发起日期</label>
+	            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否有追</label>
+		        <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保理类型</label>
+	            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">拟申请保理金额</label>
+	            <label id="aplFacAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否存量客户</label>
+			    <label id="isStockCustomerLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">区域</label>
+	            <label id="areaLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">客户经理</label>
+	            <label id="custManagerLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <fieldset>
+	              <legend class="little-title">行业风险点分析</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">判断行业是起步，成熟</label>
+		            <label id="isIndustryRipeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">行业风险点</label>
+		            <label id="riskPointsLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="客户在行业里面的优势和不足及地位">客户在行业里面的优势和不足及地位</label>
+		            <label id="shortageAndPositionInIndustryLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">负面信息分析</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="网查信息（百度，工商网，法院网等）">网查信息（百度，工商网，法院网等）</label>
+		            <label id="webSearchInfoLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">中登网筛查</label>
+		            <label id="zhongdengSearchLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">企业经营风险点分析</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">对外投资情况</label>
+		            <label id="foreignInvestmentLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">企业的业务风险</label>
+		            <label id="busiRiskLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">内部运营分析</label>
+		            <label id="insideOperationAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">财务风险点分析</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="年度同比变化大于20%的科目分析">年度同比变化大于20%的科目分析</label>
+		            <label id="changeMore20perAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">财务比率分析</label>
+		            <label id="finacialRtAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">收入的核实手段</label>
+		            <label id="incomeVerifMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">收入的真实性评价</label>
+		            <label id="incomeAuthenticityEvaluateLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">利润水平</label>
+		            <label id="profitLevelLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">利润质量</label>
+		            <label id="profitQualityLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">刚性负债分析</label>
+		            <label id="rigidLiabilityAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">隐形负债</label>
+		            <label id="hiddenLiabilitiesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">或有负债</label>
+		            <label id="contingentLiabilitiesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">历史征信记录分析</label>
+		            <label id="historicalRecordsAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">应收/应付/存货周转率</label>
+		            <label id="turnoverRateLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">应收/应付帐款集中度</label>
+		            <label id="receivableConcentrationLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">存活规模</label>
+		            <label id="survivalScaleLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">预付资金压力</label>
+		            <label id="advanceFundingPressureLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">存活的价格变动</label>
+		            <label id="survivalPriceChangesLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">流动性测试</label>
+		            <label id="mobilityTestLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">债项风险点分析</legend>
+	              <legend class="little-title">基础合同</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">合同是否可以转让</label>
+		            <label id="whetherContractTransferredLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">商业纠纷的约定</label>
+		            <label id="businessDisputeAgreementLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">合同的有效期</label>
+		            <label id="contractValidityLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">合同的计价方式</label>
+		            <label id="cntValuationMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">结算方式</label>
+		            <label id="settlementMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">开票</label>
+		            <label id="billingLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">结算单据</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">订单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="orderLbl" id="orderLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">发货单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="deliveryLbl" id="deliveryLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">收货单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="receiptLbl" id="receiptLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">入库单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="godownEntryLbl" id="godownEntryLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">榜单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="listLbl" id="listLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">仓储单</label>
+		            <div class="col-sm-6">
+		            	<input type="hidden" name="storageLbl" id="storageLbl" />
+		            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+		            </div>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">应收帐款与发票的对应</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">发票与合同对应</label>
+		            <label id="invoiceCorrespondsContractLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">发票与单据对应</label>
+		            <label id="invoiceBillContractLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">发票与结算方式的对应</label>
+		            <label id="invoiceCorrespondsSettlementMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">确认应收帐款的受让比例</label>
+		            <label id="confirmArProportionReceivableLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">自尝性审查</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">明保</label>
+		            <label id="informFactoringLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">有追</label>
+		            <label id="recourseLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">暗保理</label>
+		            <label id="unInformFactoringLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">应对措施</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">行业的风险接受分析</label>
+		            <label id="industryRiskAcceptanceAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">引入其他的增信手段</label>
+		            <label id="introductionOtherIncreaseCreditMethodLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="关联风险匹配措施，可要求关联方担保等措施规避">关联风险匹配措施，可要求关联方担保等措施规避</label>
+		            <label id="associatedRiskMatchingMeasuresLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label oneline" title="资产负债率比率高，强化后期的资产管理">资产负债率比率高，强化后期的资产管理</label>
+		            <label id="assetLiabilityRatioHighLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">抵质押担保分析</label>
+		            <label id="mortgageGuaranteeAnalysisLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset>
+	              <legend class="little-title">审查结论</legend>
+	              <div class="form-group">
+		            <label class="col-sm-4 control-label">授信额度</label>
+		            <label id="reditLineLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">授信额度类型</label>
+		            <label id="reditLineTypeLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">期限</label>
+		            <label id="deadlineLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">应收帐款的受让比例</label>
+		            <label id="arFarmInRatioLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">业务期限</label>
+		            <label id="busiDeadlineLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">服务费的收取</label>
+		            <label id="serviceFeeCollectionLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">复核结论</label>
+		            <label id="reviewConclusionLbl" class="col-sm-6 control-label left"></label>
+		          </div>
+	          </fieldset>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	        </div>
+	       <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+	<!-- 详情_合同申请 -->
+	<form class="form-horizontal" role="form" id="contractLblForm" data-toggle="validator">
+        <div class="modal fade" id="contractLblModal" tabindex="-1" role="dialog" aria-labelledby="contractLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="contractLblModalLabel">合同申请</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">是否有追</label>
+		        <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保理类型</label>
+	            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">立项人员名称</label>
+	            <label id="proMembNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">立项发起日期</label>
+	            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联买方名称</label>
+	            <label id="relBuyNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联卖方名称</label>
+	            <label id="relSaleNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联企业名称</label>
+	            <label id="relSaleCorpNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">备注</label>
+	            <label id="noteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同编号</label>
+	            <label id="contractNoLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">买卖关系</label>
+	            <label id="busiRelaLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div id="invcDiv">
+	          
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款</label>
+	            <label id="arAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款说明</label>
+	            <label id="arNoteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款受让款</label>
+	            <label id="arTransfAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款受让款说明</label>
+	            <label id="arTransfNoteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保证金</label>
+	            <label id="earnestMoneyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">服务费</label>
+	            <label id="serviceAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款转让通知</label>
+	            <label id="arTransfNoticeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保人名称</label>
+	            <label id="guarantorNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保品名称</label>
+	            <label id="guaranteeNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保方式</label>
+	            <label id="guaranteeMethodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">币种</label>
+	            <label id="ccyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保价值</label>
+	            <label id="guaranteeValueLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保附件上传</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="guaranteeFileLbl" id="guaranteeFileLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">收益补偿</label>
+	            <label id="inComeMakeUpLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同生效条款</label>
+	            <label id="cntEffectiveTermsLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">特别条款说明</label>
+	            <label id="specTermsNoticeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同版本</label>
+	            <label id="cntVersionLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同生效日期</label>
+	            <label id="cntEffectDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同结束日期</label>
+	            <label id="cntEndDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同附件上传</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="cntFilesLbl" id="cntFilesLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资期限(月)</label>
+	            <label id="loanLimitLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资比例(%)</label>
+	            <label id="loanPctLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资金额(元)</label>
+	            <label id="loanAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">基准利率(%)</label>
+	            <label id="standardRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">利率上浮比例(%)</label>
+	            <label id="rateFloatPctLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">手续费</label>
+	            <label id="commissionLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">其它费用</label>
+	            <label id="otherCostLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">罚息率(%)</label>
+	            <label id="penaltyIntRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">管理费</label>
+	            <label id="managementFeeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">管理费率(%)</label>
+	            <label id="managementFeeRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">违约金</label>
+	            <label id="penaltyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资期数</label>
+	            <label id="loanPeriodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款企业</label>
+	            <label id="repaymentCorpLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款时间</label>
+	            <label id="repaymentDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款人</label>
+	            <label id="repaymentPersonLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款企业账户</label>
+	            <label id="repaymentCorpAcountLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款计划</label>
+	            <label id="repaymentPlanLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款时长</label>
+	            <label id="repaymentTimesLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款金额</label>
+	            <label id="repaymentAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款类型</label>
+	            <label id="repaymentTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	        </div>
+	        <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+	<!-- 详情_放款申请 -->
+	<form class="form-horizontal" role="form" id="loanLblForm" data-toggle="validator">
+        <div class="modal fade" id="loanLblModal" tabindex="-1" role="dialog" aria-labelledby="loanLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="loanLblModalLabel">放款申请</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">关联保理合同号</label>
+	            <label id="contractNoLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div id="detailLend">
+	          </div>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	        </div>
+	        <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+ 	<!-- 详情_在线申请、签约 -->
+	<form class="form-horizontal" role="form" id="onLineLblForm" data-toggle="validator">
+        <div class="modal fade" id="onLineLblModal" tabindex="-1" role="dialog" aria-labelledby="onLineLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="onLineLblModalLabel">在线签约</h4>
+	        </div>
+	        <div class="modal-body">
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">项目名称</label>
+	            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同编号</label>
+	            <label id="contractNoLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">公司名称</label>
+	            <label id="corpNmLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">营业执照号码</label>
+	            <label id="busiLicenceNoLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">买卖关系</label>
+	            <label id="busiRelaLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款</label>
+	            <label id="arAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款说明</label>
+	            <label id="arNoteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款受让款</label>
+	            <label id="arTransfAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款受让款说明</label>
+	            <label id="arTransfNoteLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">保证金</label>
+	            <label id="earnestMoneyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">服务费</label>
+	            <label id="serviceAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">应收账款转让通知</label>
+	            <label id="arTransfNoticeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保人名称</label>
+	            <label id="guarantorNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保品名称</label>
+	            <label id="guaranteeNameLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保方式</label>
+	            <label id="guaranteeMethodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">币种</label>
+	            <label id="ccyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保价值</label>
+	            <label id="guaranteeValueLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">担保附件上传</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="guaranteeFileLbl" id="guaranteeFileLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">收益补偿</label>
+	            <label id="inComeMakeUpLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同生效条款</label>
+	            <label id="cntEffectiveTermsLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">特别条款说明</label>
+	            <label id="specTermsNoticeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同版本</label>
+	            <label id="cntVersionLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同生效日期</label>
+	            <label id="cntEffectDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同结束日期</label>
+	            <label id="cntEndDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">合同附件上传</label>
+	            <div class="col-sm-6">
+	            	<input type="hidden" name="cntFilesLbl" id="cntFilesLbl" />
+	            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+	            </div>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资期限(月)</label>
+	            <label id="loanLimitLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资比例(%)</label>
+	            <label id="loanPctLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资金额(元)</label>
+	            <label id="loanAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">基准利率(%)</label>
+	            <label id="standardRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">利率上浮比例(%)</label>
+	            <label id="rateFloatPctLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">手续费</label>
+	            <label id="commissionLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">其它费用</label>
+	            <label id="otherCostLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">罚息率(%)</label>
+	            <label id="penaltyIntRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">管理费</label>
+	            <label id="managementFeeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">管理费率(%)</label>
+	            <label id="managementFeeRateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">违约金</label>
+	            <label id="penaltyLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">融资期数</label>
+	            <label id="loanPeriodLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款企业</label>
+	            <label id="repaymentCorpLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款时间</label>
+	            <label id="repaymentDateLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款人</label>
+	            <label id="repaymentPersonLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款企业账户</label>
+	            <label id="repaymentCorpAcountLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款计划</label>
+	            <label id="repaymentPlanLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款时长</label>
+	            <label id="repaymentTimesLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款金额</label>
+	            <label id="repaymentAmtLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <div class="form-group">
+	            <label class="col-sm-4 control-label">还款类型</label>
+	            <label id="repaymentTypeLbl" class="col-sm-6 control-label left"></label>
+	          </div>
+	          <fieldset id="fsAdvice">
+	              <legend class="little-title">审批意见</legend>
+		          <div class="form-group">
+		            <label class="col-sm-4 control-label">意见</label>
+		            <div class="col-sm-6">
+		            	<textarea rows="6" name="advice" class="form-control" id="advice" readonly></textarea>
+		            </div>
+		          </div>
+	          </fieldset>
+	        </div>
+	        <div class="modal-footer">
+			  <div class="form-group">
+			  	<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			</div>
+		</div>
+      </div>
+    </div>
+  	</div>
+ 	</form>
+ 	<!-- 详情_融资直通车 -->
+ 	<div class="modal fade" id="financeLblModal" tabindex="-1" role="dialog" aria-labelledby="financeLblModalLabel">
+	    <div class="modal-dialog" role="document">
+	      <div class="modal-content">
+	        <div class="modal-header">
+	          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span> </button> 
+	          <h4 class="modal-title" id="financeLblModalLabel">融资直通车</h4>
+	        </div>
+	        <div class="modal-body">
+	        	<ul id="myTabLbl" class="nav nav-tabs">
+					<li class="active"><a href="#tab1Lbl" data-toggle="tab">立项管理</a></li>
+					<li><a href="#tab2Lbl" data-toggle="tab">授信申请</a></li>
+					<li><a href="#tab3Lbl" data-toggle="tab">风控报告</a></li>
+					<li><a href="#tab4Lbl" data-toggle="tab">合同申请</a></li>
+					<li><a href="#tab5Lbl" data-toggle="tab">放款申请</a></li>
+					<li><a href="#tab6Lbl" data-toggle="tab">审批意见</a></li>
+				</ul>
+				<div id="myTabContentLbl" class="tab-content">
+					<div class="tab-pane fade in active" id="tab1Lbl">
+						<form class="form-horizontal" role="form" id="tab1LblForm" data-toggle="validator">
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">项目名称</label>
+				            <label id="proNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">是否有追</label>
+					        <label id="chaseFlgLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">保理类型</label>
+				            <label id="factorTypeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">立项人员名称</label>
+				            <label id="proMembNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">立项发起日期</label>
+				            <label id="proMakeDateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">关联买方名称</label>
+				            <label id="relBuyNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">关联卖方名称</label>
+				            <label id="relSaleNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">关联企业名称</label>
+				            <label id="relSaleCorpNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">备注</label>
+				            <label id="noteLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="contractLbl" id="contractLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="order">订单</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="orderLbl" id="orderLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="delivery">发货单</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="deliveryLbl" id="deliveryLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="receipt">收货单</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="receiptLbl" id="receiptLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="godownEntry">入库单</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="godownEntryLbl" id="godownEntryLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="list">榜单(保险)</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="listLbl" id="listLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label"  for="storage">仓储单</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="storageLbl" id="storageLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同/订单编号</label>
+				            <label id="billNoLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同名称/订单</label>
+				            <label id="billNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同/订单金额</label>
+				            <label id="billAmountLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">付款方式</label>
+				            <label id="payTypeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同/订单约定账期</label>
+				            <label id="accountPeriodLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">是否开立发票</label>
+					        <label id="hasInvLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div id="detailInvcDiv">
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款余额</label>
+				            <label id="arBalLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">拟申请保理金额</label>
+				            <label id="aplFacAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">申请账期</label>
+				            <label id="aplPeriodLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款受让比例</label>
+				            <label id="arPctLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">中登网查询截屏</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="srchPrtScLbl" id="srchPrtScLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+					 	</form>
+					</div>
+					<div class="tab-pane fade" id="tab2Lbl">
+						<form class="form-horizontal" role="form" id="tab2LblForm" data-toggle="validator">
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">营业执照注册地址</label>
+				            <label id="licenseRegAddrLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">实际生产经营地址</label>
+				            <label id="relPrdBusiAddrLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">访厂地址</label>
+				            <label id="visiAddrLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">三个地址是否一致</label>
+					        <label id="isAddrSameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">地址不一样的原因</label>
+				            <label id="unSameReasonLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">主要访谈对象1</label>
+				            <label id="mainVisiPerson1Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">职务</label>
+				            <label id="position1Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">电话</label>
+				            <label id="phone1Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">主要访谈对象2</label>
+				            <label id="mainVisiPerson2Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">职务</label>
+				            <label id="position2Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">电话</label>
+				            <label id="phone2Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">主要访谈对象3</label>
+				            <label id="mainVisiPerson3Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">职务</label>
+				            <label id="position3Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">电话</label>
+				            <label id="phone3Lbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <fieldset>
+				              <legend class="little-title">经营场所相关情况</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">厂区（经营场所）处于</label>
+					            <label id="facAddrAreaLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">厂房/经营场所</label>
+					            <label id="facAddrTypeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">经营场所为</label>
+					            <label id="busiPlaceTypeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="经营场所是否为本次授信担保品">经营场所是否为本次授信担保品</label>
+					            <label id="isFacGuaranteeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">主要经营场所建造时间</label>
+					            <label id="mainFacBuildTimeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="主要车间建造时间(适用制造业及自有)">主要车间建造时间(适用制造业及自有)</label>
+					            <label id="mainWorkShopBuildTimeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">车间/仓库安全生产配置</label>
+					            <label id="workShopSafeConfigLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">仓库情况</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">存货存放</label>
+					            <label id="inventoryStorageLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="仓库是否有存放较久的原材料或产品">仓库是否有存放较久的原材料或产品</label>
+					            <label id="hasLongTimeStoredGoodsLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="仓库进出库管理是出入库管理系统">仓库进出库管理是出入库管理系统</label>
+					            <label id="hasOutStorageManagementSystemLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司货物运输方式及比率</label>
+					            <label id="deliverMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">设备使用情况</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">公司主要生产设备</label>
+					            <label id="mainEquipmentLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">数量</label>
+					            <label id="equNumLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司产能利用</label>
+					            <label id="prdCapUtilLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">是否有任何机器闲置</label>
+					            <label id="hasAnyMachineIdleLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="企业是否有配套设施（如排污设施、净化设施等）">企业是否有配套设施（如排污设施、净化设施等）</label>
+					            <label id="hasSupportingFacilitiesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">生产情况</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">企业主要能耗</label>
+					            <label id="mainEnergyConsumptionLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">现场员工上岗人数</label>
+					            <label id="postsStaffOnSiteLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">工人忙碌程度</label>
+					            <label id="isBusyLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">每天开工班次</label>
+					            <label id="orderOfClassesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline"
+					            title="生产情况（如日产量、开工程度、产品单价等）&#10;与报告中营业额的80%">生产情况（如日产量、开工程度、产品单价等）与报告中营业额的80%</label>
+					            <label id="productionStatusLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="企业是否有专门的质检人员（适用制造业）">企业是否有专门的质检人员（适用制造业）</label>
+					            <label id="hasQCLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司是否有自有研发人员</label>
+					            <label id="hasOwnRDLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">是否有严格的质量保证体系</label>
+					            <label id="hasQASLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">机器的平均使用年限</label>
+					            <label id="machineAvgUseLifeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司主要产品或服务内容</label>
+					            <label id="mainPrdServContLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">非财务因素</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">业务来源</label>
+					            <label id="busiSourceLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">比率</label>
+					            <label id="ratioLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="股东在过去或未来6个月是否有变动">股东在过去或未来6个月是否有变动</label>
+					            <label id="hasShareHolderChangeInSixMonthLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="公司资金回笼的主要方式(如有多选，请备注比率)">公司资金回笼的主要方式(如有多选，请备注比率)</label>
+					            <label id="capitalReturnMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="公司最近12个月是否涉及诉讼或被执行">公司最近12个月是否涉及诉讼或被执行</label>
+					            <div class="col-sm-6">
+					            	<a id="hasLawsuitRecentYearA" class="fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+					            </div>
+					            <label id="hasLawsuitRecentYearLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline"
+					            title="公司业务近期是否遇到了麻烦&#10;（包括但不限于重要人员/合约的流失、&#10;关键人员患重大疾病、应收帐款回收困难、&#10;债务纠纷等）">公司业务近期是否遇到了麻烦（包括但不限于重要人员...</label>
+					            <label id="hasTroubleLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="公司最近12个月内是否有拖欠员工工资或福利">公司最近12个月内是否有拖欠员工工资或福利</label>
+					            <label id="hasArrearsOfWagesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司最大采购商名称</label>
+					            <label id="biggestBuyerLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">比率</label>
+					            <label id="ratioOfBiggestBuyerLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司最大供应商名称</label>
+					            <label id="biggestSupplierLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">比率</label>
+					            <label id="ratioOfBiggestSupplierLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司是否涉及外销</label>
+					            <label id="hasExportLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">比率</label>
+					            <label id="ratioOfExportLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">企业财报与税报差异</label>
+					            <label id="diffEarningsTaxLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司应收帐款平均帐期</label>
+					            <label id="arAvgPeriodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">财务因素</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">公司应付帐款平均帐期</label>
+					            <label id="apAvgPeriodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司材料采购频率</label>
+					            <label id="materialStockFrequencyLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">产品生产周期（适用制造业）</label>
+					            <label id="productionCycleLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司近3年平均毛利率趋势</label>
+					            <label id="nearly3yAvgGrossMarginTrendLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">公司目前毛利率</label>
+					            <label id="nowGrossMarginLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">企业其他信息</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label oneline"
+					            title="企业生产工艺流程（生产企业）/&#10;交易流程（贸易企业）描述">企业生产工艺流程（生产企业）/交易流程（贸易企业）描述</label>
+					            <label id="processDiscLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="客户融资真实需求（包括未来商业计划和资金安排）">客户融资真实需求（包括未来商业计划和资金安排）</label>
+					            <label id="relLoanDemandLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">其他需说明的问题及总体评价</label>
+					            <label id="otherNoteEvaluationLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">纳税开票系统查核</label>
+					            <label id="taxInvSysChkLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">银行流水系统查核</label>
+					            <label id="bankWaterSysChkLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">财务系统查核</label>
+					            <label id="financeSysChkLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">其他资料查核</label>
+					            <label id="otherInfoChkLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+					 	</form>
+					</div>
+					<div class="tab-pane fade" id="tab3Lbl">
+						<form class="form-horizontal" role="form" id="tab3LblForm" data-toggle="validator">
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">是否存量客户</label>
+						    <label id="isStockCustomerLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">区域</label>
+				            <label id="areaLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">客户经理</label>
+				            <label id="custManagerLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <fieldset>
+				              <legend class="little-title">行业风险点分析</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">判断行业是起步，成熟</label>
+					            <label id="isIndustryRipeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">行业风险点</label>
+					            <label id="riskPointsLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="客户在行业里面的优势和不足及地位">客户在行业里面的优势和不足及地位</label>
+					            <label id="shortageAndPositionInIndustryLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">负面信息分析</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="网查信息（百度，工商网，法院网等）">网查信息（百度，工商网，法院网等）</label>
+					            <label id="webSearchInfoLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">中登网筛查</label>
+					            <label id="zhongdengSearchLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">企业经营风险点分析</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">对外投资情况</label>
+					            <label id="foreignInvestmentLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">企业的业务风险</label>
+					            <label id="busiRiskLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">内部运营分析</label>
+					            <label id="insideOperationAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">财务风险点分析</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="年度同比变化大于20%的科目分析">年度同比变化大于20%的科目分析</label>
+					            <label id="changeMore20perAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">财务比率分析</label>
+					            <label id="finacialRtAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">收入的核实手段</label>
+					            <label id="incomeVerifMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">收入的真实性评价</label>
+					            <label id="incomeAuthenticityEvaluateLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">利润水平</label>
+					            <label id="profitLevelLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">利润质量</label>
+					            <label id="profitQualityLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">刚性负债分析</label>
+					            <label id="rigidLiabilityAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">隐形负债</label>
+					            <label id="hiddenLiabilitiesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">或有负债</label>
+					            <label id="contingentLiabilitiesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">历史征信记录分析</label>
+					            <label id="historicalRecordsAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">应收/应付/存货周转率</label>
+					            <label id="turnoverRateLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">应收/应付帐款集中度</label>
+					            <label id="receivableConcentrationLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">存活规模</label>
+					            <label id="survivalScaleLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">预付资金压力</label>
+					            <label id="advanceFundingPressureLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">存活的价格变动</label>
+					            <label id="survivalPriceChangesLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">流动性测试</label>
+					            <label id="mobilityTestLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">债项风险点分析</legend>
+				              <legend class="little-title">基础合同</legend>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">合同是否可以转让</label>
+					            <label id="whetherContractTransferredLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">商业纠纷的约定</label>
+					            <label id="businessDisputeAgreementLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">合同的有效期</label>
+					            <label id="contractValidityLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">合同的计价方式</label>
+					            <label id="cntValuationMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">结算方式</label>
+					            <label id="settlementMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">开票</label>
+					            <label id="billingLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">应收帐款与发票的对应</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">发票与合同对应</label>
+					            <label id="invoiceCorrespondsContractLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">发票与单据对应</label>
+					            <label id="invoiceBillContractLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">发票与结算方式的对应</label>
+					            <label id="invoiceCorrespondsSettlementMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">确认应收帐款的受让比例</label>
+					            <label id="confirmArProportionReceivableLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">自尝性审查</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">明保</label>
+					            <label id="informFactoringLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">有追</label>
+					            <label id="recourseLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">暗保理</label>
+					            <label id="unInformFactoringLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">应对措施</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">行业的风险接受分析</label>
+					            <label id="industryRiskAcceptanceAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">引入其他的增信手段</label>
+					            <label id="introductionOtherIncreaseCreditMethodLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="关联风险匹配措施，可要求关联方担保等措施规避">关联风险匹配措施，可要求关联方担保等措施规避</label>
+					            <label id="associatedRiskMatchingMeasuresLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label oneline" title="资产负债率比率高，强化后期的资产管理">资产负债率比率高，强化后期的资产管理</label>
+					            <label id="assetLiabilityRatioHighLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">抵质押担保分析</label>
+					            <label id="mortgageGuaranteeAnalysisLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+				          <fieldset>
+				              <legend class="little-title">审查结论</legend>
+				              <div class="form-group">
+					            <label class="col-sm-4 control-label">授信额度</label>
+					            <label id="reditLineLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">授信额度类型</label>
+					            <label id="reditLineTypeLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">期限</label>
+					            <label id="deadlineLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">应收帐款的受让比例</label>
+					            <label id="arFarmInRatioLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">业务期限</label>
+					            <label id="busiDeadlineLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">服务费的收取</label>
+					            <label id="serviceFeeCollectionLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+					          <div class="form-group">
+					            <label class="col-sm-4 control-label">复核结论</label>
+					            <label id="reviewConclusionLbl" class="col-sm-6 control-label left"></label>
+					          </div>
+				          </fieldset>
+					 	</form>
+					</div>
+					<div class="tab-pane fade" id="tab4Lbl">
+						<form class="form-horizontal" role="form" id="tab4LblForm" data-toggle="validator">
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同编号</label>
+				            <label id="contractNoLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">买卖关系</label>
+				            <label id="busiRelaLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款</label>
+				            <label id="arAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款说明</label>
+				            <label id="arNoteLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款受让款</label>
+				            <label id="arTransfAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款受让款说明</label>
+				            <label id="arTransfNoteLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">保证金</label>
+				            <label id="earnestMoneyLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">服务费</label>
+				            <label id="serviceAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">应收账款转让通知</label>
+				            <label id="arTransfNoticeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">担保人名称</label>
+				            <label id="guarantorNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">担保品名称</label>
+				            <label id="guaranteeNameLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">担保方式</label>
+				            <label id="guaranteeMethodLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">币种</label>
+				            <label id="ccyLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">担保价值</label>
+				            <label id="guaranteeValueLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">担保附件上传</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="guaranteeFileLbl" id="guaranteeFileLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">收益补偿</label>
+				            <label id="inComeMakeUpLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同生效条款</label>
+				            <label id="cntEffectiveTermsLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">特别条款说明</label>
+				            <label id="specTermsNoticeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同版本</label>
+				            <label id="cntVersionLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同生效日期</label>
+				            <label id="cntEffectDateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同结束日期</label>
+				            <label id="cntEndDateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">合同附件上传</label>
+				            <div class="col-sm-6">
+				            	<input type="hidden" name="cntFilesLbl" id="cntFilesLbl" />
+				            	<a class = "fa fa-eye" style="color:#1c4efa;padding:10px 5px;margin-left:5px;" title="附件" href="javascript:void(0)"></a>
+				            </div>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">融资期限(月)</label>
+				            <label id="loanLimitLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">融资比例(%)</label>
+				            <label id="loanPctLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">融资金额(元)</label>
+				            <label id="loanAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">基准利率(%)</label>
+				            <label id="standardRateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">利率上浮比例(%)</label>
+				            <label id="rateFloatPctLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">手续费</label>
+				            <label id="commissionLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">其它费用</label>
+				            <label id="otherCostLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">罚息率(%)</label>
+				            <label id="penaltyIntRateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">管理费</label>
+				            <label id="managementFeeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">管理费率(%)</label>
+				            <label id="managementFeeRateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">违约金</label>
+				            <label id="penaltyLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">融资期数</label>
+				            <label id="loanPeriodLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款企业</label>
+				            <label id="repaymentCorpLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款时间</label>
+				            <label id="repaymentDateLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款人</label>
+				            <label id="repaymentPersonLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款企业账户</label>
+				            <label id="repaymentCorpAcountLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款计划</label>
+				            <label id="repaymentPlanLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款时长</label>
+				            <label id="repaymentTimesLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款金额</label>
+				            <label id="repaymentAmtLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">还款类型</label>
+				            <label id="repaymentTypeLbl" class="col-sm-6 control-label left"></label>
+				          </div>
+				 	</form>
+					</div>
+					<div class="tab-pane fade" id="tab5Lbl">
+						<form class="form-horizontal" role="form" id="tab5LblForm" data-toggle="validator">
+				          <div id="detailLend">
+				          </div>
+					 	</form>
+					</div>
+					<div class="tab-pane fade" id="tab6Lbl">
+						<form class="form-horizontal" role="form" id="tab6LblForm" data-toggle="validator">
+				          <div class="form-group">
+				            <label class="col-sm-4 control-label">审批意见</label>
+				            <label id="advice" class="col-sm-6 control-label left"></label>
+				          </div>
+					 	</form>
+					</div>
+				</div>
+	        </div>
+	        <div class="modal-footer">
+			  <div class="form-group">
+				<div class="col-sm-7"></div>
+				<div class="col-sm-3">
+					<button type="button" class="btn btn-default cancel" data-dismiss="modal">取消
+					</button>
+				</div>
+			  </div>
+			</div>
+      	  </div>
+    	</div>
+ 	</div>
+</body>
+</html>

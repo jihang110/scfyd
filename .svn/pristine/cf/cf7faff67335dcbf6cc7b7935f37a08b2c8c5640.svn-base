@@ -1,0 +1,11 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+public interface IRepayMagagerService {
+
+	String httpURLConnectionPOST(Map<String, String> map, String paramUrl);
+
+	String postHttp(String url, Map<String, String> map);
+
+}

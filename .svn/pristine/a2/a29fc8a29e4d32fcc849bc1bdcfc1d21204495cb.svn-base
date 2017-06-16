@@ -1,0 +1,9 @@
+package com.ut.scf.service.project;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+public interface IAgencyService {
+
+	void startProcess(JSONObject jsonObject);
+	
+}

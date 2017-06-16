@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ut.scf.dao.sys.IWarningDao">
+  <select id="selectWarningList" parameterType="hashmap" resultType="hashmap">
+	select 
+	warning_id warningId,
+	warning_title warningTitle, 
+	send_time sendTime,
+	warning_status warningStatus,
+	warning_msg warningMsg
+    from warning_info
+    <where>
+        
+    </where>
+    
+  </select>
+  
+   <select id="selectWarningCount"  resultType="java.lang.Integer">
+	select 
+	count(0) 
+    from warning_info
+    <where>
+     warning_status='0'    
+    </where>
+    
+  </select>
+
+
+  
+  
+</mapper>

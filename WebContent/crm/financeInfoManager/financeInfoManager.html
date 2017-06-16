@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="ThemeBucket">
+<link rel="shortcut icon" href="#" type="image/png">
+<title>融资信息</title>
+<link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/style-responsive.css" rel="stylesheet">
+<link href="../../css/bootstrap-table.css" rel="stylesheet">
+
+<link href="../../css/validator/bootstrapValidator.css" rel="stylesheet">
+<link href="../../js/bootstrap-datetimepicker/css/datetimepicker.css"
+	rel="stylesheet" />
+
+<link href="../../css/sysfun.css" rel="stylesheet">
+<link href="../../106/css/selectordie_theme_03.css" rel="stylesheet">
+<script src="../../js/jquery-3.0.0.min.js" type="text/javascript"></script>
+<script src="../../106/js/selectordie.min.js" type="text/javascript"></script>
+<script src="../../js/bootstrap.min.js"></script>
+<script src="../../js/CloudUtils.js"></script>
+<script src="../../js/password.js"></script>
+<script src="../../js/store.js" type="text/javascript"></script>
+<script src="../../js/jquery.nicescroll.js"></script>
+<script type="text/javascript" src="../../js/jquery.validate.min.js"></script>
+<script src="../../js/validation-init.js"></script>
+<script type="text/javascript"
+	src="../../js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="../../js/bootstrap-table.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/bootstrapValidator.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-validator/zh_CN.js"></script>
+<script type="text/javascript" src="../../js/bootbox-4.4.0/bootbox.js"></script>
+<script type="text/javascript" src="../../js/jquery.number.js"></script>
+<!--dynamic table initialization -->
+<script type="text/javascript"
+	src="../../js/bootstrap-datepicker/js/bootstrap-datepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="../../js/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.zh-CN.js"></script>
+<script src="../../js/crm/financeInfoManager/financeInfoManager.js"
+	type="text/javascript"></script>
+</head>
+<body class="iframeBody">
+	<section>
+		<div class="main-content-child">
+			<div class="row">
+				<div class="title">
+					<span>融资信息</span>
+				</div>
+			</div>
+			<fieldset>
+				<div class="row rowpad">
+					<div class="form-group">
+						<div class="col-sm-2">
+							<button id="btn_add" type="button" class="btn btn-default add"
+								data-toggle="modal" onclick="addFun()">
+								<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>添加
+							</button>
+						</div>
+						<form class="form-horizontal" role="form" id="searchForm">
+							<div class="col-sm-3">
+								<input type="text" name="txt_financingInstitutions"
+									class="form-control" id="txt_financingInstitutions"
+									placeholder="金融机构">
+							</div>
+							<div class="col-sm-3">
+								<select id="txt_financingType" name="txt_financingType" class="form-control">
+								 	<option value="">全部</option>
+		                   		 	<option value="1">直接融资</option>
+				                 	<option value="2">间接融资</option>
+		                    	</select>
+							</div>
+							<div class="col-sm-2">
+								<select id="txt_corpId" name="txt_corpId" class="form-control">
+								</select>
+							</div>
+						</form>
+						<div class="col-sm-2">
+							<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+						</div>
+					</div>
+				</div>
+			</fieldset>
+			<form class="form-horizontal" role="form" id="addForm"
+				data-toggle="validator">
+				<div class="modal fade" id="addModal" aria-hidden="true" data-backdrop="static" tabindex="-1" role="dialog"
+					aria-labelledby="addModalLabel">
+					<div class="modal-dialog" role="document">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+								<h4 class="modal-title" id="addModalLabel">添加</h4>
+							</div>
+							<div class="modal-body">
+								<fieldset id='field'>
+									<input type="hidden" id="recUid" name="recUid"> <input
+										type="hidden" id="isEdit" name="isEdit">
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="corpId"><span class="required">*</span>企业名称</label>
+										<div class="col-sm-6">
+											<select id="corpId" name="corpId" class="form-control">
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="financingType"><span class="required">*</span>融资类型</label>
+										<div class="col-sm-6">
+											<select id="financingType" name="financingType"
+												class="form-control">
+												<option value="1">直接融资</option>
+												<option value="2">间接融资</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="financingNote">融资描述</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="financingNote" class="form-control"
+												id="financingNote"></textarea>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="financingInstitutions"><span class="required">*</span>金融机构</label>
+										<div class="col-sm-6">
+											<input type="text" name="financingInstitutions"
+												class="form-control" id="financingInstitutions"
+												placeholder="金融机构">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="loanType">借款类型</label>
+										<div class="col-sm-6">
+											<select id="loanType" name="loanType" class="form-control">
+												<option value="1">委托借款</option>
+												<option value="2">信用借款</option>
+												<option value="3">担保借款</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="loanDate"><span class="required">*</span>借款日期</label>
+										<div class="col-sm-6 date form_datetime">
+											<input name="loanDate" class="form-control" id="loanDate"
+												readonly="readonly" style="cursor: pointer;" size="16" type="text" value="">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="loanAmount"><span class="required">*</span>借款金额</label>
+										<div class="col-sm-6">
+											<input type="text" name="loanAmount" class="form-control"
+												id="loanAmount" placeholder="10.00" size="13">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="loanBalance"><span class="required">*</span>借款余额</label>
+										<div class="col-sm-6">
+											<input type="text" name="loanBalance" class="form-control"
+												id="loanBalance" placeholder="10.00" size="13">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="loanMaturityDate"><span class="required">*</span>借款到期日</label>
+										<div class="col-sm-6 date form_datetime">
+											<input name="loanMaturityDate" class="form-control"
+												id="loanMaturityDate" style="cursor: pointer;" readonly="readonly" size="16"
+												type="text" value="">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label" for="gyarateeType">担保方式</label>
+										<div class="col-sm-6">
+											<select id="gyarateeType" name="gyarateeType"
+												class="form-control">
+												<option value="1">保证</option>
+												<option value="2">抵押</option>
+												<option value="3">质押</option>
+												<option value="4">留置</option>
+												<option value="5">定金</option>
+											</select>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-4 control-label"
+											for="historyOfCooperation">合作历史</label>
+										<div class="col-sm-6">
+											<textarea rows="3" name="historyOfCooperation"
+												class="form-control" id="historyOfCooperation"></textarea>
+										</div>
+									</div>
+								</fieldset>
+							</div>
+							<div class="modal-footer">
+								<div class="form-group">
+									<div class="col-sm-4" id="btn_blank"></div>
+									<div class="col-sm-3">
+										<button type="button" class="btn btn-default cancel"
+											data-dismiss="modal">取消</button>
+									</div>
+									<div class="col-sm-3">
+										<button type="submit" id="btn_save"
+											class="btn btn-default add" 
+											onclick="saveUser()">保存</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+			<div class="panel-body">
+				<table id="financeInfoList" class="table" cellspacing="0"
+					width="100%">
+				</table>
+			</div>
+		</div>
+	</section>
+</body>
+</html>

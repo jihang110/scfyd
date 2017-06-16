@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.crm.ICorpContrastAnalysisDao">
+
+<select id="selectContrastAnalysisList" parameterType="java.lang.String" resultType="hashmap">
+	select cc.rec_uid recUid, cc.corp_id corpId, cc.oper_year operYear, c.corp_name corpName,  
+	cc.current_rate_analysis currentRateAnalysis,
+	cc.quick_rate_analysis quickRateAnalysis,
+	cc.interest_coverage_analysis interestCoverageAnalysis,
+	cc.cash_rate_analysis cashRateAnalysis,
+	cc.assets_and_liabilities_analysis assetsAndLiabilitiesAnalysis,
+	cc.equity_rate_analysis equityRateAnalysis,
+	cc.receivable_turnover_rate_analysis receivableTurnoverRateAnalysis,
+	cc.receivable_turnover_rate_days_analysis receivableTurnoverRateDaysAnalysis,
+	cc.inventory_turnover_analysis inventoryTurnoverAnalysis,
+	cc.inventory_turnover_days_analysis inventoryTurnoverDaysAnalysis,
+	cc.current_assets_turnover_analysis currentAssetsTurnoverAnalysis,
+	cc.current_assets_turnover_days_analysis currentAssetsTurnoverDaysAnalysis,
+	cc.fixed_asset_turnover_analysis fixedAssetsTurnoverAnalysis,
+	cc.fixed_asset_turnover_days_analysis fixedAssetsTurnoverDaysAnalysis,
+	cc.total_asset_turnover_analysis totalAssetTurnoverAnalysis,
+	cc.total_asset_turnover_days_analysis totalAssetTurnoverDaysAnalysis,
+	cc.accounts_payable_turnover_analysis accountsPayableTurnoverAnalysis,
+	cc.accounts_payable_turnover_days_analysis accountsPayableTurnoverDaysAnalysis,
+	cc.cash_turnover_analysis cashTurnoverAnalysis,
+	cc.cash_turnover_days_analysis cashTurnoverDaysAnalysis,
+	cc.operating_margin_analysis operatingMarginAnalysis,
+	cc.operating_net_profit_analysis operatingNetProfitAnalysis,
+	cc.operating_gross_profit_analysis operatingGrossProfitAnalysis,
+	cc.cost_margins_analysis costMarginsAnalysis,
+	cc.cost_rate_analysis costRateAnalysis,
+	cc.return_total_assets_analysis returnTotalAssetsAnalysis,
+	cc.return_net_assets_analysis returnNetAssetsAnalysis,
+	cc.main_business_revenue_growth_analysis mainBusinessRevenueGrowthAnalysis,
+	cc.main_business_profit_growth_analysis mainBusinessProfitGrowthAnalysis,
+	cc.net_profit_growth_analysis netProfitGrowthAnalysis,
+	cc.total_asset_growth_analysis totalAssetGrowthAnalysis,
+	cc.capital_maintenance_and_appreciation_analysis capitalMaintenanceAndAppreciationAnalysis,
+	cc.cash_of_sales_analysis cashOfSalesAnalysis,
+	cc.cash_of_purchase_analysis cashOfPurchaseAnalysis,
+	cc.net_operating_cash_to_sales_analysis netOperatingCashToSalesAnalysis,
+	cc.operating_cash_rate_of_return_analysis operatingCashRateOfReturnAnalysis,
+	cc.net_operating_cash_to_profit_analysis netOperatingCashToProfitAnalysis,
+	cc.net_operating_cash_to_debt_analysis netOperatingCashToDebtAnalysis,
+	cc.proportion_of_fixed_assets_analysis proportionOfFixedAssetsAnalysis,
+	cc.shareholder_rate_analysis shareholderRateAnalysis,
+	cc.longterm_debt_rate_analysis longtermDebtRateAnalysis,
+	cc.fixed_assets_and_equity_rate_analysis fixedAssetsAndEquityRateAnalysis,
+	cc.main_business_profit_rate_analysis mainBusinessProfitRateAnalysis,
+	cc.accounts_receivable_income_rate_analysis accountsReceivableIncomeRateAnalysis,
+	cc.liquidity_income_rate_analysis liquidityIncomeRateAnalysis,
+	cc.total_assets_profit_margin_analysis totalAssetsProfitMarginAnalysis,
+	cc.loan_recovery_during_reporting_period_analysis loanRecoveryDuringReportingPeriodAnalysis
+	
+	from corp_comprehensive_eval_contrast_analysis cc JOIN corp_info c ON cc.corp_id = c.corp_id 
+    where 1=1 and c.status=1
+     <if test="corpId != null">
+	  and cc.corp_id = #{corpId}
+	</if>
+	 <if test="operYear != null">
+	  and cc.oper_year = #{operYear}
+	</if>
+	<if test="userCorpList !=null">
+	  and cc.corp_id in ${userCorpList}
+	</if>
+	<if test="relaCorpId != null">
+	  and cc.rela_corp_id = #{relaCorpId}
+	</if>
+	<if test="createUserId != null">
+	  and cc.create_user_id = #{createUserId}
+	</if>
+</select>
+	
+<insert id="insertContrastAnalysis" parameterType="hashmap">
+	insert into corp_comprehensive_eval_contrast_analysis ( 
+	rec_uid, 
+	corp_id, 
+	oper_year,  
+	current_rate_analysis,
+	quick_rate_analysis,
+	interest_coverage_analysis,
+	cash_rate_analysis,
+	assets_and_liabilities_analysis,
+	equity_rate_analysis,
+	receivable_turnover_rate_analysis,
+	receivable_turnover_rate_days_analysis,
+	inventory_turnover_analysis,
+	inventory_turnover_days_analysis,
+	current_assets_turnover_analysis,
+	current_assets_turnover_days_analysis,
+	fixed_asset_turnover_analysis,
+	fixed_asset_turnover_days_analysis,
+	total_asset_turnover_analysis,
+	total_asset_turnover_days_analysis,
+	accounts_payable_turnover_analysis,
+	accounts_payable_turnover_days_analysis,
+	cash_turnover_analysis,
+	cash_turnover_days_analysis,
+	operating_margin_analysis,
+	operating_net_profit_analysis,
+	operating_gross_profit_analysis,
+	cost_margins_analysis,
+	cost_rate_analysis,
+	return_total_assets_analysis,
+	return_net_assets_analysis,
+	main_business_revenue_growth_analysis,
+	main_business_profit_growth_analysis,
+	net_profit_growth_analysis,
+	total_asset_growth_analysis,
+	capital_maintenance_and_appreciation_analysis,
+	cash_of_sales_analysis,
+	cash_of_purchase_analysis,
+	net_operating_cash_to_sales_analysis,
+	operating_cash_rate_of_return_analysis,
+	net_operating_cash_to_profit_analysis,
+	net_operating_cash_to_debt_analysis,
+	proportion_of_fixed_assets_analysis,
+	shareholder_rate_analysis,
+	longterm_debt_rate_analysis,
+	fixed_assets_and_equity_rate_analysis,
+	main_business_profit_rate_analysis,
+	accounts_receivable_income_rate_analysis,
+	liquidity_income_rate_analysis,
+	total_assets_profit_margin_analysis,
+	loan_recovery_during_reporting_period_analysis,
+	rela_corp_id, create_user_id, create_time)
+	 
+	 values ( 
+	 #{recUid}, 
+	 #{corpId}, 
+	 #{operYear}, 
+	 #{currentRateAnalysis}, 
+	 #{quickRateAnalysis}, 
+	 #{interestCoverageAnalysis}, 
+	 #{cashRateAnalysis},
+	 #{assetsAndLiabilitiesAnalysis},
+	 #{equityRateAnalysis},
+	 #{receivableTurnoverRateAnalysis},
+	 #{receivableTurnoverRateDaysAnalysis},
+	 #{inventoryTurnoverAnalysis},
+	 #{inventoryTurnoverDaysAnalysis},
+	 #{currentAssetsTurnoverAnalysis},
+	 #{currentAssetsTurnoverDaysAnalysis},
+	 #{fixedAssetsTurnoverAnalysis},
+	 #{fixedAssetsTurnoverDaysAnalysis},
+	 #{totalAssetTurnoverAnalysis},
+	 #{totalAssetTurnoverDaysAnalysis},
+	 #{accountsPayableTurnoverAnalysis},
+	 #{accountsPayableTurnoverDaysAnalysis},
+	 #{cashTurnoverAnalysis},
+	 #{cashTurnoverDaysAnalysis},
+	 #{operatingMarginAnalysis},
+	 #{operatingNetProfitAnalysis},
+	 #{operatingGrossProfitAnalysis},
+	 #{costMarginsAnalysis},
+	 #{costRateAnalysis},
+	 #{returnTotalAssetsAnalysis},
+	 #{returnNetAssetsAnalysis},
+	 #{mainBusinessRevenueGrowthAnalysis},
+	 #{mainBusinessProfitGrowthAnalysis},
+	 #{netProfitGrowthAnalysis},
+	 #{totalAssetGrowthAnalysis},
+	 #{capitalMaintenanceAndAppreciationAnalysis},
+	 #{cashOfSalesAnalysis},
+	 #{cashOfPurchaseAnalysis},
+	 #{netOperatingCashToSalesAnalysis},
+	 #{operatingCashRateOfReturnAnalysis},
+	 #{netOperatingCashToProfitAnalysis},
+	 #{netOperatingCashToDebtAnalysis},
+	 #{proportionOfFixedAssetsAnalysis},
+	 #{shareholderRateAnalysis}, 
+	 #{longtermDebtRateAnalysis},
+	 #{fixedAssetsAndEquityRateAnalysis},
+	 #{mainBusinessProfitRateAnalysis},
+	 #{accountsReceivableIncomeRateAnalysis},
+	 #{liquidityIncomeRateAnalysis},
+	 #{totalAssetsProfitMarginAnalysis},
+	 #{loanRecoveryDuringReportingPeriodAnalysis},
+	 #{relaCorpId},
+	 #{createUserId}, 
+	 now())
+</insert>
+
+<update id="updateContrastAnalysis" parameterType="hashmap">
+	update corp_comprehensive_eval_contrast_analysis
+	<set>
+      <if test="operYear != null">
+        oper_year = #{operYear},
+      </if>
+      <if test="currentRateAnalysis != null">
+        current_rate_analysis = #{currentRateAnalysis},
+      </if>
+      <if test="quickRateAnalysis != null">
+        quick_rate_analysis = #{quickRateAnalysis},
+      </if>
+      <if test="interestCoverageAnalysis != null">
+        interest_coverage_analysis = #{interestCoverageAnalysis},
+      </if>
+      <if test="cashRateAnalysis != null">
+        cash_rate_analysis = #{cashRateAnalysis},
+      </if>
+      <if test="assetsAndLiabilitiesAnalysis != null">
+        assets_and_liabilities_analysis = #{assetsAndLiabilitiesAnalysis},
+      </if>
+      <if test="equityRateAnalysis != null">
+        equity_rate_analysis = #{equityRateAnalysis},
+      </if>
+      <if test="receivableTurnoverRateAnalysis != null">
+        receivable_turnover_rate_analysis = #{receivableTurnoverRateAnalysis},
+      </if>
+      <if test="receivableTurnoverRateDaysAnalysis != null">
+        receivable_turnover_rate_days_analysis = #{receivableTurnoverRateDaysAnalysis},
+      </if>
+      <if test="inventoryTurnoverAnalysis != null">
+        inventory_turnover_analysis = #{inventoryTurnoverAnalysis},
+      </if>
+      <if test="inventoryTurnoverDaysAnalysis != null">
+        inventory_turnover_days_analysis = #{inventoryTurnoverDaysAnalysis},
+      </if>
+      <if test="currentAssetsTurnoverAnalysis != null">
+        current_assets_turnover_analysis = #{currentAssetsTurnoverAnalysis},
+      </if>
+      <if test="currentAssetsTurnoverDaysAnalysis != null">
+        current_assets_turnover_days_analysis = #{currentAssetsTurnoverDaysAnalysis},
+      </if>
+      <if test="fixedAssetsTurnoverAnalysis != null">
+        fixed_asset_turnover_analysis = #{fixedAssetsTurnoverAnalysis},
+      </if>
+      <if test="fixedAssetsTurnoverDaysAnalysis != null">
+        fixed_asset_turnover_days_analysis = #{fixedAssetsTurnoverDaysAnalysis},
+      </if>
+      <if test="totalAssetTurnoverAnalysis != null">
+        total_asset_turnover_analysis = #{totalAssetTurnoverAnalysis},
+      </if>
+      <if test="totalAssetTurnoverDaysAnalysis != null">
+        total_asset_turnover_days_analysis = #{totalAssetTurnoverDaysAnalysis},
+      </if>
+      <if test="accountsPayableTurnoverAnalysis != null">
+        accounts_payable_turnover_analysis = #{accountsPayableTurnoverAnalysis},
+      </if>
+      <if test="accountsPayableTurnoverDaysAnalysis != null">
+        accounts_payable_turnover_days_analysis = #{accountsPayableTurnoverDaysAnalysis},
+      </if>
+      <if test="cashTurnoverAnalysis != null">
+        cash_turnover_analysis = #{cashTurnoverAnalysis},
+      </if>
+      <if test="cashTurnoverDaysAnalysis != null">
+        cash_turnover_days_analysis = #{cashTurnoverDaysAnalysis},
+      </if>
+      <if test="operatingMarginAnalysis != null">
+        operating_margin_analysis = #{operatingMarginAnalysis},
+      </if>
+      <if test="operatingNetProfitAnalysis != null">
+        operating_net_profit_analysis = #{operatingNetProfitAnalysis},
+      </if>
+      <if test="operatingGrossProfitAnalysis != null">
+        operating_gross_profit_analysis = #{operatingGrossProfitAnalysis},
+      </if>
+      <if test="costMarginsAnalysis != null">
+        cost_margins_analysis = #{costMarginsAnalysis},
+      </if>
+      <if test="costRateAnalysis != null">
+        cost_rate_analysis = #{costRateAnalysis},
+      </if>
+      <if test="returnTotalAssetsAnalysis != null">
+        return_total_assets_analysis = #{returnTotalAssetsAnalysis},
+      </if>
+      <if test="returnNetAssetsAnalysis != null">
+        return_net_assets_analysis = #{returnNetAssetsAnalysis},
+      </if>
+      <if test="mainBusinessRevenueGrowthAnalysis != null">
+        main_business_revenue_growth_analysis = #{mainBusinessRevenueGrowthAnalysis},
+      </if>
+      <if test="mainBusinessProfitGrowthAnalysis != null">
+        main_business_profit_growth_analysis = #{mainBusinessProfitGrowthAnalysis},
+      </if>
+      <if test="netProfitGrowthAnalysis != null">
+        net_profit_growth_analysis = #{netProfitGrowthAnalysis},
+      </if>
+      <if test="totalAssetGrowthAnalysis != null">
+        total_asset_growth_analysis = #{totalAssetGrowthAnalysis},
+      </if>
+      <if test="capitalMaintenanceAndAppreciationAnalysis != null">
+        capital_maintenance_and_appreciation_analysis = #{capitalMaintenanceAndAppreciationAnalysis},
+      </if>
+      <if test="cashOfSalesAnalysis != null">
+        cash_of_sales_analysis = #{cashOfSalesAnalysis},
+      </if>
+      <if test="cashOfPurchaseAnalysis != null">
+        cash_of_purchase_analysis = #{cashOfPurchaseAnalysis},
+      </if>
+      <if test="netOperatingCashToSalesAnalysis != null">
+        net_operating_cash_to_sales_analysis = #{netOperatingCashToSalesAnalysis},
+      </if>
+      <if test="operatingCashRateOfReturnAnalysis != null">
+        operating_cash_rate_of_return_analysis = #{operatingCashRateOfReturnAnalysis},
+      </if>
+       <if test="netOperatingCashToProfitAnalysis != null">
+        net_operating_cash_to_profit_analysis = #{netOperatingCashToProfitAnalysis},
+      </if>
+       <if test="netOperatingCashToDebtAnalysis != null">
+        net_operating_cash_to_debt_analysis = #{netOperatingCashToDebtAnalysis},
+      </if>
+       <if test="proportionOfFixedAssetsAnalysis != null">
+        proportion_of_fixed_assets_analysis = #{proportionOfFixedAssetsAnalysis},
+      </if>
+       <if test="shareholderRateAnalysis != null">
+        shareholder_rate_analysis = #{shareholderRateAnalysis},
+      </if>
+       <if test="longtermDebtRateAnalysis != null">
+        longterm_debt_rate_analysis = #{longtermDebtRateAnalysis},
+      </if>
+       <if test="fixedAssetsAndEquityRateAnalysis != null">
+        fixed_assets_and_equity_rate_analysis = #{fixedAssetsAndEquityRateAnalysis},
+      </if>
+       <if test="mainBusinessProfitRateAnalysis != null">
+        main_business_profit_rate_analysis = #{mainBusinessProfitRateAnalysis},
+      </if>
+       <if test="accountsReceivableIncomeRateAnalysis != null">
+        accounts_receivable_income_rate_analysis = #{accountsReceivableIncomeRateAnalysis},
+      </if>
+       <if test="liquidityIncomeRateAnalysis != null">
+        liquidity_income_rate_analysis = #{liquidityIncomeRateAnalysis},
+      </if>
+       <if test="totalAssetsProfitMarginAnalysis != null">
+        total_assets_profit_margin_analysis = #{totalAssetsProfitMarginAnalysis},
+      </if>
+       <if test="loanRecoveryDuringReportingPeriodAnalysis != null">
+        loan_recovery_during_reporting_period_analysis = #{loanRecoveryDuringReportingPeriodAnalysis},
+      </if>
+    </set>
+    where rec_uid = #{recUid}
+</update>
+
+<select id="hasOneYear" parameterType="hashmap" resultType="map">
+    select cca.rec_uid recUid
+    from corp_comprehensive_eval_contrast_analysis cca
+    <where>
+        1=1
+        <if test="operYear!=null and operYear!='' ">  
+            and cca.oper_year = #{operYear}
+        </if>
+        <if test="corpId != null">
+		    and cca.corp_id = #{corpId}
+		</if>
+		<if test="relaCorpId != null">
+	  		and cca.rela_corp_id = #{relaCorpId}
+		</if>
+		<if test="createUserId != null">
+	  		and cca.create_user_id = #{createUserId}
+		</if>
+    </where>
+    limit 1
+  </select>
+
+</mapper>

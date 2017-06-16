@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.project.IRevenueDao">
+
+	<select id="getDykRepayMent" resultType="hashmap" parameterType="hashmap">
+		select
+		repayment_id repaymentId,
+		repayment_date repaymentDate,
+		repay_sum_amt repaySumAmt,
+		repay_capital_amt repayCapitalAmt,
+		repay_interest_amt repayInterestAmt,
+		act_repay_amt actRepayAmt,
+		repayment_type repaymentType
+		from dyk_repayment_info
+		<!-- <where> <if test="agencyCode!=null and agencyCode!='' "> and ci.agency_num 
+			LIKE CONCAT(CONCAT('%', #{agencyCode}),'%') </if> <if test="agencyName!=null 
+			and agencyName!='' "> and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%') 
+			</if> </where> -->
+	</select>
+
+	<insert id="addDykRepayMent" parameterType="hashmap">
+		insert into dyk_repayment_info 
+		( repayment_id,
+		  repayment_date,
+		  repay_sum_amt, 
+		  repay_capital_amt, 
+		  repay_interest_amt ,
+		  act_repay_amt, 
+		  repayment_type)
+		values 
+		( #{repaymentId}, 
+		  #{repaymentDate}, 
+		  #{repaySumAmt},
+		  #{repayCapitalAmt},
+		  #{repayInterestAmt},
+		  #{actRepayAmt},
+		  #{repaymentType})
+	</insert>
+
+	<update id="updateDykRepayMent" parameterType="hashmap">
+	update dyk_repayment_info
+	<set>
+		<if test="repaymentDate != null">
+			repayment_date = #{repaymentDate},
+		</if>
+		<if test="repaySumAmt != null">
+			repay_sum_amt = #{repaySumAmt},
+		</if>
+		<if test="repayCapitalAmt != null">
+			repayCapitalAmt = #{repayCapitalAmt},
+		</if>
+		<if test="repayInterestAmt != null">
+			repayInterestAmt = #{repayInterestAmt},
+		</if>
+		<if test="actRepayAmt != null">
+			act_repay_amt = #{actRepayAmt},
+		</if>
+		<if test="repaymentType != null">
+			repayment_type = #{repaymentType},
+		</if>
+	</set>
+	where repayment_id = #{repaymentId}
+	</update>
+
+	<delete id="deleteDykRepayMent" parameterType="hashmap"> 
+		 delete from dyk_repayment_info where repayment_id = #{repaymentId}
+	</delete>
+
+
+		<select id="getRevenueInfoByAgency" resultType="hashmap" parameterType="hashmap">
+		select
+		rm.finance_id financeId,ci.corp_name agency,ci.orgn_num agencyNum,SUM(rm.interest_sum)
+		sapttaSum,SUM(has_pay_interest) apttaSum,SUM(not_pay_interest)
+		unpaidInterestSum
+		from revenue_management rm
+		join finance_info fi on fi.finance_id =rm.finance_id
+    	join corp_info ci on fi.corp_id = ci.corp_id
+		<where>
+			1=1
+			<if test="agency != null and agency != ''">
+				and ci.corp_name LIKE CONCAT(CONCAT('%', #{agency}),'%')
+			</if>
+			<if test="revenueStartDate != null and revenueStartDate !='' ">
+				and DATE_FORMAT(last_cal_date, '%Y-%m-%d') >= #{revenueStartDate}
+			</if>
+			<if test="revenueEndDate != null and revenueEndDate !='' ">
+				and DATE_FORMAT(last_cal_date, '%Y-%m-%d') <![CDATA[<=]]>
+				#{revenueEndDate}
+			</if>
+		</where>
+		GROUP BY ci.corp_name
+	</select>
+
+</mapper>

@@ -1,0 +1,45 @@
+package com.ut.scf.service.project.impl;
+
+import javax.annotation.Resource;
+
+import org.activiti.engine.ProcessEngine;
+import org.activiti.engine.RuntimeService;
+import org.activiti.engine.TaskService;
+import org.activiti.engine.impl.util.json.JSONObject;
+import org.activiti.engine.runtime.ProcessInstance;
+import org.activiti.engine.task.Task;
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.service.project.IAgencyService;
+@Service("agencyService")
+public class AgencyServiceImpl implements IAgencyService {
+	@Resource ProcessEngine processEngine;
+	@Resource RuntimeService runtimeService;
+	@Resource TaskService taskService;
+	/**
+	 * 发起流程
+	 */
+	public void startProcess(JSONObject jsonObject) {
+		String userName = (String) jsonObject.get("userId");
+		String key = (String) jsonObject.get("activitiKey");
+//		加上当前用户
+		ProcessInstance pi = processEngine.getRuntimeService()//管理流程实例和执行对象，也就是表示正在执行的操作  
+		            .startProcessInstanceByKey(key);
+//		TaskService taskService = processEngine.getTaskService();//获取任务的Service，设置和获取流程变量  
+		Task task = taskService.createTaskQuery().processInstanceId(pi.getId()).singleResult();
+//		获取所有的候选人
+//		List<IdentityLink> identityLinksForTask = taskService.getIdentityLinksForTask(task.getId());
+//		判断候选人
+
+//		拾取用户
+		taskService.claim(task.getId(), userName);
+//		设置变量
+		taskService.setVariable(task.getId(), "agencyJson", jsonObject.toString());
+//		完成节点
+		taskService.complete(task.getId());
+		
+		System.out.println("完成任务"+task.getId());
+	}
+	
+	
+}

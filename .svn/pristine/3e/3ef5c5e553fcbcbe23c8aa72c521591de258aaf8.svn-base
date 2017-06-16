@@ -1,0 +1,354 @@
+@CHARSET "UTF-8";
+.row{
+	margin-top:0px;
+	margin-left:0px;
+	margin-right:0px
+}
+.title{
+	border-bottom:1px solid #ccc;
+	font-family:"SimHei";
+	color:#2a323f;
+	font-size:24px;
+	padding:25px 0px 20px 0px;
+	margin:0px 15px 33px 15px;
+}
+.form-control{
+	height:40px;
+	border-radius: 2px;
+}
+.btn.btn-default.add{
+	color: #fff;
+    background-color: #5bc0de;
+    border-color: #46b8da;
+    margin-top:20px;
+	margin-bottom:20px;
+	min-width: 80px;
+}
+.btn.btn-default.add:hover, .btn.btn-default.add:focus, .btn.btn-default.add:active, .btn.btn-default.add.active, .open .dropdown-toggle.btn.btn-default.add{
+	color: #fff;
+    background-color: #39b3d7;
+    border-color: #269abc;
+}
+.btn.btn-default.cancel{
+	color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    margin-top:20px;
+	margin-bottom:20px;
+	min-width: 80px;
+}
+.btn.btn-default.cancel:hover, .btn.btn-default.cancel:focus, .btn.btn-default.cancel:active, .btn.btn-default.cancel.active, .open .dropdown-toggle.btn.btn-default.cancel {
+    color: #333;
+    background-color: #ebebeb;
+    border-color: #adadad;
+}
+.btn.btn-primary.search{
+	background-color: #428bca;
+    border-color: #357ebd;
+    color: #FFFFFF;
+    min-width: 80px;
+}
+.btn.btn-primary.search:hover, .btn.btn-primary.search:focus, .btn.btn-primary.search:active, .btn.btn-primary.search.active, .open .dropdown-toggle.btn.btn-primary.search {
+    background-color: #374152;
+    border-color: #2e3644;
+    color: #FFFFFF;
+}
+.bootstrap-table{
+	font-family:"华文细黑";
+	font-size:14px;
+	color:#969aa3;
+}
+.fixed-table-body{
+	background-color:#fff;
+	
+}
+.fixed-table-body >table{
+	border: 1px #e5e5e5 solid;
+	border-left:0px;
+	border-right:0px;
+}
+.table thead > tr > th, .table tbody > tr > td, .table tfoot > tr > td{
+	    border: 0px;
+}
+.table tbody > tr{
+	border-bottom: 1px #e5e5e5 solid;
+}
+.th-inner{
+	border-bottom: 1px solid #ccc;
+}
+.panel-body {
+    padding:0;
+    background:#ffffff;
+}
+.glyphicon-plus:before{
+	padding-right: 10px;
+}
+
+li.page-number.active a,li.page-number:hover a{
+	background-color:#5bc0de;
+	border-color: #46b8da;
+}
+.log{
+	padding-left: 0px;
+    padding-right: 0px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+}
+.treefont{
+	font-family:"华文细黑";
+	font-size:16px;
+	color:#969aa3;
+}
+.headerspan{
+	height:40px;
+	font-size:14px;
+	color:#8e9197;
+	font-weight:bold;
+	display: inline-block;
+	line-height:40px;
+	width:294px;
+}
+.footer{
+	background: #eff0f4;
+	width:370px;
+	padding: 20px 0px 0px 38px;
+}
+.deptform{
+	margin-bottom:10px;
+}
+
+.node-dept_tree{
+	border: 1px solid #ccc;
+}
+span.fa.fa-trash-o,span.fa.fa-pencil{
+margin-right: 10px;
+}
+
+.menuform{
+	padding-left:40px;
+	margin-bottom:20px;
+	text-align:center;
+	vertical-align:center;
+}
+.menufooter{
+	width:294px;
+	padding: 19px 0px 0px 38px;
+	background: #eff0f4;
+}
+.node-menu_tree{
+	border: 1px solid #ccc;
+}
+#modDetp{
+	border-radius: 4px;
+	border:1px solid #ccc;
+}
+#dept_tree{
+	border-radius: 4px;
+	border:1px solid #ccc;
+}
+#modMenu{
+	border-radius: 4px;
+	border:1px solid #ccc;
+}
+#menu_tree{
+	border-radius: 4px;
+	border:1px solid #ccc;
+}
+/*字段过长省略，必须为.form-group中的label*/
+.form-group label{
+	overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.input-group-addon:last-child{
+	background-color: #fff;
+}
+.notice{
+	background-color:#fff;
+	padding:20px 40px 50px 40px;
+	margin:-15px 15px 0px 15px;
+	font-family: 华文细黑;
+}
+.underlineinput{
+	border:0px;
+	border-bottom:1px #969aa3 solid;
+	text-align: center;
+	outline:none;
+}
+.smallinput{
+	   width: 50px;
+}
+.mediuminput{
+		width:100px;
+}
+.noticeFooter{
+	background: #eff0f4;
+}
+.textLeft{
+	text-align: left !important;
+}
+/* bootstrap-table强制不换行 */
+.bootstrap-table{
+	word-break: keep-all;
+    white-space: nowrap;
+}
+
+/*
+	部门菜单树边框
+*/
+.treeview{
+	border: 1px #ccc solid;
+    border-radius: 2px;
+}
+.list-group{
+	margin-bottom: 0px;
+}
+/*
+	分页页数宽度
+*/
+span.page-list  ul.dropdown-menu{
+    width: 48px;
+} 
+.dropdown-menu{
+	min-width: 0px;
+}
+/*解决分页页尾不在水平线上*/
+ul.pagination{
+	margin-right: 20px;
+    margin-top: 20px;
+}
+.pagination-detail{
+	margin-left: 20px !important;
+    margin-top: 20px !important;
+}
+/*控制label居中*/
+.control-label{
+	padding-top:10px;
+}
+/*部门管理取消form-group的margin*/
+.deptmargin{
+	 margin-left: 0px !important;
+    margin-right: 0px !important;
+    margin-bottom:10px;
+}
+
+/*---------------------------------------------
+	bootbox样式修改
+*/
+.modal-footer {
+    padding: 0px 20px 20px 0px;
+    text-align: right;
+}
+.bootbox .modal-footer{
+	text-align: center;
+}
+.bootbox .bootbox-body{
+	text-align: center;
+	font-size: 16px;
+}
+.bootbox .modal-header{
+	padding-bottom: 30px;
+}
+.bootbox .modal-body{
+	padding: 25px 20px 15px 20px;
+}
+.bootbox .btn-default{
+	background-color:#cccccc;
+	color:#ffffff;
+	border:0px;
+	width:120px;
+}
+.bootbox .btn-primary{
+	background-color:#2582e3;
+	border:0px;
+	width:120px;
+}
+#divFileUpload + .form-control-feedback{
+	right: 40px;
+}
+
+#divDate i{
+	right: 40px;
+}
+
+/*年份校验图标被挤下去的问题*/
+#operYear + .form-control-feedback{
+	top: -40px;
+    left: 240px;
+}
+#operTime+ .form-control-feedback{
+	top: -40px;
+    left: 240px;
+}
+/*导入导出图标样式*/
+/*导入*/
+.fa-sign-in:before{
+	padding-right: 10px;
+	font-size:16px;
+}
+/*导出*/
+.fa-sign-out:before{
+	padding-right: 10px;
+	font-size:16px;
+}
+/*必填校验*/
+.required{
+	color:#f7643b;
+	padding-right:5px;
+}
+
+/* .modal-title{
+		font-family: Verdana,'华文细黑';
+	} */
+/* .table.table-hover{
+	table-layout: fixed;
+} */
+/*table换行*/
+.table.table-hover>tbody>tr>td{
+	word-wrap:break-word;
+	white-space: normal;
+}
+/*小标题*/
+.little-title{
+	font-family:华文细黑;
+	font-size:20px;
+}
+/*用于手风琴效果collapse的小标题*/
+.panal-head-title{
+	color:#000000;
+	background-color:#fff;
+	border-color:#4F4F4F;
+	font-size:20px;
+	font-family:华文细黑;
+}
+/*超链接去掉下划线*/
+a:link {
+ text-decoration: none;
+}
+a:visited {
+ text-decoration: none;
+}
+a:hover {
+ text-decoration: none;
+}
+a:active {
+ text-decoration: none;
+}
+/* 导航栏面包屑 */
+.breadcrumb{
+	height:39px !important;
+	background: #ffffff;
+    border-bottom: 1px solid #ccc;
+    border-radius: 0px;
+    margin-bottom: 0px;
+}
+.whiteBgDiv{
+  		background:#ffffff;
+  		padding-top: 28px;
+    	padding-bottom: 21px;
+    	margin-bottom:20px;
+  }
+.form-control{
+	height: 35px;
+}

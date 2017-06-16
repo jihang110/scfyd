@@ -1,0 +1,57 @@
+package com.ut.scf.service.sys.impl;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import com.ut.scf.dao.auto.SequenceInfoMapper;
+import com.ut.scf.pojo.auto.SequenceInfo;
+import com.ut.scf.service.sys.ISequenceService;
+
+@Service("sequenceService")
+public class SequenceServiceImpl implements ISequenceService {
+	@Resource
+	private SequenceInfoMapper sequenceInfoMapper;
+
+	private int maxLength = 0;
+
+	private static final int POOL_SIZE = 1;
+
+	@Override
+	public String getNextKeyValue(String keyName) {
+		String sequence = findSequence(keyName);
+		String keyValue = "";
+		if ("".equals(sequence)) {
+			keyValue = POOL_SIZE + "";
+		} else {
+			keyValue = Integer.parseInt(sequence) + 1 + "";
+			if (maxLength != 0 && keyValue.length() >= maxLength) {
+				keyValue = POOL_SIZE + "";
+			}
+		}
+		updateSequence(keyName, keyValue);
+		return keyValue;
+	}
+
+	private void updateSequence(String keyName, String keyValue) {
+		SequenceInfo sequenceInfo = new SequenceInfo();
+		sequenceInfo.setKeyName(keyName);
+		sequenceInfo.setKeyValue(keyValue);
+		sequenceInfoMapper.updateByPrimaryKeySelective(sequenceInfo);
+	}
+
+	private String findSequence(String keyName) {
+		SequenceInfo sequenceInfo = sequenceInfoMapper
+				.selectByPrimaryKey(keyName);
+		if (sequenceInfo != null) {
+			this.maxLength = sequenceInfo.getMaxLength();
+			return sequenceInfo.getKeyValue();
+		} else {
+			sequenceInfo = new SequenceInfo();
+			sequenceInfo.setKeyName(keyName);
+			sequenceInfo.setMaxLength(0);
+			sequenceInfoMapper.insert(sequenceInfo);
+		}
+		return "";
+	}
+}

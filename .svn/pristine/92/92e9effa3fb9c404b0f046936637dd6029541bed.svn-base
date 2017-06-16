@@ -1,0 +1,23 @@
+package com.ut.scf.service.project;
+
+import java.util.Map;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IAgencyService {
+
+	/**
+	 * @param jsonObject
+	 * 发起流程
+	 */
+	public void startProcess(JSONObject jsonObject);
+	
+	/**
+	 * 代办任务查询
+	 */
+	public BaseRespBean getAgencyTaskList(Map<String,Object> map,PageInfoBean page);
+
+}

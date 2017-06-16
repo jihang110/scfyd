@@ -1,0 +1,40 @@
+package com.ut.scf.service.project;
+
+import org.activiti.engine.impl.util.json.JSONObject;
+
+import com.ut.scf.reqbean.project.AgencyFlowReqBean;
+import com.ut.scf.reqbean.project.AgencySearchPageReqBean;
+import com.ut.scf.reqbean.pub.TaskInfoReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+
+public interface IAgencyService {
+
+	public BaseRespBean agencyList(AgencySearchPageReqBean searchPage);
+	
+	/**
+	 * @param jsonObject
+	 * 发起流程
+	 */
+	public BaseRespBean startProcess(JSONObject jsonObject);
+	
+	/**
+	 * 获取存储在流程中的数据
+	 * @param taskId 任务Id
+	 * @return
+	 */
+	public BaseRespBean getDataByTaskId(TaskInfoReqBean reqBean);
+	
+	/**
+	 * 审核的数据
+	 * @param jsonObject 需要处理的数据，转换为jsonObject传过来
+	 * @return
+	 */
+	public boolean doAgree(JSONObject jsonObject);
+	
+	/**
+	 * 获取存储在流程中的数据
+	 * @param taskId 任务Id
+	 * @return
+	 */
+	public BaseRespBean addAgency(AgencyFlowReqBean reqBean);
+}

@@ -1,0 +1,196 @@
+$(function(){
+	CloudUtils.getMenuNames("nav");
+	initTable();
+	loadDate2();
+	chooseDateType();
+});
+function initTable(){
+	$('#revenueCountTable').bootstrapTable('destroy');  
+	$("#revenueCountTable").bootstrapTable({  
+         method: "post", 
+         url: "../../CountAnalyse/revenueInfo", 
+         striped: true,  //表格显示条纹  
+         //pagination: true, //启动分页  
+         //pageSize: 5,  //每页显示的记录数  
+         //pageNumber:1, //当前第几页  
+         //pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertStringJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+           var revenueStartDate = jsonData.revenueStartDate;
+           var revenueEndDate = jsonData.revenueEndDate;
+           if(revenueStartDate.split("-").length == 1&&revenueEndDate.split("-").length==1&&(revenueStartDate!=""&&revenueEndDate!="")){
+        	   revenueStartDate = revenueStartDate +"-01-01";
+        	   revenueEndDate = revenueEndDate +"-12-30";
+           }else if(revenueStartDate.split("-").length == 2&&revenueEndDate.split("-").length==2){
+        	   revenueStartDate = revenueStartDate +"-01";
+        	   revenueEndDate = revenueEndDate +"-30";
+           }
+           var param = {    
+        		   agency :jsonData.txt_agencyName,
+        		   revenueStartDate:revenueStartDate,
+        		   revenueEndDate:revenueEndDate
+           };    
+           return JSON.stringify(param);                   
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+        		 showChart(res);
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+	 	        field: 'agency',
+	 	        title: '客户名称',
+	 	        align: 'center',
+			    valign: 'middle'
+			 	},{
+	 	        field: 'agencyNum',
+	 	        title: '组织机构代码证号',
+	 	        align: 'center',
+			    valign: 'middle'
+			 	},{
+	 	        field: 'sapttaSum',
+	 	        title: '总计应收利息金额',
+	 	        align: 'center',
+			    valign: 'middle'
+			 	}, 
+			 	{
+	 	        field: 'apttaSum',
+	 	        title: '总计已收利息金额',
+	 	        align: 'center',
+	            valign: 'middle'
+		 	    },{
+	 	        field: 'unpaidInterestSum',
+	 	        title: '总计未收利息金额',
+	 	        align: 'center',
+	            valign: 'middle'
+		 	    }]
+       });  
+}
+
+function showChart(data){
+	 var myChart = echarts.init(document.getElementById('echart'));
+	 var apttaTotal = 0;
+	 var unpaidInterestTotal = 0;
+	 $.each(data.dataList, function(index, value) {
+		 apttaTotal += value.apttaSum;
+		 unpaidInterestTotal += value.unpaidInterestSum;
+		});
+     // 指定图表的配置项和数据
+	var option = {
+			    /*title : {
+			        text: '某站点用户访问来源',
+			        subtext: '纯属虚构',
+			        x:'center'
+			    },*/
+			    tooltip : {
+			        trigger: 'item',
+			        formatter: "{a} <br/>{b} : {c} ({d}%)"
+			    },
+			    legend: {
+			        orient: 'vertical',
+			        left: 'left',
+			        data: ['总计已收利息金额','总计未收利息金额']
+			    },
+			    series : [
+			        {
+			            name: '访问来源',
+			            type: 'pie',
+			            radius : '55%',
+			            center: ['50%', '60%'],
+			            data:[
+			                {value:apttaTotal, name:'总计已收利息金额'},
+			                {value:unpaidInterestTotal, name:'总计未收利息金额'}
+			            ],
+			            itemStyle: {
+			                emphasis: {
+			                    shadowBlur: 10,
+			                    shadowOffsetX: 0,
+			                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+			                }
+			            }
+			        }
+			    ]
+			};
+     // 使用刚指定的配置项和数据显示图表。
+     myChart.setOption(option);
+}
+
+function searchFun(){
+	initTable();
+}
+function loadDate2(){
+	$('#revenueStartDate,#revenueEndDate').datetimepicker('remove');
+	$("#revenueStartDate,#revenueEndDate").datetimepicker({
+		 language: 'zh-CN',
+	       autoclose: 1,
+	       todayBtn: true,// 显示今天时间
+	       pickerPosition: "bottom-left",
+	       minuteStep: 5,
+	       format: 'yyyy-mm-dd',
+	       minView: 'month'　　　　// 日期时间选择器所能够提供的最精确的时间选择视图。
+	    });
+}
+
+function loadDate0(){
+	$('#revenueStartDate,#revenueEndDate').datetimepicker('remove');
+	$('#revenueStartDate,#revenueEndDate').datetimepicker({
+		language: 'zh-CN',
+		autoclose: 1,
+		todayHighlight: true,
+		format: 'yyyy',
+		startView: 4,
+        minView: 4,
+		todayBtn: true,
+		initialDate : new Date() ,
+		pickerPosition: "bottom-left"
+	});
+}
+
+function loadDate1(){
+	$('#revenueStartDate,#revenueEndDate').datetimepicker('remove');
+	$('#revenueStartDate,#revenueEndDate').datetimepicker({
+		language: 'zh-CN',
+		autoclose: 1,
+		todayHighlight: true,
+		format: 'yyyy-mm',
+		startView: 3,
+        minView: 3,
+		todayBtn: true,
+		initialDate : new Date() ,
+		pickerPosition: "bottom-left"
+	});
+}
+
+function chooseDateType(){
+	$("#chooseDateType").click(function(){
+		$('#revenueStartDate,#revenueEndDate').val("");
+		var dateType = $("input[type='radio']:checked").val();
+		//切换日历
+		if(dateType == "0"){
+			loadDate0();
+		}else if(dateType == "1"){
+			loadDate1();
+		}else if(dateType == "2"){
+			loadDate2();
+		}
+	})
+}

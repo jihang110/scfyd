@@ -1,0 +1,6 @@
+package com.ut.scf.service.project;
+
+
+public interface IRepayMagagerService {
+
+}
