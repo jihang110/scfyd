@@ -1,0 +1,63 @@
+package com.ut.scf.service.query.impl;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import com.ut.scf.core.dict.PageInfoBean;
+import com.ut.scf.core.util.BeanUtil;
+import com.ut.scf.dao.auto.FactorContractInfoMapper;
+import com.ut.scf.dao.project.IFactorContractInfoDao;
+import com.ut.scf.reqbean.query.ContractFileListReqBean;
+import com.ut.scf.reqbean.query.ContractInfoListReqBean;
+import com.ut.scf.respbean.BaseRespBean;
+import com.ut.scf.respbean.PageRespBean;
+import com.ut.scf.service.query.IContractQueryService;
+
+@Service("contractQueryService")
+public class ContractQueryServiceImpl implements IContractQueryService {
+
+	Logger log = LoggerFactory.getLogger(this.getClass());
+
+	@Resource
+	private FactorContractInfoMapper factorContractInfoMapper;
+	@Resource
+	private IFactorContractInfoDao factorContractInfoDao;
+
+	@Override
+	public BaseRespBean contractInfoList(ContractInfoListReqBean reqBean) {
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		System.out.println("================================");
+        System.out.println(reqBean.getContractType());
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		List<Map<String, Object>> resultList = factorContractInfoDao
+				.contractListInfo(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(resultList);
+		return respBean;
+	}
+
+	@Override
+	public BaseRespBean contractInfoFileList(ContractFileListReqBean reqBean) {
+
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		List<Map<String, Object>> resultList = factorContractInfoDao
+				.contractFileList(paramMap, page);
+		PageRespBean respBean = new PageRespBean();
+		respBean.setPages(page.getTotalPage());
+		respBean.setRecords(page.getTotalRecord());
+		respBean.setDataList(resultList);
+		return respBean;
+	}
+
+}

@@ -58,7 +58,7 @@
 	        and fci.product_type LIKE CONCAT(CONCAT('%', #{productType}),'%') 
 	    </if>
 	    <if test="agencyCorpName != null and agencyCorpName!='' ">  
-	        and ci.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%') 
+	        and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyCorpName}),'%') 
 	    </if>
 	    <if test="coreCorpName != null and coreCorpName!='' ">  
 	        and po.corp_name LIKE CONCAT(CONCAT('%', #{coreCorpName}),'%') 

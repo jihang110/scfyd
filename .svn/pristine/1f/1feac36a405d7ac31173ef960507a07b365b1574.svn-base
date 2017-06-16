@@ -13,10 +13,10 @@ import com.ut.scf.reqbean.query.ContractFileListReqBean;
 import com.ut.scf.reqbean.query.ContractInfoListReqBean;
 import com.ut.scf.respbean.BaseRespBean;
 import com.ut.scf.respbean.PageRespBean;
-import com.ut.scf.service.query.IContractListService;
+import com.ut.scf.service.query.IContractQueryService;
 
-@Service("contractListService")
-public class ContractListServiceImpl implements IContractListService {
+@Service("contractQueryService")
+public class ContractQueryServiceImpl implements IContractQueryService {
 
 	Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -26,7 +26,7 @@ public class ContractListServiceImpl implements IContractListService {
 	private IFactorContractInfoDao factorContractInfoDao;
 
 	@Override
-	public BaseRespBean ContractInfoList(ContractInfoListReqBean reqBean) {
+	public BaseRespBean contractInfoList(ContractInfoListReqBean reqBean) {
 
 		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
 		System.out.println("================================");
@@ -44,7 +44,7 @@ public class ContractListServiceImpl implements IContractListService {
 	}
 
 	@Override
-	public BaseRespBean ContractInfoFileList(ContractFileListReqBean reqBean) {
+	public BaseRespBean contractInfoFileList(ContractFileListReqBean reqBean) {
 
 		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
 

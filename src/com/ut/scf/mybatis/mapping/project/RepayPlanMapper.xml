@@ -5,18 +5,17 @@
   	
   <select id="selectRepayPlanInfo" resultType="hashmap" parameterType="hashmap" >
     SELECT
+    o.order_id orderId,
+    s.stu_name stuName,
+    s.id_card idCard,
+    s.mobile_phone mobilePhone,
+    o.product_amt productAmt,
+    o.cr_req_amt crReqAmt,
+    o.pay_m payM,
+    r.current_repay_date currentRepayDate,
+    r.period,
 	r.current_payable_interest currentPayableInterest,
-	r.current_payable_principal currentPayablePrincipal,
-	r.current_repay_date currentRepayDate,
-	r.period,
-	o.order_id orderId,
-	s.stu_name stuName,
-	s.id_card idCard,
-	s.mobile_phone mobilePhone,
-	o.product_amt productAmt,
-	o.cr_req_amt crReqAmt,
-	o.pay_m payM,
-	o.order_batch_id orderBatchId
+	r.current_payable_principal currentPayablePrincipal
 	FROM 
 		order_info o 
 	INNER JOIN repayment_plan_info r ON o.order_id = r.order_id 

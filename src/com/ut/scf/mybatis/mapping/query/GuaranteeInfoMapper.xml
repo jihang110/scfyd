@@ -44,4 +44,29 @@
     </if>
   </select>
   
+  <select id="getGuaranteeQueryList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      f.finance_id financeId,
+      f.finance_amount financeAmount,
+      f.pay_amt payAmt,
+      c.corp_name agencyName,
+      c.agency_num agencyNum,
+      g.pay_able_guarantee payAbleGuarantee,
+      g.guarantee_pay_date guaranteePayDate,
+      g.pay_act_guarantee payActGuarantee
+    from finance_info f
+    join guarantee_info g on f.finance_id = g.finance_id
+    join corp_info c on f.corp_id = c.corp_id
+    WHERE 1 = 1
+    <if test="agencyName != null and agencyName != ''">
+	    and c.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	</if> 
+    <if test="agencyNum != null and agencyNum !='' ">  
+        and c.agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and f.finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
+    </if>
+  </select>
+  
 </mapper>
