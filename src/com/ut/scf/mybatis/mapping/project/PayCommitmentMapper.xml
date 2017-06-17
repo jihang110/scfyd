@@ -51,7 +51,8 @@
 	  fi.finance_id financeId,
 	  fi.finance_start_date financeStartDate,
 	  fi.finance_end_date financeEndDate,
-	  fi.finance_amount financeAmount
+	  fi.finance_amount financeAmount,
+	  fci.contract_no contractNo
 	from finance_info fi
 	join guarantee_info gi on fi.finance_id = gi.finance_id
 	join corp_info ci on fi.corp_id = ci.corp_id

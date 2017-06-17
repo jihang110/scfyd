@@ -15,7 +15,7 @@ import com.ut.scf.service.query.IContractQueryService;
 
 @Controller
 @RequestMapping("/contractInfo")
-public class ContractListController {
+public class ContractQueryController {
     @Resource
 	private IContractQueryService contractQueryService;
 

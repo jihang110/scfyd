@@ -7,10 +7,17 @@
 	warn_type warnType, 
 	send_time sendTime,
 	warn_status warnStatus,
-	warn_msg warnMsg
+	warn_msg warnMsg,
+	file_path filePath
     from warning_info
     <where>
-        
+     1=1
+         <if test="warnType != null and warnType != ''">
+          and warn_type = #{warnType}
+         </if>
+         <if test="sendTime != null and sendTime != ''">
+          and  DATE_FORMAT(send_time, '%Y-%m-%d')  = #{sendTime}
+         </if>
     </where>
     
   </select>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ut.scf.dao.query.ICarInfoListDao" >
+
+	
+  
+  <select id="getcarInfoList" resultType="hashmap" parameterType="hashmap" >
+    SELECT
+      c.car_no carNo,
+      c.car_actual_price carActualPrice,
+      c.sale_status saleStatus
+    from car_info c
+   <where> 
+   	1=1
+   	<if test="financeId !=null and financeId !=''">
+   		and c.finance_id = #{financeId}
+   	</if>
+   </where>
+  </select>
+  
+</mapper>

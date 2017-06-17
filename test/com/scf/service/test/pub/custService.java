@@ -239,4 +239,10 @@ public class custService {
 		HistoricVariableInstance singleResult = processEngine.getHistoryService().createHistoricVariableInstanceQuery().taskId("500037").singleResult();
 		System.out.println(singleResult.getVariableName()+"  "+singleResult.getValue());
 	}
+	
+	@Test
+	public void getuser(){
+		System.out.println("34");
+		processEngine.getTaskService().createTaskQuery().taskCandidateGroup("1232").taskCandidateUser("23");
+	};
 } 

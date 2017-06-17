@@ -17,7 +17,8 @@
       fi.finance_balance financeBalance,
       fi.finance_amount financeAmount,
       fi.expense expense,
-      fi.finance_status financeStatus
+      fi.finance_status financeStatus,
+      fi.note note
     from finance_info fi
     join corp_info ci on fi.corp_id = ci.corp_id
     left join limit_info li on ci.corp_id = li.corp_id
@@ -97,7 +98,12 @@
     join corp_info ci on fi.corp_id = ci.corp_id
     left join limit_info li on ci.corp_id = li.corp_id
     <where>
-    	fi.pay_amt<![CDATA[<=]]>fi.finance_amount
+    	<if test="financeType==0">  
+    		fi.pay_amt<![CDATA[<=]]>fi.finance_amount
+    	</if>
+    	<if test="financeType==1 and corpId != null and corpId !=''">
+    		 and ci.corp_id = #{corpId}
+    	</if>  
     </where>
     
   </select>

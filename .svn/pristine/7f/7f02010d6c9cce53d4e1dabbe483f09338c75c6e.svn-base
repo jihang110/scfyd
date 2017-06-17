@@ -72,21 +72,18 @@ function initTable() {
          queryParams: function queryParams(params) {   //设置查询参数  
            var data = CloudUtils.convertAllJson('searchForm');
            var jsonData = eval("(" + data + ")");
-           console.log(jsonData.agencyCorpName);
+          // console.log(jsonData.contractNo,jsonData.agencyCorpName);
+          
            var param = {    
                pageNumber: params.pageNumber,
                pageSize: params.pageSize,
                isPage : 1,
                contractNo:jsonData.contractNo?jsonData.contractNo:null,
-            		  
                contractType:jsonData.contractType?jsonData.contractType:null,
-             
                agencyCorpName:jsonData.agencyCorpName?jsonData.agencyCorpName:null,
                coreCorpName:jsonData.coreCorpName?jsonData.coreCorpName:null,
                productType:jsonData.productType?jsonData.productType:null
-         
-              
-           };
+            };
            return JSON.stringify(param);
          },  
          responseHandler:function responseHandler(res) {

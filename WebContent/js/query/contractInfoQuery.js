@@ -1,0 +1,235 @@
+$(document).ready(function() {
+	CloudUtils.getMenuNames("nav");
+	dateload();
+	initTable();
+	numFormat();
+//	 $('#detailModal').on('hidden.bs.modal', function() {
+//			$("#detailForm").bootstrapValidator('resetForm', true);
+//			$("#detailForm")[0].reset();
+//		});
+	 
+} );
+/*function aaa(){
+	console.log($("#agency_corp_name").val()+" "+$("#agencyOrgnNum").val()+" "+$("#coreOrgnNum").val()+" "+$("#core_corp_name").val());
+}*/
+window.detailEvents = {
+     'click .detail': function (e, value, row, index) {
+			$('#detailModal').modal('show');
+			detailFun(row);
+	    },
+};
+
+function searchFun(){
+	 initTable();
+}
+
+function detailFun(row) {
+	$("#detailForm")[0].reset();
+	$("#detailForm").bootstrapValidator('resetForm', true);
+	$('#detailModal').modal({backdrop: 'static', keyboard: false});
+ 	CloudUtils.setForm(row,'detailForm');
+// 	CloudUtils.setForm([],'detailForm');
+ 	contractFileTable();
+ 	$('#detailForm').find("input, select").attr('disabled',true);
+}
+
+function dateload(){
+	 $("#searchForm").find('#financeStartDate,#financeEndDate').datetimepicker({
+      language: 'zh-CN',
+      autoclose: 1,
+      todayBtn: true,// 显示今天时间
+      pickerPosition: "bottom-left",
+      minuteStep: 5,
+      format: 'yyyy-mm-dd',
+      minView: 'month',// 日期时间选择器所能够提供的最精确的时间选择视图。
+      initialDate : new Date() //参考financeInfoManager.js
+     });
+	 $('#financeStartDate').datetimepicker('setEndDate', new Date());
+}
+
+function submitContract(){
+ var data = CloudUtils.convertStringJson('detailForm');
+ var jsonData = eval("(" + data + ")");
+
+}
+function initTable() { 
+	$('#contractListInfo').bootstrapTable('destroy'); 
+	$("#contractListInfo").bootstrapTable({  
+		 method: "post", 
+         url: "../contractInfo/list", 
+         striped: true,  //表格显示条纹  
+         pagination: true, //启动分页  
+         pageSize: 5,  //每页显示的记录数  
+         pageNumber:1, //当前第几页  
+         pageList: [5, 10, 15, 20, 25],  //记录数可选列表  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+           var data = CloudUtils.convertAllJson('searchForm');
+           var jsonData = eval("(" + data + ")");
+          // console.log(jsonData.contractNo,jsonData.agencyCorpName);
+          
+           var param = {    
+               pageNumber: params.pageNumber,
+               pageSize: params.pageSize,
+               isPage : 1,
+               contractNo:jsonData.contractNo?jsonData.contractNo:null,
+               contractType:jsonData.contractType?jsonData.contractType:null,
+               agencyCorpName:jsonData.agencyCorpName?jsonData.agencyCorpName:null,
+               coreCorpName:jsonData.coreCorpName?jsonData.coreCorpName:null,
+               productType:jsonData.productType?jsonData.productType:null
+            };
+           return JSON.stringify(param);
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'contractNo',
+ 	        title: '合同编号',
+ 	        align: 'center',
+            valign: 'middle'
+       },{
+ 	        field: 'agencyCorpName',
+ 	        title: '买方名称',
+ 	        align: 'center',
+            valign: 'middle',
+ 	   },{
+	        field: 'agencyOrgnNum',
+	        title: '组织机构证号',
+	        align: 'center',
+	        valign: 'middle',
+
+ 	    }, {
+ 	        field: 'coreCorpName',
+ 	        title: '卖方名称',
+ 	        align: 'center',
+            valign: 'middle',
+           
+ 	   },{
+	        field: 'coreOrgnNum',
+	        title: '组织机构证号',
+	        align: 'center',
+	        valign: 'middle',
+
+ 	    }, {
+ 	        field: 'productType',
+ 	        title: '产品名称',
+ 	       align: 'center',
+           valign: 'middle',
+        	   formatter:function(value,row,index) {
+   				if (value == "0") {
+   					return "DYK";
+   				} else if (value == "1") {
+   					return "分期超人";
+   				}
+   	    	}
+ 	    },{
+ 	        field: 'contractType',
+ 	        title: '合同类型',
+ 	        align: 'center',
+ 	        valign: 'middle',
+ 	           formatter:function(value,row,index) {
+ 	   				if (value == "0") {
+ 	   					return "保理合同";
+ 	   				} else if (value == "1") {
+ 	   					return "订单合同";
+ 	   				}
+ 	   	    	}
+  
+ 	    },{
+ 	  
+ 	        field: 'detail',
+ 	        title: '详情',
+ 	        align: 'center',
+            valign: 'middle',
+ 	        formatter:function(value,row,index){
+ 	        	var d = '<a class = "fa fa-list-ul detail" style="color:#278bdd;padding:0px 5px;" title="详情" href="javascript:void(0)"></a>';
+ 	            return d;
+ 	        },
+ 	        events: 'detailEvents'
+ 	    }
+ 	    ]
+       });
+}
+
+function contractFileTable() {
+	$('#contractInfoList').bootstrapTable('destroy'); 
+	$("#contractInfoList").bootstrapTable({  
+		 method: "post", 
+         url: "../contractInfo/fileList", 
+         striped: false,  //表格显示条纹  
+         pagination: false, //启动分页  
+         search: false,  //是否启用查询  
+         showColumns: false,  //显示下拉框勾选要显示的列  
+         showRefresh: false,  //显示刷新按钮  
+         sidePagination: "server", //表示服务端请求  
+         //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+         //设置为limit可以获取limit, offset, search, sort, order  
+         queryParamsType : "undefined",   
+         queryParams: function queryParams(params) {   //设置查询参数  
+        	 var contractNo = $("#modalcontractNo").val();
+        	 var param = {    
+                 
+                 contractNo:contractNo
+             };    
+             return JSON.stringify(param);
+         },  
+         responseHandler:function responseHandler(res) {
+        	 if (res.result==0) {
+	        	 return {
+	        		 "rows": res.dataList,
+	        		 "total": res.records
+	        	 };
+
+        	 } else {
+        		 bootbox.alert(res.resultNote);
+        		 return {
+			        	 "rows": [],
+			        	 "total": 0
+			        	 };
+        	 }
+         },
+         columns: [{
+ 	        field: 'fileName',
+ 	        title: '附件名称',
+ 	        align: 'center',
+            valign: 'middle',
+            formatter:function(value,row,index){
+ 			  var s = '<a href="/../..'+row.filePath+'" download="'+value+'">'+value+'</a>';
+ 			    return s;
+ 		     }
+ 	    }, {
+ 	        field: 'fileType',
+ 	        title: '文件格式',
+ 	        align: 'center',
+            valign: 'middle',
+
+ 	    }, {
+ 	        field: 'fileSize',
+ 	        title: '文件大小',
+ 	        align: 'center',
+            valign: 'middle',
+
+ 	    }
+ 	    ]
+       });
+}
+

@@ -18,14 +18,18 @@
 		finance_info f
 	inner join revenue_management r ON r.finance_id = f.finance_id
 	inner join corp_info c ON f.corp_id = c.corp_id
-    <if test="agencyName != null and agencyName != ''">
-	    and agency_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
+	where 1=1
+    <if test="corpName != null and corpName != ''">
+	    and c.corp_name LIKE CONCAT(CONCAT('%', #{corpName}),'%')
 	</if> 
     <if test="agencyNum != null and agencyNum !='' ">  
         and agency_num LIKE CONCAT(CONCAT('%', #{agencyNum}),'%')
     </if>
     <if test="financeStartDate != null and financeStartDate !='' ">  
         and DATE_FORMAT(finance_start_date, '%Y-%m-%d') >= #{financeStartDate}
+    </if>
+    <if test="financeId != null and financeId !='' ">  
+        and f.finance_id LIKE CONCAT(CONCAT('%', #{financeId}),'%')
     </if>
     <if test="financeEndDate != null and financeEndDate !='' ">  
         and DATE_FORMAT(finance_end_date, '%Y-%m-%d') <![CDATA[<=]]> #{financeEndDate}
