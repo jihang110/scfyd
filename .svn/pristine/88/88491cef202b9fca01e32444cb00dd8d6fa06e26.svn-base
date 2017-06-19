@@ -28,7 +28,7 @@ function setForm(){
 
 
 function getInfo(type){
-	var data = CloudUtils.convertStringJson('loanInfoForm');
+	var data = CloudUtils.convertStringJson('infoForm');
 	data = eval("(" + data + ")");
 	data.agree = type;
 	data.advice = $("#advice").val();
@@ -75,7 +75,7 @@ function saveFun(){
 						data : '{"financeId":"'+guaranteeData.financeId+'","payActGuarantee":"'+payActGuarantee+'","guaranteeBalance":"'+guaranteeBalance+'"}',
 						callBackFun : function(data) {
 							bootbox.alert(data.resultNote,function(){
-								window.location.href='../../agencyTask/agencyTask.html';
+								window.location.href='../agencyTask/agencyTask.html';
 							});
 						},
 						errorCallback : function(data) {
