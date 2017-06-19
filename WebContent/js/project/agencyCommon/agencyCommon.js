@@ -120,6 +120,20 @@ function showTabs() {
     		CloudUtils.getTab('../../project/ssmManager/LoanInfoManager/LoanInfoAgencyTask.html', "projectInfo");
 	        jQuery.getScript("../../js/project/ssmManager/LoanInfoManager/LoanInfoAgencyTask.js");
     	}
+    }else if (procdefKey == "orderManagerProcess") {
+        if (taskDefKey == "task_order_pl") {
+            //项目经理 task_order_fzr
+            CloudUtils.getTab('../../project/ssmManager/orderManager/orderManager.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/orderManager/orderManager.js");
+            // $('#mainFrame', top.document).attr('src', 'project/ssmManager/orderManager/orderManager.html?taskId=' + row.taskId + '&procInstId=' + row.procInstId + '&taskDefKey=' + row.taskDefKey);
+        } else if (taskDefKey == "task_order_fzr") {
+            //项目经理 task_order_fzr
+                CloudUtils.getTab('../../project/ssmManager/orderManager/orderManager.html', "projectInfo");
+            jQuery.getScript("../../js/project/ssmManager/orderManager/orderManager.js");
+            // $('#mainFrame', top.document).attr('src', 'project/ssmManager/orderManager/orderManager.html?taskId=' + row.taskId + '&procInstId=' + row.procInstId + '&taskDefKey=' + row.taskDefKey);
+        }
+
+
     }
 }
 

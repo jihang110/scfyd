@@ -5,15 +5,14 @@ import java.util.Map;
 
 import com.ut.scf.pojo.auto.OrderBatchInfo;
 import com.ut.scf.respbean.BaseRespBean;
-import com.ut.scf.respbean.project.RepaymentPlanInfoRespBean;
 
 public interface IOrderManagerService {
 
-	BaseRespBean orderInfoById(List<String> orderIds, Map<String, String> map);
+	BaseRespBean orderInfoById(String batchId, Map<String, String> map);
 
 	OrderBatchInfo batchInfoById(String batchId);
 
-	List<List<RepaymentPlanInfoRespBean>> getRepaymentPlans(List<String> ids);
+	List<List<Map<String, Object>>> getRepaymentPlans(String orderIds);
 
 	BaseRespBean addRepayPlanInfo(List<String> orderIds, Map<String, String> map);
 }

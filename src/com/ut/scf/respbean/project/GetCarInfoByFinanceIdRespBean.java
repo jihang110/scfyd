@@ -11,6 +11,7 @@ public class GetCarInfoByFinanceIdRespBean extends BaseRespBean {
 	 */
 	private List<?> dataList;
 	private BigDecimal carActualPriceTotal;
+	private BigDecimal salesRate;
 	public List<?> getDataList() {
 		return dataList;
 	}
@@ -22,6 +23,12 @@ public class GetCarInfoByFinanceIdRespBean extends BaseRespBean {
 	}
 	public void setCarActualPriceTotal(BigDecimal carActualPriceTotal) {
 		this.carActualPriceTotal = carActualPriceTotal;
+	}
+	public BigDecimal getSalesRate() {
+		return salesRate;
+	}
+	public void setSalesRate(BigDecimal salesRate) {
+		this.salesRate = salesRate;
 	}
 	
 }

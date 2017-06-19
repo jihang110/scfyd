@@ -22,6 +22,7 @@ import com.ut.scf.core.dict.ScfConsts;
 import com.ut.scf.core.util.BeanUtil;
 import com.ut.scf.reqbean.project.FinanceFlowReqBean;
 import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
+import com.ut.scf.reqbean.project.FinanceListReqBean;
 import com.ut.scf.reqbean.pub.TaskInfoReqBean;
 import com.ut.scf.respbean.BaseRespBean;
 import com.ut.scf.service.project.IActivitiService;
@@ -146,4 +147,28 @@ public class FinanceInfoController {
 		financeInfoService.reApply(reqBean);
 		return respBean;
 	}
+	
+/*	@RequestMapping(value = "/financelist", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean financeList(@RequestBody FinanceInfoListReqBean reqBean, BindingResult bindingResult) {
+		BaseRespBean respBean = new BaseRespBean();
+		Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+		PageInfoBean page = new PageInfoBean();
+		page.setPageNumber(reqBean.getPageNumber());
+		page.setPageSize(reqBean.getPageSize());
+		respBean = financeInfoService.getFinanceList(paramMap, page);
+		log.debug("financeList: {}", respBean);
+		
+		return respBean;
+	}*/
+	
+	@RequestMapping(value = "/financelist", method = RequestMethod.POST, consumes = { "application/json" }, produces = { "application/json;charset=UTF-8" })
+	public @ResponseBody BaseRespBean financeList(HttpSession httpSession,
+			@RequestBody FinanceListReqBean reqBean,
+			BindingResult bindingResult) {
+			BaseRespBean respBean = new BaseRespBean();
+			Map<String, Object> paramMap = BeanUtil.beanToMap(reqBean);
+			respBean=financeInfoService.getFinanceList(paramMap);
+			return respBean;
+	}
+
 }

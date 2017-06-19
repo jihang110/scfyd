@@ -17,6 +17,14 @@ public class RevenueListReqBean extends PageReqBean{
 	private String revenueEndDate;
 	private BigDecimal actRepayAmt;
 	private byte repaymentType;
+	public String agency;
+	
+	public String getAgency() {
+		return agency;
+	}
+	public void setAgency(String agency) {
+		this.agency = agency;
+	}
 	public String getRepaymentId() {
 		return repaymentId;
 	}

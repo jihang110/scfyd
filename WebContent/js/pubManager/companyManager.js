@@ -351,7 +351,6 @@ function ajaxFileUpload(){
 	        fileElementId : 'file',  
 	        dataType : 'json',  
 	        success : function(data, status) {  
-	        	debugger
 	            if (data.result == 0) { 
 //	            	1.先添加进页面中
 	            	var relData = {};

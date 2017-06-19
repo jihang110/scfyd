@@ -18,38 +18,50 @@ function dateload(){
       minuteStep: 5,
       format: 'yyyy-mm-dd',
       minView: 'month',// 日期时间选择器所能够提供的最精确的时间选择视图。
-      initialDate : new Date()
-     });
+      initialDate : new Date(),
+      endDate : new Date()
+     }).on('hide',function(e) {  
+         $('#addForm').data('bootstrapValidator')  
+         .updateStatus('guaranteePayDate', 'NOT_VALIDATED',null)  
+         .validateField('guaranteePayDate');  
+     });;
 }
 
 function reapply() {
-	// 保证金缴纳历史
-	var guaranteePayDate = $("#guaranteePayDate").val();
-	var payActGuarantee = $("#payActGuarantee").val();
-	$("#guaranteePayHis").val(guaranteePayDate + '，实缴保证金' + $.number(payActGuarantee, 2) + '元');
 	
-	var data = CloudUtils.convertStringJson('addForm');
-	data = eval("(" + data + ")");
-	data.taskId = taskId;
-	
-	var options = {
-			url : '../../finance/applyGuarantee',
-			data : JSON.stringify(data),
-			callBackFun : function(data) {
-				if(data.result==0){
-					bootbox.alert(data.resultNote, function() {
-						window.location.href = '../../project/agencyTask/agencyTask.html';
-					});
-				}else{
-					bootbox.alert(data.resultNote);
-					return false;
+	$('#addForm').data('bootstrapValidator').validate();
+	if(!$('#addForm').data('bootstrapValidator').isValid()){  
+	    //没有通过校验 
+	 return false;
+	} else {
+		// 保证金缴纳历史
+		var guaranteePayDate = $("#guaranteePayDate").val();
+		var payActGuarantee = $("#payActGuarantee").val();
+		$("#guaranteePayHis").val(guaranteePayDate + '，实缴保证金' + $.number(payActGuarantee, 2) + '元');
+		
+		var data = CloudUtils.convertStringJson('addForm');
+		data = eval("(" + data + ")");
+		data.taskId = taskId;
+		
+		var options = {
+				url : '../../finance/applyGuarantee',
+				data : JSON.stringify(data),
+				callBackFun : function(data) {
+					if(data.result==0){
+						bootbox.alert(data.resultNote, function() {
+							window.location.href = '../../project/agencyTask/agencyTask.html';
+						});
+					}else{
+						bootbox.alert(data.resultNote);
+						return false;
+					}
+				},
+				errorCallback:function(data){
+					bootbox.alert("error");
 				}
-			},
-			errorCallback:function(data){
-				bootbox.alert("error");
-			}
-	};
-	CloudUtils.ajax(options);
+		};
+		CloudUtils.ajax(options);
+	}
 }
 
 
@@ -58,79 +70,38 @@ function formValidator(){
 	$('#addForm').bootstrapValidator({
 	      message: 'This value is not valid',
 	      excluded: ':disabled',
+	      group:".guarantee_group",
 	      feedbackIcons: {
 	          valid: 'glyphicon glyphicon-ok',
 	          invalid: 'glyphicon glyphicon-remove',
 	          validating: 'glyphicon glyphicon-refresh'
 	      },
 	      fields: {
-	    	  agencyName: {
+	    	  payActGuarantee: {
 	              validators: {
 	                  notEmpty: {
-	                      message: '经销商名称不能为空'
-	                  }
+	                      message: '实缴保证金金额不能为空'
+	                  },
+			      callback: {  
+						message: '实缴保证金金额在0~1000000000.00之间',  
+							callback: function(value, validator) { 
+							return parseFloat(value)> 0 && parseFloat(value)<1000000000;
+							}  
+					  } 
 	              }
 	          },
-	          agencyNum: {
+	          note:{
 	        	  validators: {
-	        		  notEmpty: {
-	                      message: '经销商名称不能为空'
-	                  },
-	        		  numeric: {message: '只能输入数字'},
-	                  stringLength: {
-	                      max: 100,
-	                      message: '长度为0-100'
-	                  }
-		          }
-	          },
-	          cashRate:{
-	        	  validators: {
-	        		  notEmpty: {message: '费率不能为空'},
-	        		  numeric: {message: '只能输入数字'},
-	        		  callback: {  
-	                        message: '保证金收取比例在0.00~100.00之间',  
-	      						callback: function(value, validator) { 
-	      						return parseFloat(value)>= 0&&parseFloat(value)<=100;
-	                        }  
-	                    } 
-	                  
-		          }
-	          },
-	          financeRate:{
-	        	  validators: {
-	        		  notEmpty: {message: '融资比例不能为空'},
-	        		  numeric: {message: '只能输入数字'},
-	        		  callback: {  
-	                        message: '保证金收取比例在0.00~100.00之间',  
-	      						callback: function(value, validator) { 
-	      						return parseFloat(value)>= 0&&parseFloat(value)<=100;
-	                        }  
-	                    } 
-	                  
-		          }
-	          },
-	          availableCredit:{
-	        	  validators: {
-	        		  notEmpty: {message: '可用授信额度不能为空'},
-	        		  numeric: {message: '只能输入数字'}
-	        	  }
-	          },
-	          maxCredit:{
-	        	  validators: {
-	        		  notEmpty: {message: '最高授信额度不能为空'},
-	        		  numeric: {message: '只能输入数字'}
+	        		  notEmpty: {message: '备注不能为空'},
+	        		  stringLength: {
+			              max: 128,
+			              message: '备注长度不能超过128'
+			          },
 	        	  } 
 	          },
-	          expense:{
+	          guaranteePayDate:{
 	        	  validators: {
-	        		  notEmpty: {message: '费用不能为空'},
-	        		  numeric: {message: '只能输入数字'}
-	        	  } 
-	          },
-	          financeAmount:{
-	        	  validators: {
-	        		  notEmpty: {message: '费用不能为空'},
-	        		  numeric: {message: '只能输入数字'}
+	        		  notEmpty: {message: '保证金缴纳日期不能为空'},
 	        	  } 
 	          }
 	      }

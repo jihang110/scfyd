@@ -35,4 +35,6 @@ public interface IFinanceInfoService {
 	void reApply(FinanceFlowReqBean reqBean);
 	
 	public BaseRespBean addFinance(FinanceFlowReqBean reqBean, HttpSession httpSession);
+
+	public BaseRespBean getFinanceList(Map<String, Object> paramMap);
 }

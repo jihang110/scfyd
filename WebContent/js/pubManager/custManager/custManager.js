@@ -81,7 +81,7 @@ function initTable() {
  	        align: 'center',
              valign: 'middle'
  	    }, {
- 	        field: '固定电话',
+ 	        field: 'contactInfo',
  	        title: '联系方式',
  	        align: 'center',
              valign: 'middle'

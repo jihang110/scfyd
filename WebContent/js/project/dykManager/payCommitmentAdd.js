@@ -91,6 +91,7 @@ function initCarInfoListTable() {
 window.operateEvents = {
     'click .remove':function (e, value, row, index) {
     	$('#carInfoListTable').bootstrapTable('remove', {field: 'fileUrl', values: [row.fileUrl]});
+    	$('#fileNum').val(0);
 	}
 };
 
@@ -288,13 +289,18 @@ function upload() {
 }
 
 function ajaxFileUpload(obj) {
+	var fileNum = $('#fileNum').val();
+	if(fileNum>=1){
+		bootbox.alert("只能上传一个文件");
+		return false;
+	}
 	var fileUrl = $(obj)[0].value;
 	var index = $(obj)[0].value.toLowerCase().lastIndexOf(".");
 	var fileType = fileUrl.substring(index);
 	if ($("#file").val().length > 0) {
 		var fileSize = ($(obj)[0].files)[0].size;
 		if(fileType != ".xls"&&fileType != ".xlsx"&&fileType!=".xlsm"){
-			bootbox.alert("请选择正确的文件类型");
+			bootbox.alert("支持excel文件,请选择正确的文件类型");
 			return false;
 		}else if(fileSize >= 52428800){
 			$("#fileSize").val(fileSize);
@@ -310,6 +316,9 @@ function ajaxFileUpload(obj) {
 	            if (data.result == 0) { 
 	            	$("#carInfoListTable").bootstrapTable('append', data);
 	                bootbox.alert("上传成功！");
+	                fileNum++;
+	                $('#fileNum').val(fileNum);
+	                //$("#addFile").attr('disabled',true);
 	            }else{
 	            	bootbox.alert("上传失败！");
 	            }
@@ -333,6 +342,13 @@ function save() {
 	    //没有通过校验 
 	 return false;
 	} else {
+		
+		var fileNum = $('#fileNum').val();
+		if(fileNum==0){
+			bootbox.alert("请上传车辆明细");
+			return false;
+		}
+		
 		var data = CloudUtils.convertStringJson('addForm');
 		var jsonData = eval("(" + data + ")");
 		var carListData = $("#carInfoListTable").bootstrapTable('getData');

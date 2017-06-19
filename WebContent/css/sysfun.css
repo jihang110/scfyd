@@ -1,4 +1,11 @@
 @CHARSET "UTF-8";
+body{
+	 -moz-user-select: none; 
+	-webkit-user-select: none; 
+	-ms-user-select: none; 
+	-khtml-user-select: none; 
+	user-select: none; 
+}
 .row{
 	margin-top:0px;
 	margin-left:0px;

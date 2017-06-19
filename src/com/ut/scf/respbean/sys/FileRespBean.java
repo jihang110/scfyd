@@ -4,7 +4,7 @@ import com.ut.scf.respbean.BaseRespBean;
 
 public class FileRespBean extends BaseRespBean {
 	private String fileUrl;
-	private long fileSize;
+	private double fileSize;
 	private String fileName;
 	private String fileType;
 
@@ -16,11 +16,11 @@ public class FileRespBean extends BaseRespBean {
 		this.fileUrl = fileUrl;
 	}
 
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
+	public void setFileSize(double d) {
+		this.fileSize = d;
 	}
 
-	public long getFileSize() {
+	public double getFileSize() {
 		return fileSize;
 	}
 

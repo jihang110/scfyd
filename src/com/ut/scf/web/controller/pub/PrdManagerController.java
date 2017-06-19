@@ -49,6 +49,7 @@ public class PrdManagerController extends  BaseJsonController{
 		paramMap.put("productName",reqBean.getProductName());
 		paramMap.put("productDesc",reqBean.getProductDesc());
 		paramMap.put("attachment",reqBean.getAttachment());
+		paramMap.put("fileName",reqBean.getFileName());
 		PageInfoBean page = new PageInfoBean();
 		page.setPageNumber(reqBean.getPageNumber());
 		page.setPageSize(reqBean.getPageSize());

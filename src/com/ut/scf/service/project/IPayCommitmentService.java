@@ -15,7 +15,7 @@ public interface IPayCommitmentService {
 	
 	BaseRespBean agencyFinanceList(PayCommitmentListReqBean reqBean);
 	
-	void startProcess(JSONObject jsonObject);
+	BaseRespBean startProcess(JSONObject jsonObject, HttpSession httpSession);
 	
 	BaseRespBean getDataByTaskId(TaskInfoReqBean reqBean);
 	
@@ -23,7 +23,7 @@ public interface IPayCommitmentService {
 	
 	boolean doAgree(PayCommitProcessReqBean reqBean);
 	
-	void reApply(PayCommitProcessReqBean reqBean);
+	BaseRespBean reApply(PayCommitProcessReqBean reqBean, HttpSession httpSession);
 	
 	BaseRespBean updateFinance(PayCommitProcessReqBean reqBean, HttpSession httpSession);
 }

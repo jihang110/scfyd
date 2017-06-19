@@ -1,5 +1,6 @@
 <form class="form-horizontal" role="form" id="infoForm"
 	data-toggle="validator">
+	<input type="hidden" id="corpId" name="corpId">
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="repaymentId"><span
 			class="required">*</span>还款编号</label>
@@ -47,7 +48,7 @@
 		</div>
 	</div>
 
-	<div class="form-group">
+	<!-- <div class="form-group">
 		<label class="col-sm-2 control-label" for="financeId"><span
 			class="required"></span>融资编号</label>
 		<div class="col-sm-3">
@@ -83,7 +84,8 @@
 			<input type="text" name="thisInterest" class="form-control"
 				id="thisInterest" placeholder="10.00" size="13">
 		</div>
-	</div>
+	</div> -->
+	
 
 	<div class="form-group">
 		<label class="col-sm-2 control-label" for="repaymentType"><span
@@ -93,6 +95,10 @@
 				<option value="0">还利息</option>
 			</select>
 		</div>
+	</div>
+	<div class="col-sm-9" style="margin-left:100px;margin-top: 20px;">
+					  	<table id="financeListTable" class="table table-bordered" cellspacing="0" style="border: 1px #e5e5e5 solid">
+		              	</table>
 	</div>
 	<!-- <div class="col-sm-12">
 		<a onclick="start()" class="btn btn-default save pull-right"

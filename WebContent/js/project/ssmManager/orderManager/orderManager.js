@@ -1,11 +1,7 @@
-//获取url中的值taskId
-var taskId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskId;
-var procInstId = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).procInstId;
-var taskDefKey = CloudUtils.getIframeParams($(window.parent.document).find('iframe').attr('src')).taskDefKey;
-
 $(document).ready(function() {
     getTaskData();
     if (taskDefKey == "task_order_fzr") {
+        $('#orderList').bootstrapTable('hideColumn', 'operation');
         $("#div_refuse").show();
     }
 });
@@ -14,14 +10,14 @@ function getTaskData() {
     var data = {};
     data.taskId = taskId;
     var options = {
-        url: "../../../activiti/getTaskDataByTaskId",
+        url: "../../activiti/getTaskDataByTaskId",
         data: JSON.stringify(data),
         callBackFun: function(data) {
             if (data.result == 0) {
                 debugger;
                 var jsonData = eval("(" + data.str + ")");
                 getBatchInfoById(jsonData.orderBatchId);
-                initOrderListTable(jsonData.orderId, jsonData.orderStatus);
+                initOrderListTable(jsonData.orderBatchId,jsonData.orderId, jsonData.orderStatus);
 
             } else {
                 return false;
@@ -41,7 +37,7 @@ function getBatchInfoById(batchId) {
     data.orderBatchId = batchId;
 
     var options = {
-        url: '../../../order/batchInfo',
+        url: '../../order/batchInfo',
         data: JSON.stringify(data),
         callBackFun: function(data) {
             CloudUtils.setForm(data, 'detailForm');
@@ -64,7 +60,7 @@ function getPlanInfos() {
     }
     data.orderId = orderIds;
     var options = {
-        url: '../../../order/plans',
+        url: '../../order/plans',
         data: JSON.stringify(data),
         callBackFun: function(data) {
             debugger;
@@ -80,7 +76,9 @@ function getPlanInfos() {
 }
 
 
-function doAgree(type) {
+function saveFun() {
+    debugger;
+    var type = $("#agree").val();
     var data = {};
     var orderIds = "";
     var status = "";
@@ -96,10 +94,15 @@ function doAgree(type) {
     data.agree = type;
     data.orderBatchId = $("#orderBatchId2").val();
     var options = {
-        url: '../../../order/doAgree',
+        url: '../../order/doAgree',
         data: JSON.stringify(data),
         callBackFun: function(data) {
-            bootbox.alert(data.resultNote);
+            if (taskDefKey != "task_order_fzr") {
+                bootbox.alert(data.resultNote, function() {
+                window.location.href = '../../project/agencyTask/agencyTask.html';
+            });
+            }
+            
         },
         errorCallback: function(data) {
             bootbox.alert(data.resultNote);
@@ -108,27 +111,29 @@ function doAgree(type) {
     };
     CloudUtils.ajax(options);
 
-    if (taskDefKey == "task_order_fzr"&&type=="0") {
-         var options = {
-        url: '../../../order/add',
-        data: JSON.stringify(data),
-        callBackFun: function(data) {
-            bootbox.alert(data.resultNote);
-        },
-        errorCallback: function(data) {
-            bootbox.alert(data.resultNote);
-            return false;
-        }
-    };
-    CloudUtils.ajax(options);
+    if (taskDefKey == "task_order_fzr" && type == "0") {
+        var options = {
+            url: '../../order/add',
+            data: JSON.stringify(data),
+            callBackFun: function(data) {
+                bootbox.alert(data.resultNote, function() {
+                    window.location.href = '../../project/agencyTask/agencyTask.html';
+                });
+            },
+            errorCallback: function(data) {
+                bootbox.alert(data.resultNote);
+                return false;
+            }
+        };
+        CloudUtils.ajax(options);
     }
 }
 
-function initOrderListTable(orderIds, orderStatus) {
+function initOrderListTable(orderBatchId, orderId,orderStatus) {
     $('#orderList').bootstrapTable('destroy');
     $("#orderList").bootstrapTable({
         method: "post",
-        url: "../../../order/orderList",
+        url: "../../order/orderList",
         striped: false, //表格显示条纹  
         pagination: false, //启动分页  
         pageSize: 5, //每页显示的记录数  
@@ -144,8 +149,9 @@ function initOrderListTable(orderIds, orderStatus) {
         queryParams: function queryParams(params) {
             debugger;
             var param = {
-                orderId: orderIds,
-                orderStatus: orderStatus
+                orderBatchId: orderBatchId,
+                orderStatus: orderStatus,
+                orderId:orderId
             };
             return JSON.stringify(param);
         },
@@ -232,7 +238,7 @@ function initOrderListTable(orderIds, orderStatus) {
             valign: 'middle',
             width: 150
         }, {
-            field: 'name',
+            field: 'stuName',
             title: '姓名',
             align: 'center',
             valign: 'middle',
@@ -244,7 +250,7 @@ function initOrderListTable(orderIds, orderStatus) {
             valign: 'middle',
             width: 150
         }, {
-            field: 'birth_ym',
+            field: 'birthDate',
             title: '出身年月',
             align: 'center',
             valign: 'middle',
@@ -262,13 +268,13 @@ function initOrderListTable(orderIds, orderStatus) {
             valign: 'middle',
             width: 150
         }, {
-            field: 'contact',
+            field: 'mobilePhone',
             title: '联系方式',
             align: 'center',
             valign: 'middle',
             width: 150
         }, {
-            field: 'school',
+            field: 'schoolName',
             title: '学校',
             align: 'center',
             valign: 'middle',
@@ -328,7 +334,7 @@ function initRepayPlanListTable() {
     $('#planInfoListTable').bootstrapTable('destroy');
     $("#planInfoListTable").bootstrapTable({
         method: "post",
-        // url: "../../../repayInfo/repayPlanInfo",
+        // url: "../../repayInfo/repayPlanInfo",
         striped: false, //表格显示条纹  
         pagination: false, //启动分页  
         pageSize: 5, //每页显示的记录数  
@@ -370,7 +376,7 @@ function initRepayPlanListTable() {
             valign: 'middle',
 
         }, {
-            field: 'name',
+            field: 'stuName',
             title: '学生姓名',
             align: 'center',
             valign: 'middle',
@@ -382,7 +388,7 @@ function initRepayPlanListTable() {
             valign: 'middle',
 
         }, {
-            field: 'contact',
+            field: 'mobilePhone',
             title: '联系方式',
             align: 'center',
             valign: 'middle',
@@ -400,7 +406,7 @@ function initRepayPlanListTable() {
             valign: 'middle',
 
         }, {
-            field: 'contact',
+            field: 'payM',
             title: '每期应收账款金额',
             align: 'center',
             valign: 'middle',

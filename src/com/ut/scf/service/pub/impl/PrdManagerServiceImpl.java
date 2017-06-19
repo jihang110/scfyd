@@ -62,6 +62,7 @@ public class PrdManagerServiceImpl implements IPrdManagerService{
 		paramMap.get("productName");
 		paramMap.get("productDesc");
 		paramMap.get("attachment");
+		paramMap.get("fileName");
 		respBean.setPages(page.getTotalPage());
 		respBean.setRecords(page.getTotalRecord());
 		respBean.setDataList(list);

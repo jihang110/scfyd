@@ -6,6 +6,8 @@ $(function() {
 	}
 	$("a[name='loginRealName']").text(username)
 	InitLeftMenu();
+	toWarning();
+	ajaxWarningCount();
 	logoShow();
 	initRoleIds();
 	$("#roleIds").val(store.get("roleId"));
@@ -32,14 +34,16 @@ function setIframeHeight(iframe) {
 function initRoleIds(){
 	 var jsonData = eval("(" + store.get("roleList") + ")");
 	$.each(jsonData, function (index, units) { 
-		$("#roleIds").append("<option value='"+units.roleId+"'>&nbsp;" + units.roleName + "</option>");
+		$("#roleType").append('<li><a changeRoleId="'+units.roleId+'" onclick="changeRole(this)">'+units.roleName+'</a></li>');
 	});
 }
 
 //切换角色
 function changeRole(obj){
-	var jsondata  ='{"roleId":"'+$(obj).val()+'"}';
-	store.set('roleId',$(obj).val());
+	 var thisObj=$(obj);  
+	 var roleId=thisObj.attr("changeRoleId");
+	 var jsondata  ='{"roleId":"'+roleId+'"}';
+	store.set('roleId',roleId);
 	var options = {
 			url : 'user/changeRole',
 			data : jsondata,
@@ -144,6 +148,24 @@ function logoShow(){
 			errorCallback:function(data){
 				alert("error");
 			}*/
+	};
+	CloudUtils.ajax(options);
+}
+
+//tital预警
+function toWarning(){
+	$("#warnLogo").click(function(){
+		$('#mainFrame',top.document).attr('src','sysManager/warningManager/warningManager.html');
+	});
+}
+//tital预警条数
+function ajaxWarningCount(){
+	var options = {
+			url : 'warning/count',
+			data : "{}",
+			callBackFun : function(data) {
+					$("#warnCount").html(data);
+			}
 	};
 	CloudUtils.ajax(options);
 }

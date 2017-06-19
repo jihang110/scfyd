@@ -25,7 +25,7 @@ body {
     background: #424f63;
     font-family: 'Open Sans', sans-serif;
     color: #7a7676;
-    line-height: 20px;
+    /* line-height: 20px; */
     overflow-x: hidden;
     font-size: 14px;
 }

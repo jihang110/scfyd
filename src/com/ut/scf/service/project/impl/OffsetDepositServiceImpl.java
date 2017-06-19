@@ -23,6 +23,7 @@ public class OffsetDepositServiceImpl implements IOffsetDepositService {
 		List<Map<String, Object>> carInfo = carInfoDao.getCarInfo(paramMap);
 		List<Map<String, Object>> newList = new ArrayList<>();
 		BigDecimal carActualPrice = BigDecimal.ZERO;
+		BigDecimal salesRate = BigDecimal.ZERO;
 		for (Map<String, Object> map : carInfo) {
 			int saleStatus = (int) map.get("saleStatus");
 //			未赎
@@ -32,8 +33,13 @@ public class OffsetDepositServiceImpl implements IOffsetDepositService {
 				carActualPrice = carActualPrice.add((BigDecimal) map.get("carActualPrice"));
 			}
 		}
+//		除数为0判断
+		if(carInfo.size()!=0){
+			salesRate = new BigDecimal(newList.size()).divide(new BigDecimal(carInfo.size()));
+		}
 		RespBean.setDataList(newList);
 		RespBean.setCarActualPriceTotal(carActualPrice);
+		RespBean.setSalesRate(salesRate);
 		return RespBean;
 	}
 

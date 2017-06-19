@@ -9,4 +9,6 @@ public interface ISignContractDao {
 
 	List<Map<String, Object>> orderInfoByBatchId(Map<String, Object> paramMap,
 			PageInfoBean page);
+
+	List<Map<String, Object>> orderInfoByBatchId(Map<String, Object> paramMap);
 }

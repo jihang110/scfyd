@@ -1,8 +1,11 @@
 $(document).ready(function() {
 	$("form").attr("autocomplete","off");
 	 CloudUtils.getMenuNames("nav");
+	 ajaxProGuarantee();
 	 $("#financeStartDay").val(CloudUtils.getcurrentdate());
 	 $("#loanDate").val(CloudUtils.getcurrentdate());
+	 //保证金比例
+	 
 });
 
 function start(){
@@ -111,4 +114,39 @@ function initContractListTable() {
  	    }
  	    ]
 	});  
+}
+
+
+function ajaxProGuarantee() {
+	var options = {
+		url : '../../../finance/getProGuarantee',
+		data : '{"productId":"product02"}',
+		callBackFun : function(data) {
+			if (data.result == 0) {
+				// 保证金比例
+				$("#guaranteeMoneyRate").val(data.guaranteeRate);
+				if (data.dataList != null) {
+					$.each(data.dataList, function(i, row) {
+						$("#interestInfoList").bootstrapTable('append', row);
+					});
+				}
+			} else {
+				bootbox.alert(data.resultNote);
+				return false;
+			}
+		},
+		errorCallback : function(data) {
+			bootbox.alert(data.resultNote);
+			return false;
+		}
+	};
+	CloudUtils.ajax(options);
+}
+
+function calInterestList() {
+	// 保证金计算
+	var guaranteeMoneyRate = $("#guaranteeMoneyRate").val();
+ 	var loanAmt = $("#loanAmt").val();
+ 	var guaranteeMoney = CloudUtils.Math(loanAmt, CloudUtils.Math(guaranteeMoneyRate,100,"div"), "mul");
+ 	$("#guaranteeMoney").val(guaranteeMoney);
 }

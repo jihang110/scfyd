@@ -48,11 +48,10 @@
 					<div class="form-group col-sm-12">
 						<div class="col-sm-2"></div>
 						<label class="col-sm-2 control-label" for="txt_productName">产品名称</label>
-						<div class="col-sm-3 input-group">
-							<input type="text" name="productName" class="form-control" 
-							placeholder="产品名称" id="productName">
+						<div class="col-sm-4 input-group">
+							<input type="text" name="productName" class="form-control" id="productName">
 							<span class="input-group-btn">
-								<a onclick="searchFun()" class="btn btn-primary search">查找</a>
+								<a onclick="searchFun()" class="btn btn-primary search" style="height:35px;">查找</a>
 							</span>
 						</div>
 					</div>
@@ -84,15 +83,22 @@
 		                  </div>
 		               </div>
 		               <div class="form-group">
-                    		<label class="col-sm-4 control-label" for="attachment"><span class="required">*</span>附件</label>
-                      		<div class="input-group">
-								<input type="file" name="file" id="file" onchange="ajaxFileUpload(this);" >
-								<input type="hidden" id="url" name="url" /> 
-					            <input type="hidden" id="fileName" name="fileName" /> 
-					            <input type="hidden" id="fileType" name="fileType" /> 
-					            <input type="hidden" id="fileSize" name="fileSize" />
-					            <div id="note" style="display:none;"><span style="color:red;">支持文件类型：docx、pdf、png、jpg</span></div> 
-							</div>
+                    		<label class="col-sm-4 control-label" for="fileName"><span class="required">*</span>附件</label>
+                      		<div class="col-sm-6">
+			            		<input type="text" class="form-control" id="fileName" name="fileName" readonly/>
+	                		</div>
+			                 <input type="button" class="btn btn-info" onclick="uploadAttachment()" value="上传">
+			                 <input type="file" name="file" id="file" onchange="ajaxFileUpload(this);" class="hidden">
+							 <input type="hidden" id="url" name="url" /> 
+				             <input type="hidden" id="fileType" name="fileType" /> 
+				             <input type="hidden" id="fileSize" name="fileSize" />
+					   </div>
+					    <div class="form-group">
+		                  <label class="col-sm-4 control-label" for="typeNote" ></label>
+		                  <div id="typeNote" style="display:none;" class="col-sm-6">
+		                  	<span style="color:red;">支持文件类型：docx、pdf、png、jpg</span>
+		                  </div> 
+		               </div>
                   	  </div>
                   <div class="modal-footer">
                     <div class="form-group">
@@ -133,11 +139,11 @@
 		                  </div>
 		               </div>
 		               <div class="form-group">
-                    		<label class="col-sm-4 control-label" for="attach">附件</label>
-                    		<div class="col-sm-6">
-                      			<input class="form-control" placeholder="附件" name="attachment" id="attach" type="text" />
-                      		</div>
-                  	  </div>
+                    		<label class="col-sm-4 control-label" for="fileName"><span class="required">*</span>附件</label>
+                      		<div class="col-sm-6">
+			            		<input type="text" class="form-control" id="fileName" name="fileName" readonly/>
+	                		</div>
+					   </div>
                   <div class="modal-footer">
                     <div class="form-group">
                       <div class="col-sm-4"></div>

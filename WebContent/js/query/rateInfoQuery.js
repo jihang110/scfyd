@@ -75,27 +75,42 @@ function initTable() {
             field: 'financeAmount',
             title: '融资金额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
         }, {
             field: 'payAmt',
             title: '放款金额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
         }, {
             field: 'interestSum',
             title: '应收利息金额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
         }, {
             field: 'hasPayInterest',
             title: '已收利息金额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
         },  {
             field: 'notPayInterest',
             title: '未收利息金额',
             align: 'center',
-            valign: 'middle'
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
         }]
     });
 }

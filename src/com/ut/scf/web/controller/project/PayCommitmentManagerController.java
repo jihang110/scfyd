@@ -54,7 +54,7 @@ public class PayCommitmentManagerController {
 		reqBean.setUserId(userName);
 		reqBean.setActivitiKey("payCommitment");
 		JSONObject repayInfoStr = new JSONObject(reqBean);
-		iPayCommitmentService.startProcess(repayInfoStr);
+		respBean = iPayCommitmentService.startProcess(repayInfoStr, httpSession);
 		return respBean;
 	}
 	
@@ -103,7 +103,7 @@ public class PayCommitmentManagerController {
 		// 获取当前用户
 		String userName = (String) httpSession.getAttribute(ScfConsts.SESSION_USERNAME);
 		reqBean.setUserId(userName);
-		iPayCommitmentService.reApply(reqBean);
+		respBean = iPayCommitmentService.reApply(reqBean, httpSession);
 		return respBean;
 	}
 }

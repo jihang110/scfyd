@@ -1,12 +1,7 @@
 package com.ut.scf.web.scheduled;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +9,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +26,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ut.scf.core.dict.ScfConsts;
+import com.ut.scf.core.util.HttpConnection;
+import com.ut.scf.core.util.ScfDateUtil;
 import com.ut.scf.core.util.ScfUUID;
 import com.ut.scf.dao.auto.DykRateMapper;
 import com.ut.scf.dao.auto.FinanceInfoMapper;
@@ -55,6 +52,7 @@ import com.ut.scf.pojo.auto.RepaymentPlanInfoExample;
 import com.ut.scf.pojo.auto.RevenueManagement;
 import com.ut.scf.pojo.auto.StuFileInfo;
 import com.ut.scf.pojo.auto.StuInfo;
+import com.ut.scf.pojo.auto.StuInfoExample;
 import com.ut.scf.pojo.auto.WarningInfo;
 import com.ut.scf.reqbean.project.OrderManagerReqBean;
 import com.ut.scf.respbean.BaseRespBean;
@@ -69,8 +67,6 @@ public class InterfaceSyncJob {
 			.getLogger(InterfaceSyncJob.class);
 
 	private static String DATE_FORMAT = "yyyy-MM-dd";
-	private static String SUCCESS = "批处理执行成功";
-	private static String FAIL = "批处理执行失败";
 
 	private int age;// 年龄
 	private String birthday;// 出生日期
@@ -112,12 +108,14 @@ public class InterfaceSyncJob {
 	@Resource
 	private WarningInfoMapper warningInfoMapper;
 
-	// @Scheduled(cron="*/5 * * * * ?")
-	/*
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+	/**
 	 * 订单信息同步
 	 * 
 	 * batchId 批处理id
 	 */
+	// @Scheduled(cron="*/5 * * * * ?")
 	private BaseRespBean startProcess(String batchId) throws Exception {
 		// 发起流程
 		BaseRespBean respBean = new BaseRespBean();
@@ -136,6 +134,7 @@ public class InterfaceSyncJob {
 
 	// 自动 定时任务
 	public void orderInfoSyncTask() {
+		logger.info("订单同步定时任务开始，日期{}", new Date());
 		orderInfoSync("0");
 	}
 
@@ -144,23 +143,24 @@ public class InterfaceSyncJob {
 		orderInfoSync("1");
 	}
 
+	@Transactional
 	private void orderInfoSync(String type) {
 		int dataNum = 0;
 		try {
-			String url = "http://api.fenqichaoren.com/p2p/order.php";
+			String url = "http://test-p2p.fenqichaoren.com/p2p/api.php/Home/Index/need_check_order";
+			String beforeDate = ScfDateUtil.getBeforeDateStr();
 			Map<String, String> paramMap = new HashMap<String, String>();
-			paramMap.put("keyCode", "");
-			paramMap.put("StatPayTime", "");
-			paramMap.put("EndPayTime", "");
-			paramMap.put("StatTime", "");
-			paramMap.put("EndTime", "");
-
-			String result = httpURLConnectionPOST(paramMap, url);
-
+			paramMap.put("keyCode", "oiUHf8y282asjn218hsadwq234sfda");
+			paramMap.put("start_date", "2016-3-1");
+			// paramMap.put("end_date", beforeDate);
+			paramMap.put("state", "1");
+			String result = HttpConnection.httpURLConnection(paramMap, url);
+			logger.info("获取到的超人数据{}", result);
 			// 每日定时同步新增订单以及大学生信息存入平台
 			dataNum = insertOrderInfo(result);
 			insertBatchHndlInfo(dataNum, "1", type);// 成功
 		} catch (Exception e) {
+			e.printStackTrace();
 			log.error(e.getMessage());
 			insertBatchHndlInfo(dataNum, "0", type);// 失败
 		}
@@ -175,7 +175,7 @@ public class InterfaceSyncJob {
 		batchHndlInfo.setBatchName("同步订单信息接口");
 		// batchHndlInfo.setBatchNo("");// 批次
 		batchHndlInfo.setBatchId(ScfUUID.generate());
-		batchHndlInfo.setClassName(this.getClass().toString());// 类名称
+		batchHndlInfo.setClassName("interfaceSyncJob");// bean 名称
 		batchHndlInfo.setDataNum(dataNum);// 数据量
 		batchHndlInfo.setBatchType(type);
 		batchHndlInfo.setResult(result);
@@ -192,7 +192,7 @@ public class InterfaceSyncJob {
 		paramMap.put("rePayDateE", "");
 		paramMap.put("page", "");
 
-		String result = httpURLConnectionPOST(paramMap, url);
+		String result = HttpConnection.httpURLConnection(paramMap, url);
 		updateRepayPlan(result);
 		System.out.println("批处理test：" + result + "批处理id：" + batchId);// TODO
 	}
@@ -229,6 +229,7 @@ public class InterfaceSyncJob {
 		}
 	}
 
+	// 预警通知
 	private void insertWaring(String msg) {
 		WarningInfo warn = new WarningInfo();
 		warn.setRecUid(ScfUUID.generate());
@@ -241,8 +242,10 @@ public class InterfaceSyncJob {
 
 	private int insertOrderInfo(String orderInfoStr) throws Exception {
 		JSONObject jsonObject = new JSONObject(orderInfoStr);
+		// String str = jsonObject.getString("data");
 		JSONArray jsonArray = jsonObject.getJSONArray("data");
 		int count = jsonArray.length();
+		logger.info("订单信息：{}", jsonArray.toString());
 		if (count == 0) {
 			// error
 			return 0;
@@ -250,25 +253,31 @@ public class InterfaceSyncJob {
 			Map<String, List<OrderInfo>> orderBatchinfoMap = new LinkedHashMap<>();
 			for (int i = 0; i < count; i++) {
 				JSONObject obj = jsonArray.getJSONObject(i);
-				IdcardInfoExtractor(obj.getString("IDcard"));// 解析身份证号码
-
-				// 大学生信息表
-				String stuId = ScfUUID.generate();// 学生信息id
-				insertStuInfo(obj, stuId);
-				// 大学生附件表
-				// 身份证正面
-				inserStuFileInfo(stuId, obj.getString("idcard_face"));
-				// 身份证反面
-				inserStuFileInfo(stuId, obj.getString("idcard_back"));
-				// 身份证手持
-				inserStuFileInfo(stuId, obj.getString("idcard_zm"));
-				// 额外图片
-				JSONArray picExtendArray = obj.getJSONArray("pic_extend");
-				if (picExtendArray.length() > 0) {
-					for (int j = 0; j < picExtendArray.length(); j++) {
-						inserStuFileInfo(stuId, picExtendArray.getString(j));
+				idcardInfoExtractor(obj.getString("IDcard"));// 解析身份证号码
+				String stuId = "";// 学生信息id
+				StuInfo stuInfo = selectStuInfoByIdCard(obj.getString("IDcard"));
+				if (stuInfo == null) {
+					stuId = ScfUUID.generate();// 学生信息id
+					// 大学生信息表
+					insertStuInfo(obj, stuId);
+					// 大学生附件表
+					// 身份证正面
+					inserStuFileInfo(stuId, obj.getString("idcard_face"));
+					// 身份证反面
+					inserStuFileInfo(stuId, obj.getString("idcard_back"));
+					// 身份证手持
+					inserStuFileInfo(stuId, obj.getString("idcard_zm"));
+					// 额外图片
+					JSONArray picExtendArray = obj.getJSONArray("pic_extend");
+					if (picExtendArray.length() > 0) {
+						for (int j = 0; j < picExtendArray.length(); j++) {
+							inserStuFileInfo(stuId, picExtendArray.getString(j));
+						}
 					}
+				} else {
+					stuId = stuInfo.getStuId();
 				}
+
 				// 获得订单信息
 				OrderInfo orderInfo = getOrderInfo(obj, stuId);
 
@@ -355,13 +364,18 @@ public class InterfaceSyncJob {
 		orderInfo.setProductAmt(new BigDecimal(obj.getString("Loan"))); // 产品金额
 		orderInfo.setPeriod(Byte.parseByte(obj.getString("Period"))); // 分期期数期数
 		orderInfo.setLoan(new BigDecimal(obj.getString("Loan"))); // 分期总金额
-		orderInfo.setCrReqAmt(new BigDecimal(obj.getString("fqcrM"))); // 超人所需费用
+		if ("".equals(obj.getString("fqcrM"))) {
+			orderInfo.setCrReqAmt(new BigDecimal(0)); // 超人所需费用
+		} else {
+			orderInfo.setCrReqAmt(new BigDecimal(obj.getString("fqcrM")));
+		}
+
 		orderInfo.setStartPayAmt(BigDecimal.ZERO); // 首期还款金额
 		orderInfo.setPayM(new BigDecimal(obj.getString("PayM"))); // 每期还款金额
 		orderInfo
 				.setStartPayDay(dateFormat.parse(obj.getString("StartPayDay"))); // 首期还款日期
 		orderInfo.setSellerId(obj.getString("sellerID")); // 商家ID
-		orderInfo.setSellerName(obj.getString("sellerNmae")); // 商家名称
+		orderInfo.setSellerName(obj.getString("sellerName")); // 商家名称
 		return orderInfo;
 	}
 
@@ -383,6 +397,20 @@ public class InterfaceSyncJob {
 		stuInfo.setDorm(obj.getString("univsRoom"));
 		stuInfo.setGraduateDate(obj.getString("finishTime"));
 		stuInfoMapper.insert(stuInfo);
+	}
+
+	// 根据身份证查询学生信息
+	private StuInfo selectStuInfoByIdCard(String idCard) {
+
+		StuInfoExample example = new StuInfoExample();
+		com.ut.scf.pojo.auto.StuInfoExample.Criteria criteria = example
+				.createCriteria();
+		criteria.andIdCardEqualTo(idCard);
+		List<StuInfo> stuInfos = stuInfoMapper.selectByExample(example);
+		if (stuInfos != null && stuInfos.size() > 0) {
+			return stuInfos.get(0);
+		}
+		return null;
 	}
 
 	// 大学生附件
@@ -437,7 +465,8 @@ public class InterfaceSyncJob {
 	}
 
 	// 从身份证号码中解析 性别 出生年月 年龄
-	public void IdcardInfoExtractor(String idcard) {
+	public void idcardInfoExtractor(String idcard) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
 		try {
 			// 获取性别
 			String id17 = idcard.substring(16, 17);
@@ -448,8 +477,9 @@ public class InterfaceSyncJob {
 			}
 			// 获取出生日期
 			String birthday = idcard.substring(6, 14);
-			Date birthdate = dateFormat.parse(birthday);
-			this.birthday = dateFormat.format(birthdate);
+			Date birthdate = format.parse(birthday);
+			this.birthday = ScfDateUtil
+					.format(birthdate, ScfConsts.DATE_FORMAT);
 			GregorianCalendar currentDay = new GregorianCalendar();
 			currentDay.setTime(birthdate);
 
@@ -537,7 +567,7 @@ public class InterfaceSyncJob {
 						insertWaring("融资编号为" + financeId + "的融资应还利息已过期"
 								+ diffDays + "天");
 					}
-					
+
 					if (dykRate != null) {
 						RevenueManagement management = revenueManagementMapper
 								.selectByPrimaryKey(financeInfo.getFinanceId());
@@ -595,48 +625,4 @@ public class InterfaceSyncJob {
 		return (int) ((bDate.getTime() - eDate.getTime()) / (24 * 3600 * 1000));
 	}
 
-	private String httpURLConnectionPOST(Map<String, String> paramMap,
-			String paramUrl) {
-
-		try {
-			URL url = null;
-			HttpURLConnection connection = null;
-			BufferedReader bufferedReader = null; // 接受连接受的参数
-			StringBuffer result = new StringBuffer(); // 用来接受返回值
-			String parm = "";
-			Iterator<String> iterator = paramMap.keySet().iterator();
-			while (iterator.hasNext()) {
-				String it = iterator.next();
-				parm += it + "=" + URLEncoder.encode(paramMap.get(it), "utf-8")
-						+ "&";
-			}
-			parm = parm.substring(0, parm.length() - 1);
-			paramUrl += "?" + parm;
-
-			// 创建URL
-			url = new URL(paramUrl);
-			// 建立连接
-			connection = (HttpURLConnection) url.openConnection();
-			connection.setRequestProperty("accept", "text/json");
-			connection.setRequestProperty("connection", "keep-alive");
-			connection
-					.setRequestProperty("user-agent",
-							"Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0");
-			connection.connect();
-
-			// 接受连接返回参数
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					connection.getInputStream()));
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				result.append(line);
-			}
-			bufferedReader.close();
-			return result.toString();
-
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-		return "";
-	}
 }

@@ -20,6 +20,13 @@ public class PrdUpdateReqBean extends BaseReqBean{
 	private String productName;
 	private String productDesc;
 	private String attachment;
+	private String fileName;
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	public String getProductName() {
 		return productName;
 	}

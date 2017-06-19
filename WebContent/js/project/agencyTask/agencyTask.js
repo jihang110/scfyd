@@ -132,7 +132,7 @@ window.operateEvents = {
 					|| row.procdefName == "融资管理"||row.procdefName=="还款登记"
 					|| row.procdefName=="退还保证金"||row.procdefName=="保证金冲抵"
 					|| row.procdefKey == "payCommitment"|| row.procdefKey == "revenue"
-					|| row.procdefKey == "dykRepayment"|| row.procdefKey == "loanInfo"){
+					|| row.procdefKey == "dykRepayment"|| row.procdefKey == "loanInfo"||row.procdefName=="订单管理"){
 				/*if(row.taskDefKey=="usertask1"){
 					//再申请
 					$('#mainFrame',top.document).attr('src','pubManager/custManager/custReapply.html?taskId='+row.taskId+'&procInstId='+row.procInstId);

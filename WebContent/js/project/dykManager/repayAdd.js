@@ -178,6 +178,10 @@ function save(){
 		var data = CloudUtils.convertStringJson('addForm');
 		var jsonData = eval("(" + data + ")");
 		var carListData = $("#carInfoListTable").bootstrapTable('getData');
+		if(carListData){
+			bootbox.alert("请上传车辆明细");
+			return false;
+		}
 		jsonData.carListInfo = JSON.stringify(carListData);
 		
 		var options = {

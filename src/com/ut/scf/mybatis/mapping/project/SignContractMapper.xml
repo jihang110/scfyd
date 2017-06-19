@@ -32,7 +32,16 @@
 	from
 		order_info o
 	INNER JOIN stu_info s ON o.stu_id = s.stu_id
-   	where o.order_batch_id= #{orderBatchId}
+   	where 1=1 
+   	<if test="orderBatchId!=null and orderBatchId!= ''">
+   		and	o.order_batch_id= #{orderBatchId}
+   	</if>
+   	<if test="orderId!=null and orderId!= ''">
+   		and o.order_id in
+   		 <foreach item="item" index="index" collection="orderId" open="(" separator="," close=")">  
+ 			 #{item}  
+		 </foreach>
+   	</if>
    
   </select>
   

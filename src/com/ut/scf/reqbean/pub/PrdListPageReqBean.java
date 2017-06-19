@@ -6,6 +6,13 @@ public class PrdListPageReqBean extends PageReqBean{
 	private String attachment;
 	private String productDesc;
 	private String productName;
+	private String fileName;
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 	/**
 	 * 是否分页，0：否，1：是，默认为1.
 	 */

@@ -248,8 +248,12 @@ function saveFun(){
 	 var isEdit2 = $('#isEdit2').val();
 	  if (isEdit2 == 1) {// 新增1；修改2
 		  var data = CloudUtils.convertStringJson('shareInfoForm');
+		  data = eval("(" + data + ")");
+		  data.shareProportion = data.shareProportion ==""?0:data.shareProportion;
+		  data.registeredCapital = data.registeredCapital ==""?0:data.registeredCapital;
+		  data.registeredCapitalProportion = data.registeredCapitalProportion ==""?0:data.registeredCapitalProportion;
 //			 先只在页面显示，不录入数据库
-		 $("#shareHolderInfoTable").bootstrapTable('append', JSON.parse(data));
+		 $("#shareHolderInfoTable").bootstrapTable('append', data);
 	     } else if(isEdit2 == 2){
 	    	 var data = CloudUtils.convertStringJson('shareInfoForm');
 	    	$('#shareHolderInfoTable').bootstrapTable('updateRow', {index: shareIndex, row: JSON.parse(data)});

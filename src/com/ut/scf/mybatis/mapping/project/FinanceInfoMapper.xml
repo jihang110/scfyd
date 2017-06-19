@@ -108,4 +108,29 @@
     
   </select>
   
+  <select id="getFinanceList" resultType="hashmap" parameterType="hashmap" >
+   select
+	fi.finance_id financeId,
+	fi.apply_date applyDate,
+	fi.finance_rate financeRate,
+	fi.cash_rate cashRate,
+	fi.finance_start_date financeStartDate,
+	fi.finance_end_date financeEndDate,
+	fi.pay_amt payAmt,
+	fi.finance_balance financeBalance,
+	fi.finance_amount financeAmount,
+	fi.expense expense,
+	fi.finance_status financeStatus,
+	fi.note note,
+  	rm.interest_sum interestSum,
+	rm.has_pay_interest hasPayInterest,
+	rm.this_interest thisInterest
+  from
+	finance_info fi
+  left join revenue_management rm ON rm.finance_id =fi.finance_id
+    <where>
+    	fi.corp_id =#{corpId} and fi.finance_status = 2
+    </where>
+  </select>
+  
 </mapper>

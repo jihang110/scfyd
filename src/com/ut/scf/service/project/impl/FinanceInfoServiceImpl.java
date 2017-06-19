@@ -47,6 +47,7 @@ import com.ut.scf.pojo.auto.InterestManagement;
 import com.ut.scf.pojo.auto.InterestManagementExample;
 import com.ut.scf.pojo.auto.InterestManagementExample.Criteria;
 import com.ut.scf.pojo.auto.WarningInfo;
+import com.ut.scf.reqbean.project.FinDataReqBean;
 import com.ut.scf.reqbean.project.FinanceFlowReqBean;
 import com.ut.scf.reqbean.project.FinanceInfoListReqBean;
 import com.ut.scf.reqbean.pub.TaskInfoReqBean;
@@ -352,4 +353,16 @@ public class FinanceInfoServiceImpl implements IFinanceInfoService {
 		// 完成节点
 		taskService.complete(task.getId());
 	}
+	
+
+	@Override
+	@Transactional(readOnly = true)
+	public BaseRespBean getFinanceList(Map<String, Object> paramMap) {
+		List<Map<String, Object>> list = financeInfoDao.getFinanceList(
+				paramMap);
+		FinDataReqBean respBean = new FinDataReqBean();
+		respBean.setDataList(list);
+		return respBean;
+	}
 }
+

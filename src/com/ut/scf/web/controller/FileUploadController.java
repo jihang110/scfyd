@@ -60,7 +60,7 @@ public class FileUploadController extends BaseJsonController {
 
 		}
 		String[] tempStrs = fileName.split("\\.");
-		resp.setFileSize(targetFile.length());
+		resp.setFileSize(Math.ceil((double)targetFile.length()/1024));
 		resp.setFileName(uploadName);
 		resp.setFileType(tempStrs[1]);
 		resp.setFileUrl(request.getContextPath() + "/" + uploadFilePath

@@ -92,6 +92,7 @@ $(function() {
  	$("select").attr("disabled",false);
     CloudUtils.setForm(row,'detailForm');
 	$('#isEdit').val(isEdit); //新增1;修改2
+	$('#sysType').attr('disabled',true);
  }
  
  function modShareFun(row,isEdit){
@@ -207,8 +208,12 @@ $(function() {
 		 var isEdit2 = $('#isEdit2').val();
 		  if (isEdit2 == 1) {// 新增1；修改2
 			  var data = CloudUtils.convertStringJson('shareInfoForm');
+			  data = eval("(" + data + ")");
+			  data.shareProportion = data.shareProportion ==""?0:data.shareProportion;
+			  data.registeredCapital = data.registeredCapital ==""?0:data.registeredCapital;
+			  data.registeredCapitalProportion = data.registeredCapitalProportion ==""?0:data.registeredCapitalProportion;
 //				 先只在页面显示，不录入数据库
-			 $("#shareHolderInfoTable").bootstrapTable('append', JSON.parse(data));
+			 $("#shareHolderInfoTable").bootstrapTable('append', data);
 		     } else if(isEdit2 == 2){
 		    	 var data = CloudUtils.convertStringJson('shareInfoForm');
 		    	$('#shareHolderInfoTable').bootstrapTable('updateRow', {index: shareIndex, row: JSON.parse(data)});
@@ -298,10 +303,8 @@ $(function() {
 	 	        	var m = '<a class = "fa fa-edit modify" style="color:#278bdd;padding:0px 5px;" title="编辑" data-type="shareInfo" href="javascript:void(0)"></a>';
 	 	           if(isEdit==3){
 	 	            	return " ";
-	 	            }else if(isEdit==2){
-	 	            	
-	 	            
-	 	        	return m+' '+r;
+	 	            }else if(isEdit==2 || isEdit==1){
+	 	            	return m+' '+r;
 	 	            }   
 	 	        
 	 	        },
@@ -375,13 +378,9 @@ function attachInfoTable(corpId){
 	             valign: 'middle'
 	 	    }, {
 	 	        field: 'attachSize',
-	 	        title: '附件大小(MB)',
+	 	        title: '附件大小(KB)',
 	 	        align: 'center',
-	             valign: 'middle',
-	             formatter:function(value,row,index){
-	             	var fileSize = row.attachSize/1024/1024;
-		            return $.number(fileSize, 2);
-	             }
+	             valign: 'middle'
 	 	    }, {
 	 	        field: 'operation',
 	 	        title: '操作',

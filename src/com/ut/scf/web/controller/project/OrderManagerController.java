@@ -20,7 +20,6 @@ import com.ut.scf.core.dict.ScfConsts;
 import com.ut.scf.pojo.auto.OrderBatchInfo;
 import com.ut.scf.reqbean.project.OrderManagerReqBean;
 import com.ut.scf.respbean.BaseRespBean;
-import com.ut.scf.respbean.project.RepaymentPlanInfoRespBean;
 import com.ut.scf.service.project.IActivitiService;
 import com.ut.scf.service.project.IOrderManagerService;
 import com.ut.scf.web.controller.BaseJsonController;
@@ -84,15 +83,17 @@ public class OrderManagerController extends BaseJsonController {
 	public BaseRespBean orderList(HttpSession httpSession,
 			@RequestBody OrderManagerReqBean reqBean) {
 		Map<String, String> map = null;
-		String[] ids = reqBean.getOrderId().split(",");
-		if (reqBean.getOrderStatus() != null) {
+
+		if (reqBean.getOrderStatus() != null && reqBean.getOrderId() != null) {
 			String[] status = reqBean.getOrderStatus().split(",");
+			String[] ids = reqBean.getOrderId().split(",");
 			map = new HashMap<String, String>();
 			for (int i = 0; i < status.length; i++) {
 				map.put(ids[i], status[i]);
 			}
 		}
-		return iOrderManagerService.orderInfoById(Arrays.asList(ids), map);
+		return iOrderManagerService.orderInfoById(reqBean.getOrderBatchId(),
+				map);
 
 	}
 
@@ -102,15 +103,18 @@ public class OrderManagerController extends BaseJsonController {
 	public BaseRespBean addRepayPlanInfo(HttpSession httpSession,
 			@RequestBody OrderManagerReqBean reqBean) {
 		Map<String, String> map = null;
-		String[] ids = reqBean.getOrderId().split(",");
-		if (reqBean.getOrderStatus() != null) {
+		BaseRespBean baseRespBean = new BaseRespBean();
+		if (reqBean.getOrderStatus() != null && reqBean.getOrderId() != null) {
+			String[] ids = reqBean.getOrderId().split(",");
 			String[] status = reqBean.getOrderStatus().split(",");
 			map = new HashMap<String, String>();
 			for (int i = 0; i < status.length; i++) {
 				map.put(ids[i], status[i]);
 			}
+			baseRespBean = iOrderManagerService.addRepayPlanInfo(
+					Arrays.asList(ids), map);
 		}
-		return iOrderManagerService.addRepayPlanInfo(Arrays.asList(ids), map);
+		return baseRespBean;
 
 	}
 
@@ -126,10 +130,10 @@ public class OrderManagerController extends BaseJsonController {
 	// 生成还款计划
 	@RequestMapping(value = "/plans")
 	@ResponseBody
-	public List<List<RepaymentPlanInfoRespBean>> repayPlans(
-			HttpSession httpSession, @RequestBody OrderManagerReqBean reqBean) {
-		String[] strings = reqBean.getOrderId().split(",");
-		return iOrderManagerService.getRepaymentPlans(Arrays.asList(strings));
+	public List<List<Map<String, Object>>> repayPlans(HttpSession httpSession,
+			@RequestBody OrderManagerReqBean reqBean) {
+		// String[] strings = reqBean.getOrderId().split(",");
+		return iOrderManagerService.getRepaymentPlans(reqBean.getOrderId());
 
 	}
 }

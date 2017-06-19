@@ -26,14 +26,13 @@ function setForm(){
 	 CloudUtils.ajax(options);
 }
 
-
+var jsonString = null;
 function getInfo(type){
 	var data = CloudUtils.convertStringJson('infoForm');
 	data = eval("(" + data + ")");
 	data.agree = type;
 	data.advice = $("#advice").val();
 	data.taskId = taskId;
-	var jsonString = null;
 	var options = {
 				url : '../../refDeposit/doAgree',
 				data : JSON.stringify(data),
@@ -62,9 +61,9 @@ function saveFun(){
 			getInfo(type);
 		}
 	}else{
+		debugger
 		getInfo(type);
 		 if(taskDefKey == "usertask3"){
-			if(type ==0){
 				var guaranteeData = eval("(" + jsonString + ")");
 				var payActGuarantee = CloudUtils.Math(guaranteeData.payActGuarantee,guaranteeData.returnGuaranteeAmt,"sub");
 				var guaranteeBalance = CloudUtils.Math(guaranteeData.guaranteeBalance,guaranteeData.returnGuaranteeAmt,"sub");
@@ -82,7 +81,6 @@ function saveFun(){
 						}
 					};
 				CloudUtils.ajax(options);
-			} 
 		 }
 	}
 }

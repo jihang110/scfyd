@@ -30,6 +30,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -144,7 +145,23 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 	}
 
 	@Override
-	public void startProcess(JSONObject jsonObject) {
+	public BaseRespBean startProcess(JSONObject jsonObject, HttpSession httpSession) {
+		BaseRespBean respBean = new BaseRespBean();
+		// 车辆情报校验
+		String carInfo = (String) jsonObject.get("carListInfo");
+		try {
+			checkCarInfo(carInfo, httpSession);
+		} catch (DataIntegrityViolationException e) {
+			log.error("CarDetailExcel exception", e);
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		} catch(Exception e) {
+			log.error(e.getMessage());
+			respBean.setResult(ErrorCodeEnum.FAILED);
+			respBean.setResultNote(e.getMessage());
+			return respBean;
+		}
+		
 		String userName = (String) jsonObject.get("userId");
 		String key = (String) jsonObject.get("activitiKey");
 		String payM = (String) jsonObject.get("payM"); // 付款金额
@@ -167,6 +184,8 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 				Double.parseDouble(financeAmount));
 		// 完成节点
 		taskService.complete(task.getId());
+		
+		return respBean;
 	}
 
 	@Override
@@ -244,7 +263,23 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 	}
 
 	@Override
-	public void reApply(PayCommitProcessReqBean reqBean) {
+	public BaseRespBean reApply(PayCommitProcessReqBean reqBean, HttpSession httpSession) {
+		BaseRespBean respBean = new BaseRespBean();
+		// 车辆情报校验
+		String carInfo = reqBean.getCarListInfo();
+		try {
+			checkCarInfo(carInfo, httpSession);
+		} catch (DataIntegrityViolationException e) {
+			log.error("CarDetailExcel exception", e);
+			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
+			return respBean;
+		} catch(Exception e) {
+			log.error(e.getMessage());
+			respBean.setResult(ErrorCodeEnum.FAILED);
+			respBean.setResultNote(e.getMessage());
+			return respBean;
+		}
+		
 		String userName = reqBean.getUserId();
 		String taskId = reqBean.getTaskId();
 		String payM = reqBean.getPayM(); // 付款金额
@@ -262,6 +297,8 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 				Double.parseDouble(financeAmount));
 		// 完成节点
 		taskService.complete(taskId);
+		
+		return respBean;
 	}
 
 	@Override
@@ -303,41 +340,28 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 			throw new BizException(ErrorCodeEnum.ADD_FAILED);
 		}
 		
-		// 登入车辆明细信息
-		String carInfo = reqBean.getCarListInfo();
-		JSONArray carArray = new JSONArray(carInfo);
-		JSONObject carObj = carArray.getJSONObject(0);
-		String fileUrl = carObj.getString("fileUrl");
-		int index = fileUrl.lastIndexOf("/");
-		String fileName = fileUrl.substring(index + 1);
-		String path = httpSession.getServletContext().getRealPath("uploadFile/common/");
-		File targetFile = new File(path, fileName);
+		// 车辆情报校验
+		List<CarInfo> carListinfo = new ArrayList<CarInfo>();
 		try {
-			List<CarInfo> carListinfo = parseExcel(fileName, targetFile);
-			for (CarInfo info : carListinfo) {
-				// 车架号存在验证
-				CarInfoExample carInfoExample = new CarInfoExample();
-				com.ut.scf.pojo.auto.CarInfoExample.Criteria criteria = carInfoExample.createCriteria();
-				criteria.andCarFrameNumEqualTo(info.getCarFrameNum());
-				if (carInfoMapper.countByExample(carInfoExample) > 0) {
-					respBean.setResult(ErrorCodeEnum.CAR_FRAME_NUM_EXIST);
-					return respBean;
-				}
-				info.setFinanceId(financeId);
-				info.setSaleStatus((byte) 0);//未售
-				carInfoMapper.insert(info);
-			}
+			carListinfo = checkCarInfo(reqBean.getCarListInfo(), httpSession);
 		} catch (DataIntegrityViolationException e) {
-			log.error("batchImportProfit exception", e);
+			log.error("CarDetailExcel exception", e);
 			respBean.setResult(ErrorCodeEnum.ADD_FAILED);
 			return respBean;
 		} catch(Exception e) {
-			log.error("parse file exception", e);
+			log.error(e.getMessage());
 			respBean.setResult(ErrorCodeEnum.FAILED);
 			respBean.setResultNote(e.getMessage());
 			return respBean;
 		}
 
+		// 登入车辆明细信息
+		for (CarInfo info : carListinfo) {
+			info.setFinanceId(financeId);
+			info.setSaleStatus((byte) 0);//未售
+			carInfoMapper.insert(info);
+		}
+		
 		// 付款承诺函
 		String templetPath = "/importTemp/付款承诺函模板.pdf";
 		templetPath = httpSession.getServletContext().getRealPath(templetPath);
@@ -406,16 +430,23 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 			int colMaxNum = worksheet.getRow(0).getLastCellNum();
 			int colNum = 0;
 			int rowNum = 0;
-			if(colMaxNum<=1){
+			if (rowMaxNum <= 1 || colMaxNum <= 1) {
 				throw new Exception("没有足够的信息，请检查！");
 			}
 			
 			for (rowNum = 2; rowNum <= rowMaxNum; rowNum++) {
 				CarInfo carInfo = new CarInfo();
 				x = rowNum + 1;
+				Row row = worksheet.getRow(rowNum);
+				if (row == null) {
+					throw new Exception("存在空行, 错误位置：第 "+x+" 行");
+				}
 				for (colNum = 0; colNum < colMaxNum; colNum++) {
 					y = colNum + 1;
-					Cell cell = worksheet.getRow(rowNum).getCell(colNum);
+					Cell cell = row.getCell(colNum);
+					if (cell == null) {
+						throw new Exception("数据不能为空, 错误位置：第 "+x+" 行,第 "+y+" 列");
+					}
 					String ceStr = "";
                 	BigDecimal ceVal = null;
                 	switch (cell.getCellType()) {
@@ -492,6 +523,13 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 						if (StringUtils.isEmpty(ceStr)) {
 							throw new Exception("数据不能为空, 错误位置：第 "+x+" 行,第 "+y+" 列");
 						}
+						// 车架号存在验证
+						CarInfoExample carInfoExample = new CarInfoExample();
+						com.ut.scf.pojo.auto.CarInfoExample.Criteria criteria = carInfoExample.createCriteria();
+						criteria.andCarFrameNumEqualTo(ceStr);
+						if (carInfoMapper.countByExample(carInfoExample) > 0) {
+							throw new Exception("该车架号已经付款申请过, 不能再次申请, 错误位置：第 "+x+" 行,第 "+y+" 列");
+						}
 						if (carFrameNumList.contains(ceStr)) {
 							throw new Exception("车架号不能重复, 错误位置：第 "+x+" 行,第 "+y+" 列");
 						}
@@ -529,5 +567,18 @@ public class PayCommitmentServiceImpl implements IPayCommitmentService {
 			}			
 		}
 		return list;
+	}
+	
+	private List<CarInfo> checkCarInfo(String carInfo, HttpSession httpSession) throws Exception {
+		JSONArray carArray = new JSONArray(carInfo);
+		JSONObject carObj = carArray.getJSONObject(0);
+		String fileUrl = carObj.getString("fileUrl");
+		int index = fileUrl.lastIndexOf("/");
+		String fileName = fileUrl.substring(index + 1);
+		String path = httpSession.getServletContext().getRealPath("uploadFile/common/");
+		File targetFile = new File(path, fileName);
+		List<CarInfo> carListinfo = parseExcel(fileName, targetFile);
+		
+		return carListinfo;
 	}
 }

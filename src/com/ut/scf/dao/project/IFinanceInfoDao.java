@@ -13,4 +13,7 @@ public interface IFinanceInfoDao {
 	
 	List<Map<String, Object>> getRefundDepositInfo(Map<String, Object> paramMap);
 	List<Map<String, Object>> getRefundDepositInfo(Map<String, Object> paramMap,PageInfoBean page);
+	
+	List<Map<String, Object>> getFinanceList(Map<String, Object> paramMap);
+
 }

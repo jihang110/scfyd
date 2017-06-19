@@ -277,7 +277,8 @@ function chengeValue(res){
 	$("#repaymentDate").val(CloudUtils.getcurrentdate());
 	$("#salesAmount").val(res.carActualPriceTotal);
 	$("#payInterestAmount").val(12);//假数据
-	$("#salesRate").val(CloudUtils.Math($("#salesAmount").val(),$("#financeAmount").val(),"div"));
+	$("#salesRate").val(CloudUtils.Math(res.salesRate,100,"mul"));
+	//$("#salesRate").val(CloudUtils.Math($("#salesAmount").val(),$("#financeAmount").val(),"div"));
 }
 
 //获取列值并循环计算

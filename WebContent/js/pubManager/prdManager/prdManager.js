@@ -15,13 +15,16 @@ $(document).ready(function() {
 
 function ajaxFileUpload(obj) {
 	var fileUrl = $(obj)[0].value;
-	var index = $(obj)[0].value.toLowerCase().lastIndexOf(".");
+	var index = fileUrl.toLowerCase().lastIndexOf(".");
+	var fileNameIndex = fileUrl.toLowerCase().lastIndexOf("\\")+1;
+	var fileName = fileUrl.substring(fileNameIndex);
 	var fileType = fileUrl.substring(index);
 	$("#fileType").val(fileType);
 	if ($(obj).val().length > 0) {
 		var fileSize = ($(obj)[0].files)[0].size;
 		if(fileType != ".docx"&&fileType != ".pdf"&&fileType!=".png"&&fileType!=".jpg"){
-			$("#note").show();
+			$("#typeNote").show();
+			$("#fileName").val(fileName);
 			return false;
 		}else if(fileSize >= 52428800){
 			$("#fileSize").val(fileSize);
@@ -30,7 +33,7 @@ function ajaxFileUpload(obj) {
 		}
 		else{
 			$("#fileSize").val(fileSize);
-			$("#note").hide();
+			$("#typeNote").hide();
 			$.ajaxFileUpload({
 		        url : '../../file/binUpload?pathId=3',
 		        secureuri : false,
@@ -51,9 +54,17 @@ function ajaxFileUpload(obj) {
 		    });
 	}
     } else{
-    	bootbox.alert("请选择附件");
+    	$("#addModal").modal('hide');
+    	bootbox.alert("请选择附件",function(){
+    		$("#fileName").val("");
+    		$("#addModal").modal('show');
+    	});
     }
 };
+
+function uploadAttachment(){
+	document.getElementById("file").click();
+}
 
 /*
  * 图片大小限制和图片类型限制
@@ -130,8 +141,8 @@ function searchFun() {
 
 
 function addFun() {
+	$("#typeNote").hide();
 	$("#prodName").attr("readonly",false);
-	$("input[id='file']").attr('type','file');
 	$("#file").attr("disabled",false);
 	$("#btn_blank").removeClass('col-sm-7').addClass('col-sm-4');
 	$("#addModalLabel").text("添加");
@@ -140,6 +151,7 @@ function addFun() {
 }
 
 function detailFun(row) {
+	$("#typeNote").hide();
 	$('#detailModal').modal({backdrop: 'static', keyboard: false});//防止点击空白/ESC 关闭
 	CloudUtils.setForm(row,'detailForm');
     $("#detailForm input").attr("disabled",true);
@@ -147,9 +159,9 @@ function detailFun(row) {
 }
 
 function modFun(row,isEdit) {
+	$("#typeNote").hide();
 	$("#prodName").attr("readonly",true);
-	$("input[id='file']").attr('type','file');
-	$("#attach").attr("readonly",true);
+	$("#fileName").attr("readonly",true);
 	$("#btn_blank").removeClass('col-sm-7').addClass('col-sm-4');
 	if(isEdit==2){
 		$("#addModalLabel").text("修改");
@@ -165,6 +177,7 @@ function saveProduct() {
 		var fileType=$("#fileType").val();
 		var fileSize = $("#fileSize").val();
 		var prodName = $("#prodName").val();
+		var fileName = $("#fileName").val();
 		var productDesc = $("#productDesc").val();
 		var modal = $('#addModal');
     	var data = CloudUtils.convertStringJson('addForm');
@@ -172,6 +185,7 @@ function saveProduct() {
     	var isEdit =  $('#isEdit').val(); 
     	if(isEdit == 1){//新增1；修改2
     		data.attachment = $("#url").val();
+    		data.fileName = $("#fileName").val();
         	data = JSON.stringify(data);
     		if($("#file").val()==null||$("#file").val()==""){
     			$("#addModal").modal('hide');
@@ -179,7 +193,6 @@ function saveProduct() {
     				$("#addModal").modal('show');
     				$("#prodName").val(prodName);
     				$("#productDesc").val(productDesc);
-    				$("#url").val(data.attachment);
     			});
     			return false;
     		}
@@ -188,7 +201,13 @@ function saveProduct() {
     			return false;
     		}
     		if(fileType != ".docx"&&fileType != ".pdf"&&fileType!=".png"&&fileType!=".jpg"){
-    			bootbox.alert("支持文件格式：docx、pdf、png、jpg");
+    			$("#addModal").modal('hide');
+    			bootbox.alert("支持文件格式：docx、pdf、png、jpg",function(){
+    				$("#addModal").modal('show');
+    				$("#prodName").val(prodName);
+    				$("#productDesc").val(productDesc);
+    				$("#fileName").val(fileName);
+    			});
     			return false;
     		}else{
     		var options = {
@@ -211,6 +230,16 @@ function saveProduct() {
     	}else if(isEdit == 2){
     		data.attachment = $("#file").val();
     		data = JSON.stringify(data);
+    		if(fileType != ".docx"&&fileType != ".pdf"&&fileType!=".png"&&fileType!=".jpg"){
+    			$("#addModal").modal('hide');
+    			bootbox.alert("支持文件格式：docx、pdf、png、jpg",function(){
+    				$("#addModal").modal('show');
+    				$("#prodName").val(prodName);
+    				$("#productDesc").val(productDesc);
+    				$("#fileName").val(fileName);
+    			});
+    			return false;
+    		}
     		var options = {
 					url : '../../product/mod',
 					data : data,
@@ -292,7 +321,7 @@ function initTable() {
  	        align: 'center',
             valign: 'middle'
  	    },{
- 	        field: 'attachment',
+ 	        field: 'fileName',
  	        title: '附件',
  	        align: 'center',
             valign: 'middle',
@@ -300,6 +329,12 @@ function initTable() {
 				 var s = '<a href="/../..'+row.attachment+'" download="'+value+'">'+value+'</a>';
 		         return s;
 		    }
+ 	    },{
+ 	        field: 'attachment',
+ 	        title: '附件url',
+ 	        align: 'center',
+            valign: 'middle',
+            visible: false
  	    },  {
  	        field: 'operation',
  	        title: '操作',

@@ -59,7 +59,7 @@
 	join factor_contract_info fci on ci.corp_id = fci.agency_corp_id
     left join limit_info li on ci.corp_id = li.corp_id
     <where>
-	     1 = 1
+	    fi.finance_status = '1'
 	    <if test="agencyName != null and agencyName != ''">
 		    and ci.corp_name LIKE CONCAT(CONCAT('%', #{agencyName}),'%')
 		</if> 
