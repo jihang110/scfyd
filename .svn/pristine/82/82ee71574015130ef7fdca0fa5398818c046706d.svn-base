@@ -1,0 +1,149 @@
+$(document).ready(function() {
+	CloudUtils.getMenuNames("nav");
+    initTable();
+    dateload();
+});
+
+function searchFun() {
+    initTable();
+}
+
+function initTable() {
+    $('#rateInfoListTable').bootstrapTable('destroy');
+    $("#rateInfoListTable").bootstrapTable({
+        method: "post",
+        url: "../rateInfo/rateInfoList",
+        striped: true, //表格显示条纹  
+        pagination: true, //启动分页  
+        pageSize: 5, //每页显示的记录数  
+        pageNumber: 1, //当前第几页  
+        pageList: [5, 10, 15, 20, 25], //记录数可选列表  
+        search: false, //是否启用查询  
+        showColumns: false, //显示下拉框勾选要显示的列  
+        showRefresh: false, //显示刷新按钮  
+        sidePagination: "server", //表示服务端请求  
+        //设置为undefined可以获取pageNumber，pageSize，searchText，sortName，sortOrder  
+        //设置为limit可以获取limit, offset, search, sort, order  
+        queryParamsType: "undefined",
+        queryParams: function queryParams(params) {
+            debugger;
+            var dataTemp = CloudUtils.convertStringJson('searchForm');
+            var jsonData = eval("(" + dataTemp + ")");
+            return JSON.stringify(jsonData);
+        },
+        responseHandler: function responseHandler(res) {
+            if (res.result == 0) {
+                return {
+                    "rows": res.dataList,
+                    "total": res.records
+                };
+
+            } else {
+                bootbox.alert(res.resultNote);
+                return {
+                    "rows": [],
+                    "total": 0
+                };
+            }
+        },
+        columns: [{
+            field: 'corpName',
+            title: '客户名称',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'orgnNum',
+            title: '组织机构代码证号',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'financeId',
+            title: '融资编号',
+            align: 'center',
+            valign: 'middle'
+        },{
+            field: 'financeStartDate',
+            title: '融资起始日',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'financeEndDate',
+            title: '融资到期日',
+            align: 'center',
+            valign: 'middle'
+        }, {
+            field: 'financeAmount',
+            title: '融资金额',
+            align: 'center',
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
+        }, {
+            field: 'payAmt',
+            title: '放款金额',
+            align: 'center',
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
+        }, {
+            field: 'interestSum',
+            title: '应收利息金额',
+            align: 'center',
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
+        }, {
+            field: 'hasPayInterest',
+            title: '已收利息金额',
+            align: 'center',
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
+        },  {
+            field: 'notPayInterest',
+            title: '未收利息金额',
+            align: 'center',
+            valign: 'middle',
+            formatter:function (value,row) {
+        		return $.number(value,2);
+            }
+        }]
+    });
+}
+
+
+window.operateEvents = {
+    'click .detail': function(e, value, row, index) {
+        $('#financeInfo').modal('show')
+        CloudUtils.setForm(row, 'detailForm');
+        initCarInfoTable();
+    }
+};
+
+function dateload() {
+    $('#financeStartDate').datetimepicker({
+        language: 'zh-CN',
+        autoclose: 1,
+        todayBtn: true, // 显示今天时间
+        initialDate: new Date(), //初始化当前日期
+        pickerPosition: "bottom-left",
+        minuteStep: 5,
+        format: 'yyyy-mm-dd',
+        minView: 'month'　　　　 // 日期时间选择器所能够提供的最精确的时间选择视图。
+    });
+
+    $('#financeEndDate').datetimepicker({
+        language: 'zh-CN',
+        autoclose: 1,
+        todayBtn: true, // 显示今天时间
+        initialDate: new Date(), //初始化当前日期
+        pickerPosition: "bottom-left",
+        minuteStep: 5,
+        format: 'yyyy-mm-dd',
+        minView: 'month'　　　　 // 日期时间选择器所能够提供的最精确的时间选择视图。
+    });
+}

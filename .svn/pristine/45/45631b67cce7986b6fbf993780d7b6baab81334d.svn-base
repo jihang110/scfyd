@@ -1,0 +1,96 @@
+<form class="form-horizontal" role="form" id="loanInfoForm"
+	data-toggle="validator">
+	<input type="hidden" id="loanId" name="loanId"> <input
+		type="hidden" id="isEdit" name="isEdit">
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="contractNo"><span
+			class="required">*</span>合同编号</label>
+		<div class="col-sm-6">
+			<input type="text" name="contractNo" class="form-control"
+				id="contractNo" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="orderBatchId"><span
+			class="required">*</span>订单批次号</label>
+		<div class="col-sm-6">
+			<input type="text" name="orderBatchId" class="form-control"
+				id="orderBatchId" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="loanDate"><span
+			class="required">*</span>放款日期</label>
+		<div class="col-sm-6 date form_datetime">
+			<input name="loanDate" class="form-control" id="loanDate"
+				style="cursor: pointer;" readonly="readonly" size="16" type="text"
+				value="">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="orderAcceptMoney"><span
+			class="required">*</span>接收订单金额</label>
+		<div class="col-sm-6">
+			<input type="text" name="orderAcceptMoney" class="form-control"
+				id="orderAcceptMoney" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="orderAllMoney"><span
+			class="required">*</span>超人所需费用总额</label>
+		<div class="col-sm-6">
+			<input type="text" name="orderAllMoney" class="form-control"
+				id="orderAllMoney" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="loanAmt"><span
+			class="required">*</span>放款金额</label>
+		<div class="col-sm-6">
+			<input type="text" name="loanAmt" class="form-control" id="loanAmt"
+				placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="financeStartDay"><span
+			class="required">*</span>融资起始日</label>
+		<div class="col-sm-6 date form_datetime">
+			<input name="financeStartDay" class="form-control"
+				id="financeStartDay" style="cursor: pointer;" readonly="readonly"
+				size="16" type="text" value="">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="financeDueDay"><span
+			class="required">*</span>融资到期日</label>
+		<div class="col-sm-6 date form_datetime">
+			<input name="financeDueDay" class="form-control" id="financeDueDay"
+				style="cursor: pointer;" readonly="readonly" size="16" type="text"
+				value="">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="guaranteeMoneyRate"><span
+			class="required">*</span>保证金收取比例</label>
+		<div class="col-sm-6">
+			<input type="text" name="guaranteeMoneyRate" class="form-control"
+				id="guaranteeMoneyRate" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="guaranteeMoney"><span
+			class="required">*</span>保证金</label>
+		<div class="col-sm-6">
+			<input type="text" name="guaranteeMoney" class="form-control"
+				id="guaranteeMoney" placeholder="10.00" size="13">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-4 control-label" for="guaranteeMoneyActual"><span
+			class="required">*</span>实缴保证金</label>
+		<div class="col-sm-6">
+			<input type="text" name="guaranteeMoneyActual" class="form-control"
+				id="guaranteeMoneyActual" placeholder="10.00" size="13">
+		</div>
+	</div>
+</form>

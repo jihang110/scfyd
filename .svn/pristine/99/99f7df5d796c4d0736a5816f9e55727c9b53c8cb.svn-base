@@ -1,0 +1,61 @@
+<form class="form-horizontal" role="form" id="addForm" data-toggle="validator">
+     <div class="form-group">
+       <label class="col-sm-2 control-label" for="applyDate"><span class="required"></span>申请日期</label>
+       <div class="col-sm-3">
+        <input type="text" class="form-control" id="applyDate" name="applyDate" readonly/>
+       </div>
+       <label class="col-sm-2 control-label"  for="financeStartDate">融资起始日</label>
+       <div class="col-sm-3">
+       	<input name="financeStartDate" class="form-control" id="financeStartDate"
+			style="cursor: pointer;" size="16" type="text" readonly>
+    	</div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="financeEndDate">融资到期日</label>
+       <div class="col-sm-3">
+       	<input name="financeEndDate" class="form-control" id="financeEndDate"
+			style="cursor: pointer;" size="16" type="text" readonly>
+       </div>
+       <label class="col-sm-2 control-label"  for="financeAmount">融资金额</label>
+       <div class="col-sm-3">
+       	<input type="text" name="financeAmount" class="form-control" id="financeAmount" readonly>
+       </div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="guaranteeRate">保证金比例（%）</label>
+       <div class="col-sm-3">
+       	<input type="text" name="guaranteeRate" class="form-control" id="guaranteeRate" readonly>
+       </div>
+       <label class="col-sm-2 control-label"  for="payAbleGuarantee">应缴保证金金额</label>
+       <div class="col-sm-3">
+       	<input type="text" name="payAbleGuarantee" class="form-control" id="payAbleGuarantee" readonly>
+       </div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="guaranteePayDate"><span class="required">*</span>保证金缴纳日期</label>
+       <div class="col-sm-3 guarantee_group">
+       	<input name="guaranteePayDate" class="form-control" id="guaranteePayDate"
+			style="cursor: pointer;" type="text" readonly>
+  	   </div>
+       <label class="col-sm-2 control-label"  for="payActGuarantee"><span class="required">*</span>实缴保证金金额</label>
+       <div class="col-sm-3 guarantee_group">
+     	<input type="text" name="payActGuarantee" class="form-control" id="payActGuarantee">
+  	   </div>
+     </div>
+     <div class="form-group">
+       <label class="col-sm-2 control-label"  for="guaranteePayHis">保证金缴纳历史</label>
+       <div class="col-sm-3">
+		<textarea id="guaranteePayHis" name="guaranteePayHis" class="form-control" readonly></textarea>
+   	   </div>
+       <label class="col-sm-2 control-label"  for="note"><span class="required">*</span>备注</label>
+       <div class="col-sm-3 guarantee_group">
+		<textarea id="note" name="note" class="form-control"></textarea>
+       </div>
+     </div>
+     <div class="form-group" id="divAdvice" style="display:none;">
+	     <label class="col-sm-2 control-label"  for="advice">审核结果</label>
+	     <div class="col-sm-3">
+	     	<textarea id="advice"  name="advice" class="form-control" readonly></textarea>
+	     </div>
+	   </div>
+ </form>
